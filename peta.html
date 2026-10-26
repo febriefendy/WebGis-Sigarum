@@ -35,6 +35,7 @@
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/liquid-glass.css">
   <style>
     /* Full view layout */
     html, body {
@@ -365,6 +366,152 @@
       document.getElementById('btn-close-sidebar').addEventListener('click', () => {
         sidebar.classList.add('-translate-x-full');
       });
+
+      // 4. Initialize Custom Liquid Glass Dropdowns (Eliminates OS muddy gray and unifies glass aesthetic)
+      setupLiquidGlassSelect('filter-kecamatan');
+      setupLiquidGlassSelect('filter-produk');
+      setupLiquidGlassSelect('filter-radius');
+    });
+
+    // Custom Liquid Glass Dropdown Component
+    function setupLiquidGlassSelect(selectId) {
+      const select = document.getElementById(selectId);
+      if (!select || select.dataset.glassEnhanced) return;
+      select.dataset.glassEnhanced = 'true';
+
+      // Hide original select visually while keeping fully functional for forms/events
+      select.style.position = 'absolute';
+      select.style.opacity = '0';
+      select.style.pointerEvents = 'none';
+      select.style.height = '0';
+      select.style.width = '0';
+
+      // Create wrapper
+      const wrapper = document.createElement('div');
+      wrapper.className = 'liquid-glass-select-wrapper';
+
+      // Trigger button
+      const trigger = document.createElement('button');
+      trigger.type = 'button';
+      trigger.className = 'liquid-glass-select-trigger';
+      
+      const labelSpan = document.createElement('span');
+      labelSpan.className = 'truncate';
+      const selectedOption = select.options[select.selectedIndex];
+      labelSpan.textContent = selectedOption ? selectedOption.text : 'Pilih...';
+
+      const arrowSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      arrowSvg.setAttribute('class', 'w-3.5 h-3.5 text-sky-400 shrink-0 transition-transform duration-200');
+      arrowSvg.setAttribute('fill', 'none');
+      arrowSvg.setAttribute('viewBox', '0 0 24 24');
+      arrowSvg.setAttribute('stroke', 'currentColor');
+      arrowSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 9l-7 7-7-7"/>';
+
+      trigger.appendChild(labelSpan);
+      trigger.appendChild(arrowSvg);
+
+      // Dropdown floating glass menu
+      const dropdown = document.createElement('div');
+      dropdown.className = 'liquid-glass-select-dropdown';
+
+      function renderOptions() {
+        dropdown.innerHTML = '';
+        Array.from(select.options).forEach(opt => {
+          const item = document.createElement('div');
+          const isSelected = opt.value === select.value;
+          item.className = 'liquid-glass-select-option' + (isSelected ? ' is-selected' : '');
+          item.dataset.value = opt.value;
+          item.innerHTML = `<span>${opt.text}</span>` + 
+            (isSelected ? `<svg class="w-3.5 h-3.5 text-sky-300 shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>` : '');
+          
+          item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            select.value = opt.value;
+            labelSpan.textContent = opt.text;
+            closeDropdown();
+            renderOptions();
+            select.dispatchEvent(new Event('change', { bubbles: true }));
+          });
+          dropdown.appendChild(item);
+        });
+      }
+
+      function openDropdown() {
+        document.querySelectorAll('.liquid-glass-select-dropdown.is-open').forEach(d => {
+          if (d !== dropdown) {
+            d.classList.remove('is-open');
+            d.parentElement?.querySelector('.liquid-glass-select-trigger')?.classList.remove('is-open');
+            d.parentElement?.querySelector('.liquid-glass-select-trigger svg')?.classList.remove('rotate-180');
+          }
+        });
+        renderOptions();
+        
+        // Smart placement: check if enough space below
+        const rect = trigger.getBoundingClientRect();
+        const spaceBelow = window.innerHeight - rect.bottom;
+        if (spaceBelow < 220 && rect.top > 220) {
+          dropdown.style.top = 'auto';
+          dropdown.style.bottom = 'calc(100% + 6px)';
+        } else {
+          dropdown.style.top = 'calc(100% + 6px)';
+          dropdown.style.bottom = 'auto';
+        }
+
+        dropdown.classList.add('is-open');
+        trigger.classList.add('is-open');
+        arrowSvg.classList.add('rotate-180');
+      }
+
+      function closeDropdown() {
+        dropdown.classList.remove('is-open');
+        trigger.classList.remove('is-open');
+        arrowSvg.classList.remove('rotate-180');
+      }
+
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (dropdown.classList.contains('is-open')) {
+          closeDropdown();
+        } else {
+          openDropdown();
+        }
+      });
+
+      // Synchronize trigger label if select changes programmatically
+      select.addEventListener('change', () => {
+        const currentOpt = select.options[select.selectedIndex];
+        if (currentOpt) {
+          labelSpan.textContent = currentOpt.text;
+        }
+        renderOptions();
+      });
+
+      // Insert wrapper into DOM
+      select.parentNode.insertBefore(wrapper, select);
+      wrapper.appendChild(select);
+      wrapper.appendChild(trigger);
+      wrapper.appendChild(dropdown);
+    }
+
+    // Global listener to close open dropdowns
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.liquid-glass-select-wrapper')) {
+        document.querySelectorAll('.liquid-glass-select-dropdown.is-open').forEach(d => {
+          d.classList.remove('is-open');
+          d.parentElement?.querySelector('.liquid-glass-select-trigger')?.classList.remove('is-open');
+          d.parentElement?.querySelector('.liquid-glass-select-trigger svg')?.classList.remove('rotate-180');
+        });
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.liquid-glass-select-dropdown.is-open').forEach(d => {
+          d.classList.remove('is-open');
+          d.parentElement?.querySelector('.liquid-glass-select-trigger')?.classList.remove('is-open');
+          d.parentElement?.querySelector('.liquid-glass-select-trigger svg')?.classList.remove('rotate-180');
+        });
+      }
     });
 
     function applyFilters(panMap = true) {
@@ -400,6 +547,11 @@
       document.getElementById('filter-radius').value = 'Semua';
       const allRadio = document.querySelector('input[name="kategori-filter"][value="Semua"]');
       if (allRadio) allRadio.checked = true;
+
+      // Notify custom dropdowns
+      document.getElementById('filter-kecamatan').dispatchEvent(new Event('change'));
+      document.getElementById('filter-produk').dispatchEvent(new Event('change'));
+      document.getElementById('filter-radius').dispatchEvent(new Event('change'));
 
       applyFilters(true);
       mapEngine.resetView();

@@ -29,6 +29,7 @@
     }
   </script>
   <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/liquid-glass.css">
 </head>
 <body class="bg-black text-slate-100 flex flex-col min-h-screen has-liquid-bg">
   <!-- Fixed Full-Page Liquid Blue Glass Canvas -->
@@ -175,11 +176,11 @@
       </div>
 
       <!-- Pagination & Status bar -->
-      <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 font-medium">
-        <div id="table-count-info">
+      <div class="px-6 py-4 border-t border-white/10 bg-slate-950/70 backdrop-blur-md flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-200 font-medium">
+        <div id="table-count-info" class="text-slate-200 font-semibold tracking-wide">
           Menampilkan 1-10 dari 16 UMKM
         </div>
-        <div class="flex items-center gap-1" id="pagination-controls">
+        <div class="flex items-center gap-1.5" id="pagination-controls">
           <!-- Rendered by JS -->
         </div>
       </div>
@@ -310,7 +311,7 @@
       let pagHtml = '';
       for (let i = 1; i <= totalPages; i++) {
         pagHtml += `
-          <button onclick="goToPage(${i})" class="px-3 py-1.5 rounded-lg text-xs font-bold ${i === currentPage ? 'bg-ocean-600 text-white' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'}">
+          <button onclick="goToPage(${i})" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${i === currentPage ? 'bg-sky-600 text-white shadow-md shadow-sky-600/30 border border-sky-400/50' : 'bg-slate-900/80 text-slate-200 hover:bg-slate-800 hover:text-white border border-white/15'}">
             ${i}
           </button>
         `;

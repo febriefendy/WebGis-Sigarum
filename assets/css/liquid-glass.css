@@ -185,55 +185,176 @@ body.has-liquid-bg {
 
 /* Clear solid opaque backgrounds so the continuous canvas waves shine through */
 body:has(.liquid-canvas-fixed) .bg-slate-50,
+body.has-liquid-bg .bg-slate-50,
+body:has(.liquid-canvas-fixed) [class*="bg-slate-50"],
+body.has-liquid-bg [class*="bg-slate-50"],
 body:has(.liquid-canvas-fixed) .bg-slate-100,
+body.has-liquid-bg .bg-slate-100,
+body:has(.liquid-canvas-fixed) [class*="bg-slate-100"],
+body.has-liquid-bg [class*="bg-slate-100"],
 body:has(.liquid-canvas-fixed) .bg-slate-200,
+body.has-liquid-bg .bg-slate-200,
+body:has(.liquid-canvas-fixed) [class*="bg-slate-200"],
+body.has-liquid-bg [class*="bg-slate-200"],
 body:has(.liquid-canvas-fixed) .bg-gray-50,
-body:has(.liquid-canvas-fixed) .bg-gray-100 {
+body.has-liquid-bg .bg-gray-50,
+body:has(.liquid-canvas-fixed) [class*="bg-gray-50"],
+body.has-liquid-bg [class*="bg-gray-50"],
+body:has(.liquid-canvas-fixed) .bg-gray-100,
+body.has-liquid-bg .bg-gray-100,
+body:has(.liquid-canvas-fixed) [class*="bg-gray-100"],
+body.has-liquid-bg [class*="bg-gray-100"] {
   background-color: transparent !important;
 }
 
 /* Translucent frosted dark glass for cards and containers - Clear, Translucent & Visible */
 body:has(.liquid-canvas-fixed) .bg-white,
-body:has(.liquid-canvas-fixed) .bg-white\/95,
-body:has(.liquid-canvas-fixed) .bg-white\/90,
-body:has(.liquid-canvas-fixed) .bg-white\/80 {
+body.has-liquid-bg .bg-white,
+body:has(.liquid-canvas-fixed) [class*="bg-white\/"],
+body.has-liquid-bg [class*="bg-white\/"] {
   background-color: rgba(6, 14, 30, 0.44) !important;
-  backdrop-filter: blur(12px) saturate(170%) !important;
-  -webkit-backdrop-filter: blur(12px) saturate(170%) !important;
+  backdrop-filter: blur(14px) saturate(170%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(170%) !important;
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
 }
 
+/* Inner Sub-cards / Feature Blocks (e.g. Tentang Tech Stack cards, Goal list cards) */
+body:has(.liquid-canvas-fixed) .bg-white .rounded-xl,
+body.has-liquid-bg .bg-white .rounded-xl,
+body:has(.liquid-canvas-fixed) .glass-subcard,
+body.has-liquid-bg .glass-subcard {
+  background: rgba(6, 16, 38, 0.55) !important;
+  backdrop-filter: blur(14px) saturate(165%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(165%) !important;
+  border: 1px solid rgba(87, 185, 255, 0.2) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+body:has(.liquid-canvas-fixed) .bg-white .rounded-xl:hover,
+body.has-liquid-bg .bg-white .rounded-xl:hover,
+body:has(.liquid-canvas-fixed) .glass-subcard:hover,
+body.has-liquid-bg .glass-subcard:hover {
+  background: rgba(10, 26, 60, 0.75) !important;
+  border-color: rgba(87, 185, 255, 0.45) !important;
+  box-shadow: 0 10px 28px rgba(8, 125, 222, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+  transform: translateY(-2px);
+}
+
 /* Soft, clean, crystalline glass borders */
 body:has(.liquid-canvas-fixed) .border-slate-100,
+body.has-liquid-bg .border-slate-100,
 body:has(.liquid-canvas-fixed) .border-slate-200,
-body:has(.liquid-canvas-fixed) .border-slate-200\/80,
-body:has(.liquid-canvas-fixed) .border-slate-200\/90,
+body.has-liquid-bg .border-slate-200,
+body:has(.liquid-canvas-fixed) [class*="border-slate-200"],
+body.has-liquid-bg [class*="border-slate-200"],
 body:has(.liquid-canvas-fixed) .border-slate-300,
-body:has(.liquid-canvas-fixed) .border-gray-100,
-body:has(.liquid-canvas-fixed) .border-gray-200,
-body:has(.liquid-canvas-fixed) .border-gray-300 {
+body.has-liquid-bg .border-slate-300,
+body:has(.liquid-canvas-fixed) [class*="border-gray-"],
+body.has-liquid-bg [class*="border-gray-"] {
   border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
-/* High-contrast crisp typography on dark glass */
+/* High-contrast, easily visible typography on dark glass */
 body:has(.liquid-canvas-fixed) .text-slate-900,
+body.has-liquid-bg .text-slate-900,
 body:has(.liquid-canvas-fixed) .text-slate-800,
+body.has-liquid-bg .text-slate-800,
 body:has(.liquid-canvas-fixed) .text-gray-900,
-body:has(.liquid-canvas-fixed) .text-gray-800 {
+body.has-liquid-bg .text-gray-900,
+body:has(.liquid-canvas-fixed) .text-gray-800,
+body.has-liquid-bg .text-gray-800 {
   color: #f8fafc !important;
 }
 
 body:has(.liquid-canvas-fixed) .text-slate-700,
+body.has-liquid-bg .text-slate-700,
 body:has(.liquid-canvas-fixed) .text-slate-600,
+body.has-liquid-bg .text-slate-600,
 body:has(.liquid-canvas-fixed) .text-gray-700,
-body:has(.liquid-canvas-fixed) .text-gray-600 {
-  color: #cbd5e1 !important;
+body.has-liquid-bg .text-gray-700,
+body:has(.liquid-canvas-fixed) .text-gray-600,
+body.has-liquid-bg .text-gray-600 {
+  color: #e2e8f0 !important;
 }
 
 body:has(.liquid-canvas-fixed) .text-slate-500,
-body:has(.liquid-canvas-fixed) .text-gray-500 {
-  color: #94a3b8 !important;
+body.has-liquid-bg .text-slate-500,
+body:has(.liquid-canvas-fixed) .text-gray-500,
+body.has-liquid-bg .text-gray-500,
+body:has(.liquid-canvas-fixed) .text-slate-400,
+body.has-liquid-bg .text-slate-400 {
+  color: #cbd5e1 !important; /* Soft platinum white - high contrast, clear readability */
+}
+
+/* Luminous Tech & Badge accent colors on dark glass */
+body:has(.liquid-canvas-fixed) .text-ocean-600,
+body.has-liquid-bg .text-ocean-600 { color: #38bdf8 !important; }
+body:has(.liquid-canvas-fixed) .text-indigo-600,
+body.has-liquid-bg .text-indigo-600 { color: #a5b4fc !important; }
+body:has(.liquid-canvas-fixed) .text-emerald-600,
+body.has-liquid-bg .text-emerald-600 { color: #34d399 !important; }
+body:has(.liquid-canvas-fixed) .text-sky-600,
+body.has-liquid-bg .text-sky-600 { color: #38bdf8 !important; }
+body:has(.liquid-canvas-fixed) .text-amber-600,
+body.has-liquid-bg .text-amber-600 { color: #fbbf24 !important; }
+body:has(.liquid-canvas-fixed) .text-rose-600,
+body.has-liquid-bg .text-rose-600 { color: #fb7185 !important; }
+
+/* Table Pagination & Status Bar Footer (Image 1 fix) */
+body:has(.liquid-canvas-fixed) div:has(> #table-count-info),
+body.has-liquid-bg div:has(> #table-count-info),
+body:has(.liquid-canvas-fixed) .table-pagination-footer,
+body.has-liquid-bg .table-pagination-footer {
+  background: rgba(4, 12, 28, 0.75) !important;
+  backdrop-filter: blur(16px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(160%) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+body:has(.liquid-canvas-fixed) #table-count-info,
+body.has-liquid-bg #table-count-info {
+  color: #e2e8f0 !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em;
+}
+
+/* Pagination buttons (Inactive and Active) */
+body:has(.liquid-canvas-fixed) #pagination-controls button,
+body.has-liquid-bg #pagination-controls button {
+  border-radius: 8px !important;
+  padding: 6px 14px !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  transition: all 0.2s ease !important;
+}
+
+body:has(.liquid-canvas-fixed) #pagination-controls button:not(.bg-ocean-600):not(.bg-sky-600),
+body.has-liquid-bg #pagination-controls button:not(.bg-ocean-600):not(.bg-sky-600) {
+  background: rgba(6, 18, 42, 0.75) !important;
+  color: #cbd5e1 !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+body:has(.liquid-canvas-fixed) #pagination-controls button:not(.bg-ocean-600):not(.bg-sky-600):hover,
+body.has-liquid-bg #pagination-controls button:not(.bg-ocean-600):not(.bg-sky-600):hover {
+  background: rgba(12, 30, 68, 0.95) !important;
+  color: #ffffff !important;
+  border-color: rgba(87, 185, 255, 0.5) !important;
+  box-shadow: 0 0 14px rgba(8, 125, 222, 0.35) !important;
+  transform: translateY(-1px);
+}
+
+body:has(.liquid-canvas-fixed) #pagination-controls button.bg-ocean-600,
+body.has-liquid-bg #pagination-controls button.bg-ocean-600,
+body:has(.liquid-canvas-fixed) #pagination-controls button.bg-sky-600,
+body.has-liquid-bg #pagination-controls button.bg-sky-600 {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(186, 230, 253, 0.5) !important;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.5) !important;
 }
 
 /* Form controls on dark glass */
@@ -243,20 +364,70 @@ body:has(.liquid-canvas-fixed) input[type="email"],
 body:has(.liquid-canvas-fixed) input[type="password"],
 body:has(.liquid-canvas-fixed) input[type="number"],
 body:has(.liquid-canvas-fixed) input[type="tel"],
-body:has(.liquid-canvas-fixed) select,
 body:has(.liquid-canvas-fixed) textarea {
-  background-color: rgba(4, 10, 24, 0.55) !important;
+  background-color: rgba(3, 9, 22, 0.75) !important;
   color: #f8fafc !important;
-  border-color: rgba(255, 255, 255, 0.16) !important;
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
+  border: 1px solid rgba(87, 185, 255, 0.22) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border-radius: 10px;
+}
+
+/* Dedicated Liquid Glass Select */
+body:has(.liquid-canvas-fixed) select,
+select.liquid-select {
+  background-color: rgba(4, 12, 28, 0.85) !important;
+  color: #f1f5f9 !important;
+  border: 1px solid rgba(87, 185, 255, 0.3) !important;
+  backdrop-filter: blur(12px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+  border-radius: 10px !important;
+  padding-right: 2.25rem !important;
+  cursor: pointer !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2338bdf8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 0.75rem center !important;
+  background-size: 1rem 1rem !important;
+  transition: all 0.2s ease !important;
 }
 
 body:has(.liquid-canvas-fixed) input:focus,
-body:has(.liquid-canvas-fixed) select:focus,
 body:has(.liquid-canvas-fixed) textarea:focus {
   border-color: rgba(87, 185, 255, 0.6) !important;
   box-shadow: 0 0 0 2px rgba(8, 125, 222, 0.28) !important;
+}
+
+body:has(.liquid-canvas-fixed) select:focus,
+select.liquid-select:focus {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 2px rgba(8, 125, 222, 0.35), 0 0 20px rgba(56, 189, 248, 0.3) !important;
+  outline: none !important;
+}
+
+/* Fix Native Select Option Popup (Replaces ugly browser gray with deep obsidian ocean glass) */
+body:has(.liquid-canvas-fixed) select option,
+select option {
+  background-color: #040c1e !important;
+  color: #f1f5f9 !important;
+  font-size: 13px !important;
+  padding: 10px 14px !important;
+}
+
+body:has(.liquid-canvas-fixed) select option:checked,
+select option:checked {
+  background-color: #0284c7 !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+body:has(.liquid-canvas-fixed) select option:hover,
+body:has(.liquid-canvas-fixed) select option:focus,
+select option:hover {
+  background-color: #0369a1 !important;
+  color: #ffffff !important;
 }
 
 /* Glass Navigation Bar */
@@ -349,17 +520,223 @@ body:has(.liquid-canvas-fixed) .glass-card-subtle {
   color: #94a3b8 !important;
 }
 
-/* Map sidebar drawer - Clear Glass Look */
+/* ==========================================================================
+   MAP SIDEBAR - UNIFIED LIQUID GLASS DRAWER
+   Menyelaraskan seluruh warna sidebar filter agar tidak campur-aduk & konsisten
+   ========================================================================== */
 #map-sidebar {
-  background: rgba(5, 12, 26, 0.58) !important;
-  backdrop-filter: blur(14px) saturate(165%) !important;
-  -webkit-backdrop-filter: blur(14px) saturate(165%) !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
+  background: rgba(4, 10, 24, 0.78) !important;
+  backdrop-filter: blur(18px) saturate(175%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(175%) !important;
+  border-right: 1px solid rgba(87, 185, 255, 0.18) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65) !important;
 }
 
 #map-sidebar .border-b,
 #map-sidebar .border-t {
-  border-color: rgba(255, 255, 255, 0.10) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Header & Containers */
+#map-sidebar .bg-slate-50\/70,
+#map-sidebar .bg-slate-50 {
+  background-color: rgba(3, 8, 20, 0.5) !important;
+}
+
+#map-sidebar .bg-white {
+  background-color: transparent !important;
+}
+
+#map-sidebar h2 {
+  color: #f8fafc !important;
+}
+
+#map-sidebar label {
+  color: #94a3b8 !important;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+#map-sidebar #map-result-count {
+  background: rgba(8, 125, 222, 0.18) !important;
+  color: #38bdf8 !important;
+  border: 1px solid rgba(56, 189, 248, 0.28) !important;
+  padding: 2px 8px !important;
+  border-radius: 9999px !important;
+  font-weight: 600;
+}
+
+/* Input Fields inside Sidebar */
+#map-sidebar input[type="text"] {
+  background-color: rgba(3, 9, 22, 0.75) !important;
+  color: #f8fafc !important;
+  border: 1px solid rgba(87, 185, 255, 0.22) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+#map-sidebar input[type="text"]:focus {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 2px rgba(8, 125, 222, 0.35), 0 0 18px rgba(56, 189, 248, 0.25) !important;
+}
+
+/* Category Filter Radio Pills in Sidebar */
+#map-sidebar label:has(input[name="kategori-filter"]) {
+  background: rgba(6, 16, 38, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #cbd5e1 !important;
+  transition: all 0.2s ease !important;
+}
+
+#map-sidebar label:has(input[name="kategori-filter"]):hover {
+  background: rgba(10, 24, 52, 0.8) !important;
+  border-color: rgba(87, 185, 255, 0.35) !important;
+  color: #ffffff !important;
+}
+
+#map-sidebar label:has(input[name="kategori-filter"]:checked) {
+  background: linear-gradient(135deg, #0284c7, #0369a1) !important;
+  border-color: rgba(186, 230, 253, 0.5) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4) !important;
+}
+
+/* Action Buttons */
+#map-sidebar #btn-reset-filter {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #cbd5e1 !important;
+  transition: all 0.2s ease !important;
+}
+
+#map-sidebar #btn-reset-filter:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+}
+
+#map-sidebar #btn-apply-filter {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+  border: 1px solid rgba(186, 230, 253, 0.45) !important;
+  box-shadow: 0 4px 16px rgba(2, 132, 199, 0.4) !important;
+  color: #ffffff !important;
+}
+
+#map-sidebar #btn-apply-filter:hover {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%) !important;
+  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.55), 0 0 16px rgba(56, 189, 248, 0.35) !important;
+}
+
+/* Custom Glassmorphism Select Dropdown Menu (Floating Liquid Glass) */
+.liquid-glass-select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.liquid-glass-select-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 0.625rem;
+  background: rgba(4, 12, 28, 0.85);
+  color: #f1f5f9;
+  border: 1px solid rgba(87, 185, 255, 0.28);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.liquid-glass-select-trigger:hover {
+  background: rgba(6, 18, 42, 0.95);
+  border-color: rgba(87, 185, 255, 0.5);
+  box-shadow: 0 6px 18px rgba(8, 125, 222, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.liquid-glass-select-trigger.is-open {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 2px rgba(8, 125, 222, 0.35), 0 0 20px rgba(56, 189, 248, 0.28);
+  background: rgba(2, 8, 20, 0.98);
+}
+
+.liquid-glass-select-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  padding: 0.35rem;
+  border-radius: 0.75rem;
+  background: rgba(4, 12, 28, 0.94) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(87, 185, 255, 0.3) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 25px rgba(8, 125, 222, 0.25) !important;
+  max-height: 240px;
+  overflow-y: auto;
+  opacity: 0;
+  transform: translateY(-6px) scale(0.98);
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.liquid-glass-select-dropdown.is-open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.liquid-glass-select-option {
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  color: #cbd5e1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.15s ease;
+}
+
+.liquid-glass-select-option:hover {
+  background: rgba(8, 125, 222, 0.25);
+  color: #ffffff;
+  padding-left: 0.9rem;
+}
+
+.liquid-glass-select-option.is-selected {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 2px 10px rgba(2, 132, 199, 0.4);
+}
+
+/* Custom Sleek Scrollbar for Glass Containers */
+body:has(.liquid-canvas-fixed) ::-webkit-scrollbar,
+.has-liquid-bg ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+body:has(.liquid-canvas-fixed) ::-webkit-scrollbar-track,
+.has-liquid-bg ::-webkit-scrollbar-track {
+  background: rgba(2, 6, 16, 0.4);
+}
+
+body:has(.liquid-canvas-fixed) ::-webkit-scrollbar-thumb,
+.has-liquid-bg ::-webkit-scrollbar-thumb {
+  background: rgba(87, 185, 255, 0.25);
+  border-radius: 4px;
+}
+
+body:has(.liquid-canvas-fixed) ::-webkit-scrollbar-thumb:hover,
+.has-liquid-bg ::-webkit-scrollbar-thumb:hover {
+  background: rgba(87, 185, 255, 0.45);
 }
 
 /* 3. Tables, Dividers & Modals on Dark Glass */
