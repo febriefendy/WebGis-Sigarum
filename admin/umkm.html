@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kelola Data UMKM - SIGARUM</title>
+  <!-- Tailwind CSS CDN -->
+  <script>
+    (function(){
+      const origWarn = console.warn;
+      console.warn = function(...args) {
+        if (args[0] && typeof args[0] === 'string' && args[0].indexOf('cdn.tailwindcss.com') !== -1) return;
+        origWarn.apply(console, args);
+      };
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ocean: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e' },
+            navy: { 900: '#0f172a', 950: '#020617' },
+            salt: { 500: '#f59e0b', 600: '#d97706', 700: '#b45309' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="bg-black text-slate-100 flex h-screen overflow-hidden has-liquid-bg">
+  <!-- Fixed Full-Page Liquid Blue Glass Canvas -->
+  <canvas id="liquid-canvas" class="liquid-canvas-fixed"></canvas>
+
+  <!-- Admin / UMKM Sidebar -->
+  <aside class="w-64 bg-slate-950/80 backdrop-blur-2xl text-slate-300 flex flex-col justify-between shrink-0 border-r border-white/10 z-20">
+    <div>
+      <div class="h-16 px-6 flex items-center gap-3 border-b border-white/10 bg-slate-950/80">
+        <img src="../assets/images/logo.svg" alt="SIGARUM Logo" class="w-8 h-8 rounded-lg drop-shadow">
+        <div>
+          <span class="font-extrabold text-white text-base tracking-tight">SIGA<span class="text-ocean-400">RUM</span></span>
+          <span id="sidebar-role-title" class="text-[10px] text-slate-400 block -mt-1 font-semibold uppercase">Admin Panel</span>
+        </div>
+      </div>
+
+      <nav class="p-4 space-y-1 text-xs font-semibold">
+        <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+          Dashboard
+        </a>
+        <a href="umkm.html" id="nav-link-umkm" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-ocean-600 text-white shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+          <span id="nav-text-umkm">Data UMKM</span>
+        </a>
+        <a href="produk.html" id="nav-link-produk" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+          <span id="nav-text-produk">Data Produk</span>
+        </a>
+        <a href="kategori.html" class="admin-only-nav flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+          Data Kategori
+        </a>
+        <a href="wilayah.html" class="admin-only-nav flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+          Data Wilayah
+        </a>
+        <a href="pengguna.html" class="admin-only-nav flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          Data Pengguna
+        </a>
+        
+        <div class="pt-4 mt-4 border-t border-slate-800">
+          <a href="../peta.html" id="nav-link-peta" target="_blank" class="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+            <span class="flex items-center gap-3">
+              <svg class="w-4 h-4 text-ocean-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+              Peta WebGIS
+            </span>
+            <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+          </a>
+        </div>
+      </nav>
+    </div>
+
+    <div class="p-4 border-t border-slate-800 bg-slate-950/60">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2.5 overflow-hidden">
+          <div id="user-display-avatar" class="w-8 h-8 rounded-full bg-slate-800 text-sky-400 font-bold flex items-center justify-center text-xs shrink-0">
+            AD
+          </div>
+          <div class="overflow-hidden">
+            <div id="user-display-name" class="font-bold text-white text-xs leading-none truncate">Administrator</div>
+            <div id="user-display-role" class="text-[10px] text-emerald-400 font-semibold mt-0.5 truncate">Online • Role: Admin</div>
+          </div>
+        </div>
+        <a href="../login.html" class="text-slate-400 hover:text-rose-400 text-xs">Keluar</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col overflow-y-auto">
+    
+    <!-- Top Header -->
+    <header class="h-16 bg-white border-b border-slate-200 px-6 sm:px-8 flex items-center justify-between shrink-0">
+      <div>
+        <h1 id="page-title" class="text-lg font-extrabold text-slate-900">Pengelolaan Data UMKM</h1>
+        <p id="page-subtitle" class="text-xs text-slate-500">Tambah, sunting, hapus, dan verifikasi titik koordinat UMKM</p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <a href="../api/umkm/export/geojson" target="_blank" download="sigarum_umkm.geojson" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 transition-all shadow-sm">
+          <svg class="w-3.5 h-3.5 text-ocean-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+          <span class="hidden sm:inline">Ekspor GeoJSON</span>
+        </a>
+        <button onclick="openModalImportGeoJSON()" class="admin-only-nav inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 transition-all shadow-sm">
+          <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+          <span class="hidden sm:inline">Impor QGIS</span>
+        </button>
+        <button id="btn-add-umkm" onclick="openModalCreate()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white bg-ocean-600 hover:bg-ocean-700 shadow-md shadow-ocean-600/20 transition-all">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          Tambah UMKM Baru
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Table & Filter Container -->
+    <main class="p-6 sm:p-8 space-y-6">
+
+      <!-- RBAC Notice Banner for Pelaku UMKM -->
+      <div id="rbac-umkm-notice" class="hidden p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-start gap-3">
+        <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <div>
+          <span class="font-bold">Akses Khusus Pelaku UMKM (Aturan Bisnis BR-10):</span>
+          <p class="mt-0.5 leading-relaxed text-amber-800">
+            Anda masuk sebagai pemilik unit usaha. Sesuai kebijakan keamanan data, Anda hanya memiliki wewenang untuk melihat dan memperbarui data profil serta titik koordinat unit usaha milik Anda sendiri.
+          </p>
+        </div>
+      </div>
+      
+      <!-- Toolbar (Only shown for Admin or if search is applicable) -->
+      <div id="toolbar-admin" class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="w-full sm:w-80 relative">
+          <input type="text" id="admin-search-umkm" placeholder="Cari nama UMKM atau pemilik..." class="w-full text-xs pl-8 pr-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-ocean-500">
+          <svg class="w-4 h-4 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        </div>
+
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <select id="admin-filter-kategori" class="text-xs px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-ocean-500 bg-white">
+            <option value="Semua">Semua Kategori</option>
+            <option value="Olahan Laut">Olahan Laut</option>
+            <option value="Garam">Garam</option>
+          </select>
+
+          <select id="admin-filter-status" class="text-xs px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-ocean-500 bg-white">
+            <option value="Semua">Semua Status</option>
+            <option value="Aktif">Aktif</option>
+            <option value="Nonaktif">Nonaktif</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-slate-400 font-extrabold uppercase text-[10px] tracking-wider">
+                <th class="py-3.5 px-4 text-center w-12">ID</th>
+                <th class="py-3.5 px-4">Nama UMKM & Pemilik</th>
+                <th class="py-3.5 px-4">Kategori</th>
+                <th class="py-3.5 px-4">Kecamatan & Desa</th>
+                <th class="py-3.5 px-4">Koordinat Spasial</th>
+                <th class="py-3.5 px-4 text-center">Status</th>
+                <th class="py-3.5 px-4 text-right">Aksi Manajemen</th>
+              </tr>
+            </thead>
+            <tbody id="crud-umkm-tbody" class="divide-y divide-slate-100">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- MODAL: CREATE / EDIT UMKM -->
+  <div id="modal-umkm" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-100 my-8">
+      
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div>
+          <h3 id="modal-title" class="text-lg font-bold text-slate-900">Tambah Data UMKM Baru</h3>
+          <p class="text-xs text-slate-500">Isi formulir atribut spasial dan profil usaha secara lengkap</p>
+        </div>
+        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <form id="form-umkm" class="mt-4 space-y-4">
+        <input type="hidden" id="form-id_umkm">
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nama UMKM <span class="text-rose-500">*</span></label>
+            <input type="text" id="form-nama_umkm" required placeholder="Contoh: Barokah Hasil Laut" class="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nama Pemilik <span class="text-rose-500">*</span></label>
+            <input type="text" id="form-pemilik" required placeholder="Contoh: H. Achmad Syafi'i" class="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Kategori Usaha <span class="text-rose-500">*</span></label>
+            <select id="form-kategori" required class="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none bg-white">
+              <option value="Olahan Laut">Olahan Laut</option>
+              <option value="Garam">Garam</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Kecamatan <span class="text-rose-500">*</span></label>
+            <select id="form-kecamatan" required class="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none bg-white">
+              <option value="Pademawu">Pademawu</option>
+              <option value="Tlanakan">Tlanakan</option>
+              <option value="Galis">Galis</option>
+              <option value="Larangan">Larangan</option>
+              <option value="Pasean">Pasean</option>
+              <option value="Batumarmar">Batumarmar</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Desa / Kelurahan <span class="text-rose-500">*</span></label>
+            <input type="text" id="form-desa" required placeholder="Contoh: Bunder" class="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nomor Kontak WhatsApp <span class="text-rose-500">*</span></label>
+            <input type="text" id="form-kontak" required placeholder="+62 812-3456-7890" class="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Status Operasional (BR-07)</label>
+            <select id="form-status" class="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none bg-white">
+              <option value="Aktif">Aktif (Tayang di Peta Publik)</option>
+              <option value="Nonaktif">Nonaktif (Disembunyikan Publik)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Alamat Lengkap Usaha</label>
+          <input type="text" id="form-alamat" placeholder="Jl. Raya Tambak Garam No. 12" class="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none">
+        </div>
+
+        <!-- Coordinates Inputs (PostGIS Point SRID 4326 & Peta Interaktif) -->
+        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-ocean-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+              Koordinat Geografis Spasial (Point WGS84)
+            </span>
+            <button type="button" onclick="toggleAdminMapPicker()" id="btn-toggle-picker" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold text-ocean-700 bg-ocean-100 hover:bg-ocean-200 border border-ocean-300 transition-colors">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+              <span>Pilih di Peta Dunia</span>
+            </button>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Latitude (Lintang)</label>
+              <input type="number" step="any" id="form-latitude" required placeholder="-7.2195000" class="w-full text-xs font-mono px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Longitude (Bujur)</label>
+              <input type="number" step="any" id="form-longitude" required placeholder="113.5410000" class="w-full text-xs font-mono px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none">
+            </div>
+          </div>
+          <!-- Interactive Map Container for Picker -->
+          <div id="picker-wrapper" class="hidden mt-3">
+            <div class="flex items-center justify-between text-[11px] text-slate-600 mb-1 font-medium">
+              <span>Klik di peta atau geser pin merah untuk menentukan titik lokasi yang tepat:</span>
+              <span id="picker-coord-badge" class="font-mono text-ocean-700 font-bold"></span>
+            </div>
+            <div id="admin-map-picker" class="h-56 w-full rounded-xl border border-slate-300 overflow-hidden shadow-inner"></div>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-2">
+            * Rentang koordinat Pamekasan yang valid: Latitude -6.8 s/d -7.3, Longitude 113.4 s/d 113.6
+          </p>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">URL Foto Profil Usaha</label>
+          <input type="url" id="form-foto" placeholder="https://images.unsplash.com/photo-..." class="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Deskripsi Usaha</label>
+          <textarea id="form-deskripsi" rows="2" placeholder="Jelaskan spesialisasi produksi dan keunggulan UMKM..." class="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none"></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeModal()" class="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50">
+            Batal
+          </button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-ocean-600 hover:bg-ocean-700 text-white text-xs font-bold shadow-md shadow-ocean-600/30">
+            Simpan Data UMKM
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- MODAL: DELETE CONFIRMATION (ONLY ACCESSIBLE TO ADMIN) -->
+  <div id="modal-delete" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl">
+      <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+      </div>
+      <h3 class="font-bold text-slate-900 text-base">Hapus Data UMKM?</h3>
+      <p class="text-xs text-slate-500 mt-1 mb-4 leading-relaxed">
+        Apakah Anda yakin ingin menghapus data UMKM ini? <br>
+        <span class="text-rose-600 font-semibold">(Sesuai aturan BR-14, produk terkait juga akan terhapus secara otomatis).</span>
+      </p>
+      <div class="flex items-center justify-center gap-2">
+        <button onclick="closeDeleteModal()" class="px-4 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 font-semibold text-xs rounded-xl">
+          Batal
+        </button>
+        <button id="btn-confirm-delete" class="px-4 py-2 bg-rose-600 text-white hover:bg-rose-700 font-bold text-xs rounded-xl shadow-md shadow-rose-600/20">
+          Ya, Hapus Data
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: IMPORT GEOJSON / QGIS -->
+  <div id="modal-import-geojson" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-sm">Impor Data Spasial GeoJSON (QGIS)</h3>
+            <span class="text-[10px] text-slate-500 font-medium">Validasi Topologi & CRS: EPSG:4326 (WGS 84)</span>
+          </div>
+        </div>
+        <button onclick="closeModalImportGeoJSON()" class="p-1 rounded-lg text-slate-400 hover:text-slate-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">Unggah Berkas GeoJSON (.geojson / .json)</label>
+        <input type="file" id="import-file-input" accept=".geojson,.json" class="w-full text-xs file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-ocean-50 file:text-ocean-700 hover:file:bg-ocean-100 border border-slate-300 rounded-xl p-1 cursor-pointer">
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">Atau Tempel (Paste) Konten GeoJSON</label>
+        <textarea id="import-geojson-text" rows="5" placeholder='{"type": "FeatureCollection", "features": [...]}' class="w-full font-mono text-[11px] p-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50"></textarea>
+      </div>
+
+      <!-- Preview Box -->
+      <div id="import-preview-box" class="hidden p-3 rounded-xl bg-slate-100 border border-slate-200 text-xs space-y-1">
+        <div class="font-bold text-slate-800 flex items-center justify-between">
+          <span>Hasil Validasi Geometri:</span>
+          <span id="import-validation-status" class="text-[10px] px-2 py-0.5 rounded font-bold"></span>
+        </div>
+        <p id="import-validation-detail" class="text-slate-600 text-[11px]"></p>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+        <button type="button" onclick="closeModalImportGeoJSON()" class="px-4 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 font-semibold text-xs rounded-xl">
+          Batal
+        </button>
+        <button type="button" onclick="previewAndValidateGeoJSON()" class="px-4 py-2 bg-slate-800 text-white hover:bg-slate-900 font-bold text-xs rounded-xl">
+          Validasi Spasial
+        </button>
+        <button type="button" id="btn-submit-import" onclick="submitGeoJSONImport()" class="px-5 py-2 bg-emerald-600 text-white hover:bg-emerald-700 font-bold text-xs rounded-xl shadow-md shadow-emerald-600/20 disabled:opacity-50" disabled>
+          Mulai Impor ke Database
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let currentDeleteId = null;
+    let currentUser = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Inisialisasi RBAC
+      currentUser = SigarumStore.applyAdminRBAC();
+
+      // 2. Sesuaikan tampilan jika peran adalah Pelaku UMKM
+      if (currentUser.role === 'umkm') {
+        document.getElementById('sidebar-role-title').textContent = 'Portal UMKM';
+        document.getElementById('page-title').textContent = 'Profil & Informasi Usaha Saya';
+        document.getElementById('page-subtitle').textContent = `Perbarui profil usaha, kontak, dan titik koordinat: ${currentUser.nama_umkm || 'Garam Makmur Bunder'}`;
+        
+        // Sembunyikan tombol tambah UMKM baru bagi pelaku UMKM
+        const btnAdd = document.getElementById('btn-add-umkm');
+        if (btnAdd) btnAdd.classList.add('hidden');
+
+        // Sembunyikan toolbar filter global
+        const toolbar = document.getElementById('toolbar-admin');
+        if (toolbar) toolbar.classList.add('hidden');
+
+        // Tampilkan notice banner RBAC
+        document.getElementById('rbac-umkm-notice').classList.remove('hidden');
+      }
+
+      loadUMKMTable();
+
+      document.getElementById('admin-search-umkm').addEventListener('input', loadUMKMTable);
+      document.getElementById('admin-filter-kategori').addEventListener('change', loadUMKMTable);
+      document.getElementById('admin-filter-status').addEventListener('change', loadUMKMTable);
+      document.getElementById('form-umkm').addEventListener('submit', handleFormSubmit);
+    });
+
+    function loadUMKMTable() {
+      let list = [];
+
+      if (currentUser && currentUser.role === 'umkm') {
+        // BR-10: Pelaku UMKM HANYA DAPAT MELIHAT DAN MENGELOLA UMKM MILIKNYA SENDIRI
+        const targetId = currentUser.id_umkm || 1;
+        const myUmkm = SigarumStore.getUMKMById(targetId);
+        list = myUmkm ? [myUmkm] : [];
+      } else {
+        // Administrator: Dapat melihat dan mengelola seluruh data
+        const q = document.getElementById('admin-search-umkm').value;
+        const kat = document.getElementById('admin-filter-kategori').value;
+        const stat = document.getElementById('admin-filter-status').value;
+
+        list = SigarumStore.getUMKM({
+          keyword: q,
+          kategori: kat,
+          status: stat
+        });
+      }
+
+      const tbody = document.getElementById('crud-umkm-tbody');
+
+      if (list.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="py-8 text-center text-slate-500">
+              Tidak ada data UMKM yang ditemukan.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = list.map(item => `
+        <tr class="hover:bg-slate-50 transition-colors ${currentUser.role === 'umkm' ? 'bg-amber-50/30' : ''}">
+          <td class="py-3.5 px-4 text-center font-mono font-bold text-slate-400">
+            #${item.id_umkm}
+          </td>
+          <td class="py-3.5 px-4">
+            <div class="flex items-center gap-3">
+              <img src="${item.foto}" alt="" class="w-10 h-10 rounded-xl object-cover bg-slate-100 border border-slate-200 shrink-0">
+              <div>
+                <span class="font-bold text-slate-900 block leading-tight">${item.nama_umkm}</span>
+                <span class="text-[11px] text-slate-500">Pemilik: ${item.pemilik}</span>
+                ${currentUser.role === 'umkm' ? '<span class="inline-block mt-0.5 px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 text-[10px] font-bold">Unit Anda</span>' : ''}
+              </div>
+            </div>
+          </td>
+          <td class="py-3.5 px-4 whitespace-nowrap">${SigarumUtils.getCategoryBadge(item.kategori)}</td>
+          <td class="py-3.5 px-4">
+            <span class="font-semibold text-slate-700 block">Kec. ${item.kecamatan}</span>
+            <span class="text-[11px] text-slate-500">Desa ${item.desa}</span>
+          </td>
+          <td class="py-3.5 px-4 font-mono text-[11px] text-slate-600">
+            ${item.latitude}, ${item.longitude}
+          </td>
+          <td class="py-3.5 px-4 text-center whitespace-nowrap">${SigarumUtils.getStatusBadge(item.status)}</td>
+          <td class="py-3.5 px-4 text-right whitespace-nowrap">
+            <div class="flex items-center justify-end gap-1.5">
+              <a href="../detail-umkm.html?id=${item.id_umkm}" target="_blank" class="p-1.5 text-slate-500 hover:text-ocean-600 rounded-lg hover:bg-slate-100" title="Lihat Profil Publik">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+              </a>
+              <button onclick="openModalEdit(${item.id_umkm})" class="px-2.5 py-1.5 text-xs font-bold text-sky-700 bg-sky-50 hover:bg-sky-100 rounded-lg flex items-center gap-1" title="Sunting UMKM">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                ${currentUser.role === 'umkm' ? 'Sunting Usaha' : 'Edit'}
+              </button>
+              ${currentUser.role === 'admin' ? `
+                <button onclick="confirmDelete(${item.id_umkm})" class="p-1.5 text-rose-500 hover:text-rose-700 rounded-lg hover:bg-rose-50" title="Hapus UMKM">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                </button>
+              ` : `
+                <span class="text-[10px] text-slate-400 italic px-1">Unit Terkunci</span>
+              `}
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openModalCreate() {
+      if (currentUser && currentUser.role === 'umkm') {
+        SigarumUtils.showToast("Pelaku UMKM tidak diizinkan membuat entitas unit baru. Hubungi Administrator.", "warning");
+        return;
+      }
+      document.getElementById('modal-title').textContent = 'Tambah Data UMKM Baru';
+      document.getElementById('form-id_umkm').value = '';
+      document.getElementById('form-nama_umkm').value = '';
+      document.getElementById('form-pemilik').value = '';
+      document.getElementById('form-kategori').value = 'Olahan Laut';
+      document.getElementById('form-kecamatan').value = 'Pademawu';
+      document.getElementById('form-desa').value = '';
+      document.getElementById('form-kontak').value = '+62 812-';
+      document.getElementById('form-status').value = 'Aktif';
+      document.getElementById('form-alamat').value = '';
+      document.getElementById('form-latitude').value = '-7.2185';
+      document.getElementById('form-longitude').value = '113.5420';
+      document.getElementById('form-foto').value = 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80';
+      document.getElementById('form-deskripsi').value = '';
+
+      const modal = document.getElementById('modal-umkm');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function openModalEdit(id) {
+      // Validasi BR-10: Jika role UMKM, tidak boleh mengedit UMKM orang lain
+      if (currentUser && currentUser.role === 'umkm') {
+        const allowedId = currentUser.id_umkm || 1;
+        if (parseInt(id) !== parseInt(allowedId)) {
+          SigarumUtils.showToast("Pelanggaran BR-10: Anda tidak berhak menyunting data UMKM lain!", "error");
+          return;
+        }
+      }
+
+      const item = SigarumStore.getUMKMById(id);
+      if (!item) return;
+
+      document.getElementById('modal-title').textContent = (currentUser.role === 'umkm' ? 'Sunting Profil Usaha Anda' : 'Edit Data UMKM #' + id);
+      document.getElementById('form-id_umkm').value = item.id_umkm;
+      document.getElementById('form-nama_umkm').value = item.nama_umkm;
+      document.getElementById('form-pemilik').value = item.pemilik;
+      document.getElementById('form-kategori').value = item.kategori;
+      document.getElementById('form-kecamatan').value = item.kecamatan;
+      document.getElementById('form-desa').value = item.desa;
+      document.getElementById('form-kontak').value = item.kontak;
+      document.getElementById('form-status').value = item.status;
+      document.getElementById('form-alamat').value = item.alamat;
+      document.getElementById('form-latitude').value = item.latitude;
+      document.getElementById('form-longitude').value = item.longitude;
+      document.getElementById('form-foto').value = item.foto;
+      document.getElementById('form-deskripsi').value = item.deskripsi;
+
+      const modal = document.getElementById('modal-umkm');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('modal-umkm');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      const picker = document.getElementById('picker-wrapper');
+      if (picker) picker.classList.add('hidden');
+    }
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      try {
+        const id = document.getElementById('form-id_umkm').value;
+
+        // Validasi BR-10 jika role UMKM
+        if (currentUser && currentUser.role === 'umkm') {
+          const allowedId = currentUser.id_umkm || 1;
+          if (id && parseInt(id) !== parseInt(allowedId)) {
+            throw new Error("Pelanggaran BR-10: Anda hanya dapat menyimpan perubahan pada unit usaha milik Anda sendiri.");
+          }
+        }
+
+        const data = {
+          id_umkm: id ? parseInt(id) : null,
+          nama_umkm: document.getElementById('form-nama_umkm').value,
+          pemilik: document.getElementById('form-pemilik').value,
+          kategori: document.getElementById('form-kategori').value,
+          kecamatan: document.getElementById('form-kecamatan').value,
+          desa: document.getElementById('form-desa').value,
+          kontak: document.getElementById('form-kontak').value,
+          status: document.getElementById('form-status').value,
+          alamat: document.getElementById('form-alamat').value,
+          latitude: parseFloat(document.getElementById('form-latitude').value),
+          longitude: parseFloat(document.getElementById('form-longitude').value),
+          foto: document.getElementById('form-foto').value,
+          deskripsi: document.getElementById('form-deskripsi').value
+        };
+
+        SigarumStore.saveUMKM(data);
+        closeModal();
+        loadUMKMTable();
+        SigarumUtils.showToast("Data profil UMKM berhasil disimpan!", "success");
+      } catch (err) {
+        SigarumUtils.showToast(err.message, "error");
+      }
+    }
+
+    function confirmDelete(id) {
+      if (currentUser && currentUser.role === 'umkm') {
+        SigarumUtils.showToast("Pelaku UMKM tidak diizinkan menghapus data usaha.", "error");
+        return;
+      }
+      currentDeleteId = id;
+      const modal = document.getElementById('modal-delete');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeDeleteModal() {
+      currentDeleteId = null;
+      const modal = document.getElementById('modal-delete');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    document.getElementById('btn-confirm-delete').addEventListener('click', () => {
+      if (currentDeleteId) {
+        SigarumStore.deleteUMKM(currentDeleteId);
+        closeDeleteModal();
+        loadUMKMTable();
+        SigarumUtils.showToast("Data UMKM dan produk terkait berhasil dihapus.", "success");
+      }
+    });
+
+    // MAP PICKER ENGINE (Pilih titik spasial langsung di peta dunia)
+    let adminPickerMap = null;
+    let adminPickerMarker = null;
+
+    function toggleAdminMapPicker() {
+      const wrapper = document.getElementById('picker-wrapper');
+      const isHidden = wrapper.classList.contains('hidden');
+      if (isHidden) {
+        wrapper.classList.remove('hidden');
+        initAdminPickerMap();
+      } else {
+        wrapper.classList.add('hidden');
+      }
+    }
+
+    function initAdminPickerMap() {
+      const latInput = document.getElementById('form-latitude');
+      const lngInput = document.getElementById('form-longitude');
+
+      let lat = parseFloat(latInput.value);
+      let lng = parseFloat(lngInput.value);
+
+      if (isNaN(lat) || isNaN(lng)) {
+        lat = -7.0600;
+        lng = 113.5200;
+      }
+
+      if (!adminPickerMap) {
+        const googleHybrid = L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+          maxZoom: 20,
+          subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+          attribution: '&copy; Google Maps'
+        });
+
+        const googleRoadmap = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+          maxZoom: 20,
+          subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+          attribution: '&copy; Google Maps'
+        });
+
+        adminPickerMap = L.map('admin-map-picker', {
+          center: [lat, lng],
+          zoom: 13,
+          minZoom: 2,
+          maxZoom: 20,
+          layers: [googleHybrid]
+        });
+
+        L.control.layers({
+          "Google Maps Satelit (Citra Nyata)": googleHybrid,
+          "Google Maps Jalan (Roadmap)": googleRoadmap
+        }, null, { position: 'topright' }).addTo(adminPickerMap);
+
+        adminPickerMarker = L.marker([lat, lng], { draggable: true }).addTo(adminPickerMap);
+
+        adminPickerMarker.on('dragend', function (e) {
+          const pos = e.target.getLatLng();
+          updatePickerCoords(pos.lat, pos.lng);
+        });
+
+        adminPickerMap.on('click', function (e) {
+          adminPickerMarker.setLatLng(e.latlng);
+          updatePickerCoords(e.latlng.lat, e.latlng.lng);
+        });
+      } else {
+        adminPickerMap.setView([lat, lng], 13);
+        adminPickerMarker.setLatLng([lat, lng]);
+      }
+
+      setTimeout(() => {
+        adminPickerMap.invalidateSize();
+      }, 200);
+
+      updatePickerCoords(lat, lng);
+    }
+
+    function updatePickerCoords(lat, lng) {
+      const fixedLat = parseFloat(lat).toFixed(6);
+      const fixedLng = parseFloat(lng).toFixed(6);
+      document.getElementById('form-latitude').value = fixedLat;
+      document.getElementById('form-longitude').value = fixedLng;
+      const badge = document.getElementById('picker-coord-badge');
+      if (badge) {
+        badge.textContent = `Lat: ${fixedLat}, Lng: ${fixedLng}`;
+      }
+    }
+
+    // =========================================================================
+    // MODAL IMPORT GEOJSON / QGIS
+    // =========================================================================
+    let validatedGeoJSONData = null;
+
+    function openModalImportGeoJSON() {
+      document.getElementById('modal-import-geojson').classList.remove('hidden');
+      document.getElementById('modal-import-geojson').classList.add('flex');
+      document.getElementById('import-preview-box').classList.add('hidden');
+      document.getElementById('btn-submit-import').disabled = true;
+      document.getElementById('import-geojson-text').value = '';
+      document.getElementById('import-file-input').value = '';
+      validatedGeoJSONData = null;
+    }
+
+    function closeModalImportGeoJSON() {
+      document.getElementById('modal-import-geojson').classList.add('hidden');
+      document.getElementById('modal-import-geojson').classList.remove('flex');
+    }
+
+    document.getElementById('import-file-input').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        document.getElementById('import-geojson-text').value = evt.target.result;
+        previewAndValidateGeoJSON();
+      };
+      reader.readAsText(file);
+    });
+
+    function previewAndValidateGeoJSON() {
+      const raw = document.getElementById('import-geojson-text').value.trim();
+      const previewBox = document.getElementById('import-preview-box');
+      const statusBadge = document.getElementById('import-validation-status');
+      const detailP = document.getElementById('import-validation-detail');
+      const btnSubmit = document.getElementById('btn-submit-import');
+
+      previewBox.classList.remove('hidden');
+
+      if (!raw) {
+        statusBadge.className = 'text-[10px] px-2 py-0.5 rounded font-bold bg-rose-100 text-rose-700';
+        statusBadge.textContent = 'Gagal';
+        detailP.textContent = 'Silakan masukkan konten GeoJSON terlebih dahulu.';
+        btnSubmit.disabled = true;
+        return;
+      }
+
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed.type !== 'FeatureCollection' || !Array.isArray(parsed.features)) {
+          throw new Error('Format root harus berupa "FeatureCollection" dengan array "features".');
+        }
+
+        const count = parsed.features.length;
+        if (count === 0) {
+          throw new Error('Fitur spasial kosong (0 features).');
+        }
+
+        // Validate coordinates
+        let invalidCoords = 0;
+        parsed.features.forEach(f => {
+          if (!f.geometry || !f.geometry.coordinates) invalidCoords++;
+          else {
+            const [lng, lat] = f.geometry.coordinates;
+            if (lat < -90 || lat > 90 || lng < -180 || lng > 180) invalidCoords++;
+          }
+        });
+
+        if (invalidCoords > 0) {
+          throw new Error(`Ditemukan ${invalidCoords} fitur dengan koordinat di luar batas valid.`);
+        }
+
+        statusBadge.className = 'text-[10px] px-2 py-0.5 rounded font-bold bg-emerald-100 text-emerald-800';
+        statusBadge.textContent = 'Valid (EPSG:4326)';
+        detailP.innerHTML = `✓ Terdeteksi <strong>${count} fitur spasial</strong> Point/Polygon siap diimpor ke sistem SIGARUM. Proyeksi koordinat WGS 84 valid.`;
+        btnSubmit.disabled = false;
+        validatedGeoJSONData = parsed;
+      } catch (err) {
+        statusBadge.className = 'text-[10px] px-2 py-0.5 rounded font-bold bg-rose-100 text-rose-700';
+        statusBadge.textContent = 'Tidak Valid';
+        detailP.textContent = err.message;
+        btnSubmit.disabled = true;
+        validatedGeoJSONData = null;
+      }
+    }
+
+    async function submitGeoJSONImport() {
+      if (!validatedGeoJSONData) return;
+      const btn = document.getElementById('btn-submit-import');
+      btn.disabled = true;
+      btn.textContent = 'Sedang Mengimpor...';
+
+      try {
+        if (SigarumApi.isOnline) {
+          const res = await SigarumApi.importGeoJSON(validatedGeoJSONData);
+          SigarumUtils.showToast(res.message || 'Impor GeoJSON berhasil!', 'success');
+        } else {
+          // Client-side local import
+          let localList = SigarumStore.getUMKM();
+          let added = 0;
+          validatedGeoJSONData.features.forEach(f => {
+            const [lng, lat] = f.geometry.coordinates;
+            const p = f.properties || {};
+            const item = {
+              id_umkm: Date.now() + Math.floor(Math.random() * 1000),
+              nama_umkm: p.nama_umkm || 'UMKM Impor',
+              pemilik: p.pemilik || 'Pengelola UMKM',
+              kategori: p.kategori || 'Olahan Laut',
+              kecamatan: p.kecamatan || 'Pademawu',
+              desa: p.desa || 'Pesisir',
+              alamat: p.alamat || '',
+              kontak: p.kontak || '+62 812-0000-0000',
+              latitude: lat,
+              longitude: lng,
+              status: p.status || 'Aktif',
+              foto: p.foto || 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80'
+            };
+            localList.unshift(item);
+            added++;
+          });
+          localStorage.setItem('sigarum_umkm', JSON.stringify(localList));
+          SigarumUtils.showToast(`Berhasil mengimpor ${added} UMKM ke penyimpanan lokal!`, 'success');
+        }
+
+        closeModalImportGeoJSON();
+        setTimeout(() => window.location.reload(), 900);
+      } catch (err) {
+        SigarumUtils.showToast('Gagal impor: ' + err.message, 'error');
+        btn.disabled = false;
+        btn.textContent = 'Mulai Impor ke Database';
+      }
+    }
+  </script>
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="../assets/js/liquid-background.js"></script>
+</body>
+</html>

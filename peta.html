@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Peta Interaktif WebGIS UMKM - SIGARUM</title>
+  <meta name="description" content="Peta interaktif WebGIS pemetaan sebaran UMKM olahan laut dan garam di Kabupaten Pamekasan dengan visualisasi koordinat Leaflet.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="assets/images/logo.svg">
+  <meta name="theme-color" content="#0284c7">
+  <!-- Tailwind CSS CDN -->
+  <script>
+    (function(){
+      const origWarn = console.warn;
+      console.warn = function(...args) {
+        if (args[0] && typeof args[0] === 'string' && args[0].indexOf('cdn.tailwindcss.com') !== -1) return;
+        origWarn.apply(console, args);
+      };
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ocean: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e' },
+            navy: { 900: '#0f172a', 950: '#020617' },
+            salt: { 500: '#f59e0b', 600: '#d97706', 700: '#b45309' }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    /* Full view layout */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="bg-black text-slate-100 flex flex-col h-screen overflow-hidden has-liquid-bg">
+  <!-- Fixed Full-Page Liquid Blue Glass Canvas -->
+  <canvas id="liquid-canvas" class="liquid-canvas-fixed"></canvas>
+
+  <!-- Top Demo Banner -->
+  <div class="demo-banner shrink-0 py-1 px-4 text-xs bg-slate-950/60 backdrop-blur-md border-b border-white/5">
+    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase">
+      Demo WebGIS
+    </span>
+    <span class="hidden sm:inline text-slate-300">Peta Spasial UMKM Olahan Laut & Garam Kabupaten Pamekasan</span>
+    <button onclick="SigarumStore.resetToDefault()" class="ml-2 underline text-sky-400 hover:text-sky-300 font-medium">Reset Demo</button>
+  </div>
+
+  <!-- Navbar -->
+  <header class="shrink-0 glass-nav border-b border-white/10 z-30">
+    <div class="max-w-full px-4 sm:px-6">
+      <div class="flex items-center justify-between h-14">
+        
+        <!-- Brand & Mobile Filter Toggle -->
+        <div class="flex items-center gap-3">
+          <button id="btn-toggle-sidebar" class="md:hidden p-2 rounded-lg bg-white/10 text-slate-200 hover:bg-white/15">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+          </button>
+          
+          <a href="index.html" class="flex items-center gap-2.5">
+            <img src="assets/images/logo.svg" alt="SIGARUM Logo" class="w-8 h-8 rounded-lg drop-shadow-sm">
+            <div class="leading-tight">
+              <span class="font-extrabold text-base text-white tracking-tight">SIGA<span class="text-sky-400">RUM</span></span>
+              <span class="text-[10px] text-slate-400 block -mt-1 font-medium">Peta Interaktif</span>
+            </div>
+          </a>
+        </div>
+
+        <!-- Center links -->
+        <nav class="hidden lg:flex items-center gap-1">
+          <a href="index.html" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white hover:bg-white/10">Beranda</a>
+          <a href="peta.html" class="px-3 py-1.5 rounded-lg text-xs font-bold text-sky-400 bg-sky-950/60 border border-sky-500/30">Peta UMKM</a>
+          <a href="umkm.html" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white hover:bg-white/10">Data UMKM</a>
+          <a href="produk.html" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white hover:bg-white/10">Produk</a>
+          <a href="statistik.html" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white hover:bg-white/10">Statistik</a>
+          <a href="tentang.html" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white hover:bg-white/10">Tentang</a>
+        </nav>
+
+        <!-- Right Quick Actions -->
+        <div class="flex items-center gap-2">
+          <button onclick="mapEngine.locateUser()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-200 bg-white/10 border border-white/10 hover:bg-white/15 shadow-sm" title="Temukan Lokasi Saya">
+            <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"></path></svg>
+            <span class="hidden sm:inline">Lokasi Saya</span>
+          </button>
+          
+          <div id="nav-auth-slot">
+            <a href="login.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-slate-900/90 hover:bg-slate-800 shadow-sm border border-white/10">
+              <svg class="w-3.5 h-3.5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+              <span>Masuk / Login</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Map Page Area (Sidebar + Leaflet Map) -->
+  <div class="flex-1 flex relative overflow-hidden">
+    
+    <!-- SIDEBAR FILTER (Responsive Drawer on Mobile) -->
+    <aside id="map-sidebar" class="absolute md:relative z-20 inset-y-0 left-0 w-80 sm:w-96 liquid-glass rounded-none border-t-0 border-b-0 border-l-0 border-r border-white/10 flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl">
+      
+      <!-- Sidebar Header -->
+      <div class="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
+        <div>
+          <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <svg class="w-4 h-4 text-ocean-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+            Filter & Pencarian UMKM
+          </h2>
+          <span id="map-result-count" class="text-xs text-slate-500 font-medium">16 UMKM Ditemukan</span>
+        </div>
+        <button id="btn-close-sidebar" class="md:hidden p-1.5 text-slate-400 hover:text-slate-600 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <!-- Filter Controls Form -->
+      <div class="p-4 space-y-4 border-b border-slate-200 bg-white overflow-y-auto max-h-[46%] shrink-0">
+        
+        <!-- 1. Search Box -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Cari UMKM / Produk</label>
+          <div class="relative">
+            <input type="text" id="filter-search" placeholder="Masukkan nama UMKM, produk, atau desa..." class="w-full text-xs pl-8 pr-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-ocean-500 focus:border-transparent transition-all">
+            <svg class="w-4 h-4 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          </div>
+        </div>
+
+        <!-- 2. Filter Kecamatan -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Filter Kecamatan</label>
+          <select id="filter-kecamatan" class="w-full text-xs px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-ocean-500 bg-white">
+            <option value="Semua">Semua Kecamatan</option>
+            <option value="Pademawu">Kecamatan Pademawu (Sentra Garam & Kerupuk)</option>
+            <option value="Tlanakan">Kecamatan Tlanakan (PPI Branta & Terasi)</option>
+            <option value="Galis">Kecamatan Galis (Tambak Kristal)</option>
+            <option value="Larangan">Kecamatan Larangan (Pesisir Timur)</option>
+            <option value="Pasean">Kecamatan Pasean (Pantura & Ikan Kering)</option>
+            <option value="Batumarmar">Kecamatan Batumarmar (Pantura Kerupuk Ikan)</option>
+          </select>
+        </div>
+
+        <!-- 3. Filter Kategori -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Kategori UMKM</label>
+          <div class="grid grid-cols-3 gap-1.5 text-xs">
+            <label class="flex items-center justify-center p-2 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 transition-colors text-center font-semibold text-slate-700 has-[:checked]:bg-slate-900 has-[:checked]:text-white has-[:checked]:border-slate-900">
+              <input type="radio" name="kategori-filter" value="Semua" checked class="hidden">
+              Semua
+            </label>
+            <label class="flex items-center justify-center p-2 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 transition-colors text-center font-semibold text-sky-800 has-[:checked]:bg-sky-600 has-[:checked]:text-white has-[:checked]:border-sky-600">
+              <input type="radio" name="kategori-filter" value="Olahan Laut" class="hidden">
+              Laut
+            </label>
+            <label class="flex items-center justify-center p-2 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 transition-colors text-center font-semibold text-amber-800 has-[:checked]:bg-amber-600 has-[:checked]:text-white has-[:checked]:border-amber-600">
+              <input type="radio" name="kategori-filter" value="Garam" class="hidden">
+              Garam
+            </label>
+          </div>
+        </div>
+
+        <!-- 4. Filter Produk Spesifik -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Filter Komoditas / Produk</label>
+          <select id="filter-produk" class="w-full text-xs px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-ocean-500 bg-white">
+            <option value="Semua">Semua Jenis Produk</option>
+            <option value="garam konsumsi">Garam Konsumsi Beryodium</option>
+            <option value="garam halus">Garam Meja Halus</option>
+            <option value="garam krosok">Garam Kasar / Krosok Tambak</option>
+            <option value="garam spa">Garam Spa & Bath Salt</option>
+            <option value="teri">Ikan Teri Kering / Teri Nasi</option>
+            <option value="kerupuk">Kerupuk Ikan / Cumi / Payus</option>
+            <option value="terasi">Terasi Udang Rebon Asli</option>
+            <option value="petis">Petis Ikan Cakalang Madura</option>
+            <option value="abon">Abon Ikan Tongkol</option>
+            <option value="cumi">Cumi Kering Asin</option>
+          </select>
+        </div>
+
+        <!-- 5. Filter Radius Spasial (Nearby Analysis) -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Analisis Radius Jarak (Buffer)</label>
+          <select id="filter-radius" class="w-full text-xs px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-ocean-500 bg-white">
+            <option value="Semua">Semua Jarak (Seluruh Wilayah)</option>
+            <option value="3">Dalam Radius 3 km</option>
+            <option value="5">Dalam Radius 5 km</option>
+            <option value="10">Dalam Radius 10 km</option>
+            <option value="15">Dalam Radius 15 km</option>
+          </select>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex items-center gap-2 pt-1">
+          <button id="btn-apply-filter" class="flex-1 bg-ocean-600 hover:bg-ocean-700 text-white font-bold text-xs py-2 px-3 rounded-lg shadow-sm transition-colors flex items-center justify-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            Terapkan Filter
+          </button>
+          <button id="btn-reset-filter" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition-colors">
+            Reset
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Matching UMKM List Scroll -->
+      <div class="flex-1 overflow-y-auto p-3 space-y-2 bg-slate-50">
+        <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-1">Daftar Hasil Pencarian:</div>
+        
+        <!-- Empty State Container -->
+        <div id="map-empty-state" class="hidden p-6 text-center bg-white rounded-xl border border-dashed border-slate-300 my-4">
+          <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          </div>
+          <h4 class="font-bold text-slate-800 text-sm">Tidak Ada Data UMKM</h4>
+          <p class="text-xs text-slate-500 mt-1 mb-4 leading-relaxed">
+            Belum terdapat data UMKM yang sesuai dengan pencarian atau filter Anda.
+          </p>
+          <button onclick="resetAllFilters()" class="text-xs font-semibold px-3 py-1.5 bg-ocean-50 text-ocean-700 hover:bg-ocean-100 rounded-lg border border-ocean-200 transition-colors">
+            Reset Filter
+          </button>
+        </div>
+
+        <!-- Item list injected by JavaScript -->
+        <div id="sidebar-umkm-items" class="space-y-2"></div>
+      </div>
+
+    </aside>
+
+    <!-- MAP CONTAINER -->
+    <main class="flex-1 relative h-full w-full">
+      <div id="map" class="h-full w-full"></div>
+
+      <!-- Floating GIS Map Legend -->
+      <div class="absolute bottom-6 left-6 z-10 liquid-glass rounded-xl p-3.5 shadow-2xl max-w-xs border border-white/10 hidden sm:block">
+        <div class="text-xs font-extrabold text-white mb-2 flex items-center justify-between">
+          <span>Legenda Peta SIGARUM</span>
+          <span class="text-[10px] text-slate-400 font-normal">WGS84</span>
+        </div>
+        <div class="space-y-1.5 text-xs">
+          <div class="flex items-center gap-2">
+            <span class="w-3.5 h-3.5 rounded-full bg-gradient-to-tr from-sky-600 to-sky-400 shadow-sm border border-white/20"></span>
+            <span class="text-slate-300 font-medium">UMKM Olahan Laut (Ikan, Terasi, Petis)</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-3.5 h-3.5 rounded-full bg-gradient-to-tr from-amber-600 to-amber-400 shadow-sm border border-white/20"></span>
+            <span class="text-slate-300 font-medium">UMKM Garam (Tambak, Halus, Spa)</span>
+          </div>
+          <div class="flex items-center gap-2 pt-1 border-t border-white/10">
+            <span class="w-4 h-2 rounded bg-sky-400/20 border border-sky-400/50 border-dashed"></span>
+            <span class="text-slate-400 text-[11px]">Batas Wilayah Kecamatan (GeoJSON)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating Action Controls: Google Maps Basemap Switcher & Presets -->
+      <div class="absolute top-4 right-14 z-10 flex flex-wrap items-center gap-2">
+        <!-- Google Maps Basemap Selector -->
+        <div class="map-toggle-pill shadow-2xl text-xs font-semibold">
+          <button data-basemap-btn="satelit" onclick="mapEngine.switchBaseLayer('satelit')" class="map-toggle-btn is-active" title="Citra Satelit Nyata Google Maps dengan Label">
+            <svg class="w-3.5 h-3.5 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span class="hidden sm:inline">Google Satelit</span>
+            <span class="sm:hidden">Satelit</span>
+          </button>
+          <button data-basemap-btn="jalan" onclick="mapEngine.switchBaseLayer('jalan')" class="map-toggle-btn is-inactive" title="Peta Jalan Standar Google Maps">
+            <svg class="w-3.5 h-3.5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+            <span class="hidden sm:inline">Google Jalan</span>
+            <span class="sm:hidden">Jalan</span>
+          </button>
+          <button data-basemap-btn="osm" onclick="mapEngine.switchBaseLayer('osm')" class="map-toggle-btn is-inactive" title="OpenStreetMap Standar">
+            <span>OSM</span>
+          </button>
+        </div>
+
+        <!-- Presets -->
+        <div class="flex flex-wrap gap-1 bg-slate-950/85 backdrop-blur-xl p-1 rounded-xl shadow-2xl border border-white/10">
+          <button onclick="mapEngine.zoomToWorld()" class="px-2.5 py-1 text-slate-300 hover:text-white hover:bg-white/10 text-[11px] font-bold rounded-lg flex items-center gap-1 transition-colors" title="Zoom out ke Peta Dunia (Global)">
+            <svg class="w-3.5 h-3.5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span class="hidden sm:inline">Dunia</span>
+          </button>
+          <button onclick="mapEngine.zoomToIndonesia()" class="px-2.5 py-1 text-slate-300 hover:text-white hover:bg-white/10 text-[11px] font-bold rounded-lg flex items-center gap-1 transition-colors" title="Tampilkan Peta Indonesia">
+            <span>🇮🇩 <span class="hidden sm:inline">Indonesia</span></span>
+          </button>
+          <button onclick="mapEngine.resetView()" class="px-2.5 py-1 bg-white/10 text-sky-300 hover:bg-white/15 text-[11px] font-bold rounded-lg border border-white/10 flex items-center gap-1 transition-colors" title="Fokuskan kembali ke semua data UMKM Pamekasan">
+            <svg class="w-3.5 h-3.5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+            <span>Fokus</span>
+          </button>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="assets/js/liquid-background.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/map.js"></script>
+  <script>
+    let mapEngine;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Initialize Leaflet Map
+      mapEngine = new SigarumMapEngine('map', {
+        center: [-7.060, 113.52],
+        zoom: 11
+      });
+      mapEngine.init();
+
+      // Check if URL has query param for focusing a specific UMKM (e.g. peta.html?id=3)
+      const urlParams = new URLSearchParams(window.location.search);
+      const targetId = urlParams.get('id');
+
+      // 2. Initial List rendering (panMap: true agar menyesuaikan dengan seluruh data yang ada)
+      applyFilters(true);
+
+      if (targetId) {
+        setTimeout(() => {
+          mapEngine.focusUMKM(targetId);
+        }, 600);
+      }
+
+      // 3. Event Listeners for Filters
+      document.getElementById('btn-apply-filter').addEventListener('click', () => applyFilters(true));
+      document.getElementById('btn-reset-filter').addEventListener('click', resetAllFilters);
+      
+      // Real-time search debounce
+      let timeout = null;
+      document.getElementById('filter-search').addEventListener('input', () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => applyFilters(false), 300);
+      });
+
+      // Quick change triggers (menyesuaikan wilayah & titik spasial)
+      document.getElementById('filter-kecamatan').addEventListener('change', (e) => {
+        applyFilters(true);
+        if (e.target.value !== 'Semua') {
+          setTimeout(() => mapEngine.focusKecamatan(e.target.value), 100);
+        }
+      });
+      document.getElementById('filter-produk').addEventListener('change', () => applyFilters(true));
+      document.getElementById('filter-radius').addEventListener('change', () => applyFilters(true));
+      document.querySelectorAll('input[name="kategori-filter"]').forEach(r => {
+        r.addEventListener('change', () => applyFilters(true));
+      });
+
+      // Sidebar Mobile Toggle
+      const sidebar = document.getElementById('map-sidebar');
+      document.getElementById('btn-toggle-sidebar').addEventListener('click', () => {
+        sidebar.classList.toggle('-translate-x-full');
+      });
+      document.getElementById('btn-close-sidebar').addEventListener('click', () => {
+        sidebar.classList.add('-translate-x-full');
+      });
+    });
+
+    function applyFilters(panMap = true) {
+      const keyword = document.getElementById('filter-search').value;
+      const kecamatan = document.getElementById('filter-kecamatan').value;
+      const selectedKatRadio = document.querySelector('input[name="kategori-filter"]:checked');
+      const kategori = selectedKatRadio ? selectedKatRadio.value : 'Semua';
+      const produk = document.getElementById('filter-produk').value;
+      const radius = document.getElementById('filter-radius').value;
+
+      // Merge product search if selected
+      let finalKeyword = keyword;
+      if (produk && produk !== 'Semua') {
+        finalKeyword = (finalKeyword ? finalKeyword + ' ' : '') + produk;
+      }
+
+      const filters = {
+        keyword: finalKeyword,
+        kecamatan: kecamatan,
+        kategori: kategori,
+        radius: radius,
+        preventPan: !panMap
+      };
+
+      const results = mapEngine.renderMarkers(filters);
+      renderSidebarList(results);
+    }
+
+    function resetAllFilters() {
+      document.getElementById('filter-search').value = '';
+      document.getElementById('filter-kecamatan').value = 'Semua';
+      document.getElementById('filter-produk').value = 'Semua';
+      document.getElementById('filter-radius').value = 'Semua';
+      const allRadio = document.querySelector('input[name="kategori-filter"][value="Semua"]');
+      if (allRadio) allRadio.checked = true;
+
+      applyFilters(true);
+      mapEngine.resetView();
+      SigarumUtils.showToast("Peta & filter berhasil di-reset", "info");
+    }
+
+    function renderSidebarList(items) {
+      const container = document.getElementById('sidebar-umkm-items');
+      if (!items || items.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+
+      container.innerHTML = items.map((u, idx) => `
+        <div onclick="mapEngine.focusUMKM(${u.id_umkm})" class="bg-white p-3.5 rounded-xl border border-slate-200/90 shadow-sm card-lift glass-card-hover hover:border-ocean-400 transition-all cursor-pointer group">
+          <div class="flex items-start justify-between gap-2">
+            <h5 class="text-xs font-bold text-slate-900 group-hover:text-ocean-600 transition-colors">
+              ${u.nama_umkm}
+            </h5>
+            ${SigarumUtils.getCategoryBadge(u.kategori)}
+          </div>
+          <p class="text-[11px] text-slate-500 mt-1 flex items-center gap-1">
+            <svg class="w-3 h-3 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+            Desa ${u.desa}, Kec. ${u.kecamatan}
+          </p>
+          <div class="mt-2 flex items-center justify-between text-[11px] pt-1.5 border-t border-slate-100">
+            <span class="text-slate-600 truncate max-w-[170px]">
+              ${(u.produk_unggulan || [])[0] || 'Produk Lokal'}
+            </span>
+            <a href="detail-umkm.html?id=${u.id_umkm}" onclick="event.stopPropagation()" class="font-bold text-ocean-600 hover:text-ocean-700 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+              Detail &rarr;
+            </a>
+          </div>
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+</html>

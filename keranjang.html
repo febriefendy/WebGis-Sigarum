@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Keranjang Belanja - SIGARUM E-Commerce Pamekasan</title>
+  <!-- Tailwind CSS CDN -->
+  <script>
+    (function(){
+      const origWarn = console.warn;
+      console.warn = function(...args) {
+        if (args[0] && typeof args[0] === 'string' && args[0].indexOf('cdn.tailwindcss.com') !== -1) return;
+        origWarn.apply(console, args);
+      };
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ocean: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e' },
+            navy: { 900: '#0f172a', 950: '#020617' },
+            salt: { 500: '#f59e0b', 600: '#d97706', 700: '#b45309' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-black text-slate-100 flex flex-col min-h-screen has-liquid-bg">
+  <!-- Fixed Full-Page Liquid Blue Glass Canvas -->
+  <canvas id="liquid-canvas" class="liquid-canvas-fixed"></canvas>
+
+  <!-- Navbar -->
+  <header class="sticky top-0 z-50 glass-nav border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center gap-3">
+          <img src="assets/images/logo.svg" alt="SIGARUM Logo" class="w-10 h-10 rounded-xl drop-shadow-md">
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-extrabold text-xl tracking-tight text-slate-900">SIGA<span class="text-ocean-600">RUM</span></span>
+              <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-ocean-100 text-ocean-800 uppercase">E-Commerce</span>
+            </div>
+            <p class="text-[11px] text-slate-500 leading-none">Olahan Laut & Garam Pamekasan</p>
+          </div>
+        </a>
+
+        <!-- Desktop Menu -->
+        <nav class="hidden md:flex items-center gap-1 lg:gap-2">
+          <a href="index.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Beranda</a>
+          <a href="peta.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Peta UMKM</a>
+          <a href="produk.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Produk</a>
+          <a href="umkm.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Direktori UMKM</a>
+        </nav>
+
+        <!-- Auth / Action Slot -->
+        <div id="nav-auth-slot" class="flex items-center gap-3">
+          <a href="login.html" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 transition-colors">
+            Masuk / Akun
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Breadcrumb & Header -->
+  <div class="bg-white border-b border-slate-200 py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center gap-2 text-xs text-slate-500 mb-2">
+        <a href="index.html" class="hover:text-ocean-600">Beranda</a>
+        <span>/</span>
+        <a href="produk.html" class="hover:text-ocean-600">Katalog Produk</a>
+        <span>/</span>
+        <span class="text-slate-800 font-semibold">Keranjang Belanja</span>
+      </div>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Keranjang Belanja Saya</h1>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">Periksa item belanja Anda dari berbagai mitra UMKM pesisir Pamekasan.</p>
+        </div>
+        <a href="produk.html" class="inline-flex items-center gap-1 text-xs font-bold text-ocean-600 hover:text-ocean-700">
+          <span>&larr; Lanjut Tambah Produk</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Cart Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+    
+    <div id="cart-loading" class="py-16 text-center text-slate-500 text-sm">
+      <svg class="animate-spin h-6 w-6 text-ocean-600 mx-auto mb-3" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+      Memuat keranjang belanja Anda...
+    </div>
+
+    <!-- Empty State -->
+    <div id="cart-empty" class="hidden py-16 text-center bg-white rounded-3xl border border-slate-200 shadow-sm max-w-2xl mx-auto p-8">
+      <div class="w-20 h-20 bg-ocean-50 text-ocean-600 rounded-3xl flex items-center justify-center mx-auto mb-4">
+        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+      </div>
+      <h3 class="text-xl font-bold text-slate-900">Keranjang Belanja Masih Kosong</h3>
+      <p class="text-xs sm:text-sm text-slate-500 mt-2 max-w-md mx-auto">
+        Jelajahi beragam pilihan olahan laut bermutu dan garam kristal geomembran langsung dari pengrajin lokal Pamekasan.
+      </p>
+      <div class="mt-6 flex flex-wrap justify-center gap-3">
+        <a href="produk.html" class="px-5 py-2.5 rounded-xl bg-ocean-600 hover:bg-ocean-700 text-white font-bold text-xs shadow-md transition-colors">
+          Lihat Katalog Produk
+        </a>
+        <a href="peta.html" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors">
+          Eksplorasi Peta UMKM
+        </a>
+      </div>
+    </div>
+
+    <!-- Active Cart Layout -->
+    <div id="cart-content" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Cart Items Section (Multi-Vendor Grouping) -->
+      <div class="lg:col-span-8 space-y-6" id="cart-groups-container">
+        <!-- Rendered by JS per UMKM -->
+      </div>
+
+      <!-- Checkout Summary Sidebar -->
+      <div class="lg:col-span-4 bg-white rounded-3xl border border-slate-200 p-6 shadow-sm sticky top-24 space-y-5">
+        <h3 class="text-base font-extrabold text-slate-900 pb-3 border-b border-slate-100">
+          Ringkasan Belanja
+        </h3>
+
+        <!-- Coupon Input -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Punya Kode Promo / Kupon?</label>
+          <div class="flex gap-2">
+            <input type="text" id="coupon-code-input" placeholder="Contoh: DISKON10" class="flex-1 uppercase text-xs px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-ocean-500">
+            <button type="button" onclick="handleApplyCoupon()" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors">
+              Terapkan
+            </button>
+          </div>
+          <div id="coupon-message" class="text-[11px] mt-1.5 hidden"></div>
+        </div>
+
+        <!-- Cost Breakdown -->
+        <div class="space-y-2.5 text-xs text-slate-600 pt-2 border-t border-slate-100">
+          <div class="flex justify-between">
+            <span>Total Item (<span id="summary-total-qty">0</span> barang)</span>
+            <span id="summary-subtotal" class="font-bold text-slate-800">Rp 0</span>
+          </div>
+          <div class="flex justify-between text-emerald-600 font-semibold" id="row-discount" style="display: none;">
+            <span>Potongan Kupon</span>
+            <span id="summary-discount">- Rp 0</span>
+          </div>
+          <div class="flex justify-between text-slate-400">
+            <span>Ongkos Kirim</span>
+            <span>Dihitung di checkout</span>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-200 flex justify-between items-baseline">
+          <div>
+            <span class="block text-xs font-medium text-slate-500">Total Sementara:</span>
+            <span class="text-[10px] text-slate-400">Belum termasuk ongkir kurir</span>
+          </div>
+          <span id="summary-grandtotal" class="text-xl font-black text-ocean-700">Rp 0</span>
+        </div>
+
+        <button type="button" onclick="handleProceedToCheckout()" id="btn-checkout" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-ocean-600 to-sky-600 hover:from-ocean-700 hover:to-sky-700 text-white font-bold text-sm shadow-md shadow-ocean-600/30 transition-all flex items-center justify-center gap-2">
+          <span>Lanjut ke Pengiriman & Checkout</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        </button>
+
+        <p class="text-[11px] text-slate-400 text-center leading-relaxed">
+          Toko-toko terdaftar akan memproses pesanan Anda secara transparan dengan resi pengiriman resmi.
+        </p>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-auto bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div>&copy; 2026 SIGARUM WebGIS & Marketplace Pamekasan</div>
+      <div class="flex gap-4">
+        <a href="produk.html" class="hover:text-white">Katalog</a>
+        <a href="peta.html" class="hover:text-white">Peta WebGIS</a>
+        <a href="login.html" class="hover:text-white">Masuk Akun</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/app.js"></script>
+  <script>
+    let currentCart = null;
+    let appliedCoupon = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderNavAuth();
+      loadCart();
+    });
+
+    function renderNavAuth() {
+      const user = SigarumStore.getCurrentUser();
+      const slot = document.getElementById('nav-auth-slot');
+      if (user) {
+        const dest = user.role === 'pelanggan' ? 'pelanggan/dashboard.html' : 'admin/dashboard.html';
+        slot.innerHTML = `
+          <a href="${dest}" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-xs font-bold text-slate-800 transition-colors">
+            <span class="w-6 h-6 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-[10px] font-black">${(user.nama || 'U').substring(0, 2).toUpperCase()}</span>
+            <span>${user.nama.split(' ')[0]}</span>
+          </a>
+        `;
+      }
+    }
+
+    async function loadCart() {
+      const loading = document.getElementById('cart-loading');
+      const empty = document.getElementById('cart-empty');
+      const content = document.getElementById('cart-content');
+
+      loading.classList.remove('hidden');
+      empty.classList.add('hidden');
+      content.classList.add('hidden');
+
+      const user = SigarumStore.getCurrentUser();
+      if (!user) {
+        // Unauthenticated visitor: load local cart
+        const localItems = JSON.parse(localStorage.getItem('sigarum_guest_cart') || '[]');
+        loading.classList.add('hidden');
+        if (localItems.length === 0) {
+          empty.classList.remove('hidden');
+          return;
+        }
+        renderGuestCart(localItems);
+        return;
+      }
+
+      try {
+        const res = await SigarumApi.getCart();
+        loading.classList.add('hidden');
+        if (res.success && res.data && res.data.groups && res.data.groups.length > 0) {
+          currentCart = res.data;
+          renderCartData(res.data);
+          content.classList.remove('hidden');
+        } else {
+          empty.classList.remove('hidden');
+        }
+      } catch (err) {
+        console.warn('Cart load error:', err);
+        loading.classList.add('hidden');
+        empty.classList.remove('hidden');
+      }
+    }
+
+    function renderCartData(cartData) {
+      const container = document.getElementById('cart-groups-container');
+      container.innerHTML = '';
+
+      cartData.groups.forEach(group => {
+        const groupEl = document.createElement('div');
+        groupEl.className = 'bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm';
+        
+        let itemsHtml = group.items.map(item => `
+          <div class="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 last:border-b-0">
+            <div class="flex items-center gap-4">
+              <img src="${item.foto}" alt="${item.nama_produk}" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border border-slate-100 shrink-0" onerror="this.src='https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80'">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-ocean-600 block">${item.kategori}</span>
+                <h4 class="font-bold text-slate-900 text-sm sm:text-base">${item.nama_produk}</h4>
+                <div class="text-xs text-slate-500 mt-0.5">Berat: ${item.berat_gram || 250}g | Stok: <strong class="${item.stok <= 5 ? 'text-rose-600' : 'text-slate-700'}">${item.stok}</strong></div>
+                <div class="text-sm font-extrabold text-ocean-700 mt-1 sm:hidden">${SigarumUtils.formatRupiah(item.harga)}</div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
+              <div class="hidden sm:block text-right">
+                <span class="text-[10px] text-slate-400 font-semibold block uppercase">Harga Satuan</span>
+                <span class="text-sm font-bold text-slate-800">${SigarumUtils.formatRupiah(item.harga)}</span>
+              </div>
+
+              <!-- Stepper -->
+              <div class="flex items-center border border-slate-200 rounded-xl bg-slate-50 p-1">
+                <button type="button" onclick="updateQty(${item.id_cart_item}, ${item.jumlah - 1})" class="w-7 h-7 rounded-lg bg-white shadow-sm flex items-center justify-center font-bold text-slate-600 hover:bg-slate-100">
+                  -
+                </button>
+                <span class="w-9 text-center text-xs font-bold text-slate-800">${item.jumlah}</span>
+                <button type="button" onclick="updateQty(${item.id_cart_item}, ${item.jumlah + 1})" class="w-7 h-7 rounded-lg bg-white shadow-sm flex items-center justify-center font-bold text-slate-600 hover:bg-slate-100">
+                  +
+                </button>
+              </div>
+
+              <div class="text-right min-w-[90px]">
+                <span class="text-[10px] text-slate-400 font-semibold block uppercase sm:block hidden">Subtotal</span>
+                <span class="text-sm font-extrabold text-ocean-700">${SigarumUtils.formatRupiah(item.subtotal)}</span>
+              </div>
+
+              <button type="button" onclick="deleteItem(${item.id_cart_item})" title="Hapus produk" class="text-slate-400 hover:text-rose-600 p-1.5 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+              </button>
+            </div>
+          </div>
+        `).join('');
+
+        groupEl.innerHTML = `
+          <div class="p-4 bg-slate-100/70 border-b border-slate-200 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-base">🏪</span>
+              <div>
+                <span class="font-extrabold text-slate-900 text-xs sm:text-sm">${group.nama_umkm}</span>
+                <span class="text-[10px] text-slate-500 block leading-tight">Pengiriman dari Kec. ${group.kecamatan || 'Pamekasan'}</span>
+              </div>
+            </div>
+            <span class="text-[11px] font-semibold text-ocean-700 bg-ocean-50 px-2.5 py-1 rounded-full border border-ocean-100">
+              Subtotal Toko: ${SigarumUtils.formatRupiah(group.subtotal_toko)}
+            </span>
+          </div>
+          <div>${itemsHtml}</div>
+        `;
+        container.appendChild(groupEl);
+      });
+
+      updateSummary(cartData.total_items, cartData.subtotal);
+    }
+
+    function updateSummary(totalQty, subtotal) {
+      document.getElementById('summary-total-qty').textContent = totalQty;
+      document.getElementById('summary-subtotal').textContent = SigarumUtils.formatRupiah(subtotal);
+
+      let discount = 0;
+      if (appliedCoupon) {
+        if (appliedCoupon.tipe_diskon === 'persen') {
+          discount = Math.round((subtotal * appliedCoupon.nilai_diskon) / 100);
+          if (appliedCoupon.maksimal_potongan && discount > appliedCoupon.maksimal_potongan) {
+            discount = appliedCoupon.maksimal_potongan;
+          }
+        } else {
+          discount = appliedCoupon.nilai_diskon;
+        }
+        document.getElementById('row-discount').style.display = 'flex';
+        document.getElementById('summary-discount').textContent = `- ${SigarumUtils.formatRupiah(discount)}`;
+      } else {
+        document.getElementById('row-discount').style.display = 'none';
+      }
+
+      const grandTotal = Math.max(0, subtotal - discount);
+      document.getElementById('summary-grandtotal').textContent = SigarumUtils.formatRupiah(grandTotal);
+    }
+
+    async function updateQty(cartItemId, newQty) {
+      if (newQty <= 0) {
+        if (confirm('Hapus produk ini dari keranjang belanja?')) {
+          await deleteItem(cartItemId);
+        }
+        return;
+      }
+      try {
+        const res = await SigarumApi.updateCartItem(cartItemId, newQty);
+        if (res.success) {
+          loadCart();
+        }
+      } catch (err) {
+        SigarumUtils.showToast(err.message, 'error');
+      }
+    }
+
+    async function deleteItem(cartItemId) {
+      try {
+        const res = await SigarumApi.removeCartItem(cartItemId);
+        if (res.success) {
+          SigarumUtils.showToast('Produk dihapus dari keranjang', 'info');
+          loadCart();
+        }
+      } catch (err) {
+        SigarumUtils.showToast(err.message, 'error');
+      }
+    }
+
+    async function handleApplyCoupon() {
+      const code = document.getElementById('coupon-code-input').value.trim();
+      const msg = document.getElementById('coupon-message');
+      if (!code) {
+        msg.className = 'text-[11px] mt-1.5 text-rose-600 block';
+        msg.textContent = 'Masukkan kode kupon terlebih dahulu.';
+        return;
+      }
+      if (!currentCart) return;
+
+      try {
+        const res = await SigarumApi.applyCoupon(code, currentCart.subtotal);
+        if (res.success && res.data) {
+          appliedCoupon = res.data;
+          msg.className = 'text-[11px] mt-1.5 text-emerald-600 font-semibold block';
+          msg.textContent = `Kupon "${res.data.kode_kupon}" berhasil digunakan! Diskon: ${SigarumUtils.formatRupiah(res.data.potongan)}`;
+          sessionStorage.setItem('sigarum_applied_coupon', JSON.stringify(res.data));
+          updateSummary(currentCart.total_items, currentCart.subtotal);
+        }
+      } catch (err) {
+        appliedCoupon = null;
+        sessionStorage.removeItem('sigarum_applied_coupon');
+        msg.className = 'text-[11px] mt-1.5 text-rose-600 block';
+        msg.textContent = err.message || 'Kupon tidak valid.';
+        updateSummary(currentCart.total_items, currentCart.subtotal);
+      }
+    }
+
+    function handleProceedToCheckout() {
+      const user = SigarumStore.getCurrentUser();
+      if (!user) {
+        // Must login first
+        window.location.href = 'login.html?redirect=checkout.html';
+        return;
+      }
+      window.location.href = 'checkout.html';
+    }
+
+    function renderGuestCart(items) {
+      // For guest visitors before login
+      const content = document.getElementById('cart-content');
+      const container = document.getElementById('cart-groups-container');
+      container.innerHTML = `
+        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-xs text-amber-900 mb-4 flex items-center justify-between">
+          <span>Anda menjelajahi keranjang sebagai tamu. Masuk ke akun Anda untuk menyinkronkan keranjang dan melanjutkan pemesanan.</span>
+          <a href="login.html?redirect=keranjang.html" class="px-3 py-1.5 bg-amber-600 text-white rounded-lg font-bold shrink-0">Masuk Akun</a>
+        </div>
+      `;
+      content.classList.remove('hidden');
+    }
+  </script>
+  <script src="assets/js/liquid-background.js"></script>
+</body>
+</html>

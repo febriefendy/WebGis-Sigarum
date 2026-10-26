@@ -1,0 +1,24 @@
+[
+  {
+    "id_kategori": 1,
+    "nama_kategori": "Olahan Laut",
+    "slug": "olahan-laut",
+    "deskripsi": "Produk pangan dan olahan berbasis hasil tangkapan laut seperti ikan kering, kerupuk ikan, terasi rebon, petis madura, dan abon laut.",
+    "warna": "#0284c7",
+    "badge_bg": "bg-sky-100",
+    "badge_text": "text-sky-800",
+    "border_color": "border-sky-500",
+    "icon": "fish"
+  },
+  {
+    "id_kategori": 2,
+    "nama_kategori": "Garam",
+    "slug": "garam",
+    "deskripsi": "Produk garam tambak kristal, garam konsumsi beryodium, garam halus dapur, garam industri, garam kesehatan/spa, dan olahan mineral garam.",
+    "warna": "#d97706",
+    "badge_bg": "bg-amber-100",
+    "badge_text": "text-amber-800",
+    "border_color": "border-amber-500",
+    "icon": "sparkles"
+  }
+]

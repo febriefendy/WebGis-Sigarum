@@ -1,0 +1,50 @@
+{
+  "name": "SIGARUM - WebGIS UMKM Olahan Laut & Garam",
+  "short_name": "SIGARUM",
+  "description": "Sistem Informasi Geografis Pemetaan UMKM Olahan Laut dan Garam Kabupaten Pamekasan",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0284c7",
+  "orientation": "any",
+  "lang": "id",
+  "icons": [
+    {
+      "src": "/assets/images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "navigation", "government", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Peta Interaktif",
+      "short_name": "Peta",
+      "description": "Buka Peta Interaktif WebGIS SIGARUM",
+      "url": "/peta.html",
+      "icons": [{ "src": "/assets/images/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Katalog Produk",
+      "short_name": "Produk",
+      "description": "Lihat Katalog Komoditas Laut & Garam",
+      "url": "/produk.html",
+      "icons": [{ "src": "/assets/images/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Dashboard Admin",
+      "short_name": "Admin",
+      "description": "Masuk ke Panel Pengelolaan SIGARUM",
+      "url": "/login.html",
+      "icons": [{ "src": "/assets/images/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

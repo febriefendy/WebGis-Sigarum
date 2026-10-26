@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Master Data Wilayah & Spasial - SIGARUM Admin</title>
+  <!-- Tailwind CSS CDN -->
+  <script>
+    (function(){
+      const origWarn = console.warn;
+      console.warn = function(...args) {
+        if (args[0] && typeof args[0] === 'string' && args[0].indexOf('cdn.tailwindcss.com') !== -1) return;
+        origWarn.apply(console, args);
+      };
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ocean: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e' },
+            navy: { 900: '#0f172a', 950: '#020617' },
+            salt: { 500: '#f59e0b', 600: '#d97706', 700: '#b45309' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="bg-black text-slate-100 flex h-screen overflow-hidden has-liquid-bg">
+  <!-- Fixed Full-Page Liquid Blue Glass Canvas -->
+  <canvas id="liquid-canvas" class="liquid-canvas-fixed"></canvas>
+
+  <!-- Admin Sidebar -->
+  <aside class="w-64 bg-slate-950/80 backdrop-blur-2xl text-slate-300 flex flex-col justify-between shrink-0 border-r border-white/10 z-20">
+    <div>
+      <div class="h-16 px-6 flex items-center gap-3 border-b border-white/10 bg-slate-950/80">
+        <img src="../assets/images/logo.svg" alt="SIGARUM Logo" class="w-8 h-8 rounded-lg drop-shadow">
+        <div>
+          <span class="font-extrabold text-white text-base tracking-tight">SIGA<span class="text-ocean-400">RUM</span></span>
+          <span class="text-[10px] text-slate-400 block -mt-1 font-semibold uppercase">Admin Panel</span>
+        </div>
+      </div>
+
+      <nav class="p-4 space-y-1 text-xs font-semibold">
+        <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+          Dashboard
+        </a>
+        <a href="umkm.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+          Data UMKM
+        </a>
+        <a href="produk.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+          Data Produk
+        </a>
+        <a href="kategori.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+          Data Kategori
+        </a>
+        <a href="wilayah.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-ocean-600 text-white shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+          Data Wilayah
+        </a>
+        <a href="pengguna.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          Data Pengguna
+        </a>
+      </nav>
+    </div>
+
+    <div class="p-4 border-t border-slate-800 bg-slate-950/60">
+      <div class="text-xs">
+        <div class="font-bold text-white">Admin SIGARUM</div>
+        <div class="text-[10px] text-emerald-400 font-semibold">PostGIS SRID 4326</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col overflow-y-auto">
+    
+    <header class="h-16 bg-white border-b border-slate-200 px-6 sm:px-8 flex items-center justify-between shrink-0">
+      <div>
+        <h1 class="text-lg font-extrabold text-slate-900">Master Data Wilayah & Spasial</h1>
+        <p class="text-xs text-slate-500">Batas administratif kecamatan pesisir dan layer GeoJSON PostGIS</p>
+      </div>
+      <a href="../peta.html" target="_blank" class="px-3.5 py-2 rounded-xl text-xs font-bold text-ocean-700 bg-ocean-50 hover:bg-ocean-100 border border-ocean-200">
+        Buka Lapisan Batas di Peta
+      </a>
+    </header>
+
+    <main class="p-6 sm:p-8 space-y-6">
+      
+      <!-- Wilayah Table -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-slate-400 font-extrabold uppercase text-[10px] tracking-wider">
+                <th class="py-3.5 px-4 text-center w-12">ID</th>
+                <th class="py-3.5 px-4">Nama Kecamatan</th>
+                <th class="py-3.5 px-4">Klasifikasi Pesisir</th>
+                <th class="py-3.5 px-4">Tipe Geometri PostGIS</th>
+                <th class="py-3.5 px-4">Titik Centroid</th>
+                <th class="py-3.5 px-4 text-center">Jumlah UMKM</th>
+                <th class="py-3.5 px-4 text-right">Status Spasial</th>
+              </tr>
+            </thead>
+            <tbody id="wilayah-tbody" class="divide-y divide-slate-100">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Spatial Info Card -->
+      <div class="p-5 rounded-2xl bg-ocean-50 border border-ocean-200 text-xs text-ocean-950">
+        <div class="font-bold text-sm text-ocean-900 mb-1">Informasi Pemrosesan Data Spasial Wilayah:</div>
+        <p class="leading-relaxed text-ocean-800">
+          Data batas poligon kecamatan diproses melalui <strong>QGIS 3.28 Desktop</strong> dengan acuan sistem koordinat referensi <strong>EPSG:4326 (WGS 84)</strong>. Geometri disimpan dalam format PostGIS <code>MultiPolygon</code> dan diekspor ke GeoJSON untuk visualisasi lapisan batas wilayah interaktif pada Leaflet.js.
+        </p>
+      </div>
+
+    </main>
+
+  </div>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const wilayah = SigarumStore.getWilayah();
+      const allUMKM = SigarumStore.getUMKM();
+      const tbody = document.getElementById('wilayah-tbody');
+
+      tbody.innerHTML = wilayah.map(w => {
+        const count = allUMKM.filter(u => u.kecamatan.toLowerCase() === w.kecamatan.toLowerCase()).length;
+        return `
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="py-4 px-4 text-center font-mono font-bold text-slate-400">#${w.id_wilayah}</td>
+            <td class="py-4 px-4 font-bold text-slate-900">
+              Kecamatan ${w.kecamatan}
+              <span class="block text-[11px] text-slate-400 font-normal">Kabupaten Pamekasan, Jawa Timur</span>
+            </td>
+            <td class="py-4 px-4 text-slate-700 font-medium">${w.tipe}</td>
+            <td class="py-4 px-4">
+              <span class="font-mono text-[11px] font-semibold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded">
+                MULTIPOLYGON(4326)
+              </span>
+            </td>
+            <td class="py-4 px-4 font-mono text-[11px] text-slate-600">
+              ${w.center[0]}, ${w.center[1]}
+            </td>
+            <td class="py-4 px-4 text-center">
+              <span class="font-extrabold text-sm ${count > 0 ? 'text-ocean-700' : 'text-slate-400'}">
+                ${count} UMKM
+              </span>
+            </td>
+            <td class="py-4 px-4 text-right">
+              <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                GeoJSON Terhubung
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    });
+  </script>
+  <script src="../assets/js/liquid-background.js"></script>
+</body>
+</html>

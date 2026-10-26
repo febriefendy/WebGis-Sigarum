@@ -1,0 +1,855 @@
+/* =========================================================================
+   SIGARUM - Sistem Informasi Geografis UMKM Olahan Laut dan Garam
+   Modern Custom WebGIS Stylesheet
+   ========================================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url('liquid-glass.css');
+
+:root {
+  --primary-ocean: #0284c7;
+  --primary-dark: #0369a1;
+  --navy-deep: #0f172a;
+  --salt-gold: #d97706;
+  --salt-amber: #f59e0b;
+  --sea-green: #059669;
+  --bg-slate: #f8fafc;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-slate);
+  color: #1e293b;
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.glass-nav {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* Leaflet Customizations */
+.leaflet-container {
+  font-family: 'Plus Jakarta Sans', inherit !important;
+  z-index: 10;
+}
+
+.custom-map-popup .leaflet-popup-content-wrapper {
+  padding: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.15), 0 8px 10px -6px rgba(15, 23, 42, 0.1);
+  border: 1px solid #e2e8f0;
+}
+
+.custom-map-popup .leaflet-popup-content {
+  margin: 0;
+  line-height: 1.5;
+  min-width: 260px;
+  max-width: 320px;
+}
+
+.custom-map-popup .leaflet-popup-tip {
+  background: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom Marker Pins */
+.sigarum-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+}
+
+.sigarum-marker:hover {
+  transform: translateY(-4px) scale(1.1);
+  z-index: 9999 !important;
+}
+
+.marker-pin {
+  width: 40px;
+  height: 40px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+}
+
+.marker-pin-inner {
+  transform: rotate(45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.marker-garam {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.marker-laut {
+  background: linear-gradient(135deg, #0284c7, #0369a1);
+}
+
+.marker-pulse {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(2, 132, 199, 0.35);
+  animation: mapPulse 2s infinite ease-out;
+  pointer-events: none;
+}
+
+@keyframes mapPulse {
+  0% {
+    transform: scale(0.6);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+/* Demo Badge Removed */
+.demo-banner {
+  display: none !important;
+}
+
+/* Toast Notification */
+#toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid var(--primary-ocean);
+  animation: slideInRight 0.3s ease-out;
+  max-width: 360px;
+  font-size: 0.875rem;
+}
+
+.toast.toast-success { border-left-color: #10b981; }
+.toast.toast-error { border-left-color: #ef4444; }
+.toast.toast-warning { border-left-color: #f59e0b; }
+.toast.toast-info { border-left-color: #0284c7; }
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Interactive transitions */
+.transition-smooth {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Map Sidebar layout */
+.map-page-wrapper {
+  height: calc(100vh - 105px);
+  display: flex;
+  position: relative;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .map-page-wrapper {
+    flex-direction: column;
+    height: calc(100vh - 110px);
+  }
+}
+
+/* =========================================================================
+   ANIMATION SYSTEM & MICRO-INTERACTIONS
+   ========================================================================= */
+
+/* 1. Keyframes */
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(0.5deg);
+  }
+}
+
+@keyframes floatReverse {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(7px) rotate(-0.5deg);
+  }
+}
+
+/* Pulse Glow Keyframes for All 4 Metrics (Ocean, Amber, Sky, Emerald) */
+@keyframes pulseOceanGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.45);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px 5px rgba(2, 132, 199, 0.28);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes pulseAmberGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.45);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px 5px rgba(217, 119, 6, 0.28);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes pulseSkyGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.45);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px 5px rgba(14, 165, 233, 0.28);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes pulseEmeraldGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px 5px rgba(16, 185, 129, 0.28);
+    transform: scale(1.05);
+  }
+}
+
+/* Trending Glassmorphism Aurora Ambient Blobs Movement */
+@keyframes blobFloat1 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1) rotate(0deg);
+  }
+  33% {
+    transform: translate(60px, -45px) scale(1.15) rotate(10deg);
+  }
+  66% {
+    transform: translate(-35px, 40px) scale(0.92) rotate(-10deg);
+  }
+}
+
+@keyframes blobFloat2 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1) rotate(0deg);
+  }
+  33% {
+    transform: translate(-55px, 60px) scale(1.12) rotate(-8deg);
+  }
+  66% {
+    transform: translate(45px, -30px) scale(0.92) rotate(12deg);
+  }
+}
+
+@keyframes blobFloat3 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  50% {
+    transform: translate(45px, 35px) scale(1.22);
+  }
+}
+
+@keyframes blobFloat4 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  50% {
+    transform: translate(-40px, -35px) scale(1.18);
+  }
+}
+
+@keyframes shimmerSweep {
+  0% {
+    transform: translateX(-150%) skewX(-20deg);
+  }
+  50%, 100% {
+    transform: translateX(250%) skewX(-20deg);
+  }
+}
+
+@keyframes radarPing {
+  0% {
+    transform: scale(0.6);
+    opacity: 1;
+  }
+  75%, 100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes popupBounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(12px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.03) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes waveDrift {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-25%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* 2. Utility Animation Classes */
+.animate-float {
+  animation: floatSlow 4s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: floatReverse 4.5s ease-in-out 1s infinite;
+}
+
+/* 4-Color Equalized Metric Pulse Glows */
+.animate-pulse-ocean,
+.animate-pulse-glow {
+  animation: pulseOceanGlow 2.8s ease-in-out infinite;
+}
+
+.animate-pulse-amber {
+  animation: pulseAmberGlow 2.8s ease-in-out 0.4s infinite;
+}
+
+.animate-pulse-sky {
+  animation: pulseSkyGlow 2.8s ease-in-out 0.8s infinite;
+}
+
+.animate-pulse-emerald {
+  animation: pulseEmeraldGlow 2.8s ease-in-out 1.2s infinite;
+}
+
+.animate-spin-slow {
+  animation: spinSlow 24s linear infinite;
+}
+
+/* =========================================================================
+   TRENDING GLASSMORPHISM SYSTEM
+   ========================================================================= */
+
+/* Frosted Premium Glass Card */
+.glass-card-premium {
+  background: rgba(255, 255, 255, 0.76) !important;
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 20px 45px -12px rgba(15, 23, 42, 0.08), 
+              inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+/* Subtle Inner Glass Card */
+.glass-card-subtle {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 0 4px 15px -2px rgba(2, 132, 199, 0.04);
+}
+
+/* Ambient Floating Aurora Glow Blobs */
+.aurora-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 1;
+  will-change: transform;
+}
+
+.aurora-blob-1 {
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.5) 0%, rgba(2, 132, 199, 0.2) 65%, transparent 100%);
+  top: -80px;
+  left: -40px;
+  animation: blobFloat1 15s infinite ease-in-out;
+}
+
+.aurora-blob-2 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.42) 0%, rgba(217, 119, 6, 0.15) 65%, transparent 100%);
+  top: 5%;
+  right: -60px;
+  animation: blobFloat2 18s infinite ease-in-out;
+}
+
+.aurora-blob-3 {
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.38) 0%, rgba(5, 150, 105, 0.12) 65%, transparent 100%);
+  bottom: -60px;
+  left: 28%;
+  animation: blobFloat3 16s infinite ease-in-out;
+}
+
+.aurora-blob-4 {
+  width: 360px;
+  height: 360px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.32) 0%, rgba(59, 130, 246, 0.1) 65%, transparent 100%);
+  top: 35%;
+  left: 15%;
+  animation: blobFloat4 20s infinite ease-in-out;
+}
+
+/* 3. Card Hover & Micro-interactions (Silky Smooth Liquid Glass Interaction) */
+.card-lift {
+  transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1), 
+              box-shadow 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.35s ease,
+              background 0.35s ease;
+  will-change: transform, box-shadow;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.card-lift:hover {
+  transform: translateY(-6px) scale(1.008);
+  box-shadow: 0 22px 42px -10px rgba(0, 0, 0, 0.75), 0 0 32px rgba(56, 189, 248, 0.28);
+  border-color: rgba(56, 189, 248, 0.42) !important;
+}
+
+/* Silky soft cushion depth on click - no stiffness or abrupt snaps */
+.card-lift:active {
+  transform: translateY(-2px) scale(0.992);
+  transition: transform 0.22s cubic-bezier(0.25, 1, 0.5, 1),
+              box-shadow 0.22s cubic-bezier(0.25, 1, 0.5, 1),
+              border-color 0.22s ease;
+  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.65), 0 0 30px rgba(56, 189, 248, 0.45);
+  border-color: rgba(125, 211, 252, 0.6) !important;
+}
+
+/* Dynamic Silky Sheen & Specular Refraction on Glass Cards */
+.glass-card-hover {
+  position: relative;
+  overflow: hidden;
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+}
+
+/* Cursor-following ambient specular glow */
+.glass-card-hover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(380px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(56, 189, 248, 0.12), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.glass-card-hover:hover::before {
+  opacity: 1;
+}
+
+/* Fluid, continuous specular sheen beam across surface */
+.glass-card-hover::after {
+  content: '';
+  position: absolute;
+  top: -60%;
+  left: -130%;
+  width: 55%;
+  height: 220%;
+  background: linear-gradient(
+    90deg, 
+    rgba(255, 255, 255, 0) 0%, 
+    rgba(56, 189, 248, 0.06) 25%, 
+    rgba(255, 255, 255, 0.28) 50%, 
+    rgba(56, 189, 248, 0.09) 75%, 
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(25deg);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 2;
+  transition: opacity 0.35s ease;
+}
+
+.glass-card-hover:hover::after {
+  opacity: 1;
+  animation: shimmerSweep 1.5s cubic-bezier(0.2, 0.8, 0.25, 1) infinite;
+}
+
+@keyframes shimmerSweep {
+  0% {
+    left: -130%;
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.9;
+  }
+  80% {
+    opacity: 0.9;
+  }
+  100% {
+    left: 210%;
+    opacity: 0;
+  }
+}
+
+/* Interactive Water / Liquid Light Click Ripple */
+.glass-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(186, 230, 253, 0.45) 0%, rgba(56, 189, 248, 0.22) 40%, rgba(14, 165, 233, 0.08) 65%, transparent 80%);
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0);
+  animation: rippleExpand 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  z-index: 10;
+}
+
+@keyframes rippleExpand {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(4.5);
+    opacity: 0;
+  }
+}
+
+/* Interactive Button Click Feedback */
+.btn-interactive {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-interactive:hover {
+  transform: translateY(-1.5px);
+  filter: brightness(1.04);
+}
+
+.btn-interactive:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+/* -------------------------------------------------------------
+ * Ultra-Smooth Map Basemap Segmented Toggle Controls
+ * ------------------------------------------------------------- */
+.map-toggle-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px;
+  border-radius: 10px;
+  background: rgba(4, 10, 22, 0.75);
+  backdrop-filter: blur(14px) saturate(175%);
+  -webkit-backdrop-filter: blur(14px) saturate(175%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 16px rgba(0, 0, 0, 0.45);
+}
+
+.map-toggle-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 7px;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.25s ease;
+  user-select: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.map-toggle-btn:active {
+  transform: scale(0.95);
+  transition: transform 0.12s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Active State: Vivid Electric Ocean Blue with Specular Depth */
+.map-toggle-btn.is-active {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  border-color: rgba(186, 230, 253, 0.45) !important;
+  box-shadow: 0 2px 14px rgba(2, 132, 199, 0.55), 
+              0 0 12px rgba(56, 189, 248, 0.35), 
+              inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+  transform: scale(1.02);
+}
+
+/* Inactive State: Subdued Dark Translucent Glass */
+.map-toggle-btn.is-inactive {
+  background: transparent !important;
+  color: #94a3b8 !important;
+  font-weight: 500;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  transform: scale(1);
+}
+
+.map-toggle-btn.is-inactive:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #f8fafc !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  transform: translateY(-0.5px);
+}
+
+/* Icon Harmonization */
+.map-toggle-btn.is-active svg {
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
+  transform: scale(1.05);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
+}
+
+.map-toggle-btn.is-inactive svg {
+  opacity: 0.7;
+  transform: scale(1);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+}
+
+.map-toggle-btn.is-inactive:hover svg {
+  opacity: 1;
+}
+
+/* Glowing text gradient animation */
+.text-gradient-animated {
+  background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 35%, #d97706 70%, #0284c7 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientFlow 6s linear infinite;
+}
+
+/* Radar Location Indicator (Geolokasi) */
+.radar-beacon {
+  position: relative;
+  display: inline-flex;
+}
+
+.radar-beacon::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 9999px;
+  background-color: rgba(2, 132, 199, 0.45);
+  animation: radarPing 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Scroll Reveal Elements */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-on-scroll.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.delay-100 { transition-delay: 100ms; }
+.delay-200 { transition-delay: 200ms; }
+.delay-300 { transition-delay: 300ms; }
+.delay-400 { transition-delay: 400ms; }
+.delay-500 { transition-delay: 500ms; }
+
+/* Enhanced Leaflet Popup Animation */
+.custom-map-popup .leaflet-popup-content-wrapper {
+  animation: popupBounceIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Active Pin Highlight on Map */
+.sigarum-marker.is-active-pin .marker-pin {
+  animation: pulseGlow 1.5s infinite;
+  transform: rotate(-45deg) scale(1.22);
+}
+
+/* Skeleton Loading Shimmer Effect */
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: gradientFlow 1.6s infinite ease-in-out;
+}
+
+/* =========================================================================
+   ANIMATED LAYERED OCEAN WAVES (PARALLAX SVG WAVES)
+   ========================================================================= */
+
+.ocean-wave-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.wave-svg {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 80px;
+}
+
+@media (min-width: 640px) {
+  .wave-svg {
+    height: 110px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .wave-svg {
+    height: 140px;
+  }
+}
+
+.wave-parallax > use {
+  animation: waveMoveParallax 24s cubic-bezier(0.55, 0.5, 0.45, 0.5) infinite;
+}
+
+.wave-parallax > use.wave-layer-1 {
+  animation-delay: -2s;
+  animation-duration: 12s;
+}
+
+.wave-parallax > use.wave-layer-2 {
+  animation-delay: -3s;
+  animation-duration: 16s;
+}
+
+.wave-parallax > use.wave-layer-3 {
+  animation-delay: -4s;
+  animation-duration: 20s;
+}
+
+.wave-parallax > use.wave-layer-4 {
+  animation-delay: -5s;
+  animation-duration: 26s;
+}
+
+@keyframes waveMoveParallax {
+  0% {
+    transform: translate3d(-90px, 0, 0);
+  }
+  100% {
+    transform: translate3d(85px, 0, 0);
+  }
+}
+
+

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kelola Data Produk - SIGARUM</title>
+  <!-- Tailwind CSS CDN -->
+  <script>
+    (function(){
+      const origWarn = console.warn;
+      console.warn = function(...args) {
+        if (args[0] && typeof args[0] === 'string' && args[0].indexOf('cdn.tailwindcss.com') !== -1) return;
+        origWarn.apply(console, args);
+      };
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ocean: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e' },
+            navy: { 900: '#0f172a', 950: '#020617' },
+            salt: { 500: '#f59e0b', 600: '#d97706', 700: '#b45309' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="bg-black text-slate-100 flex h-screen overflow-hidden has-liquid-bg">
+  <!-- Fixed Full-Page Liquid Blue Glass Canvas -->
+  <canvas id="liquid-canvas" class="liquid-canvas-fixed"></canvas>
+
+  <!-- Admin / UMKM Sidebar -->
+  <aside class="w-64 bg-slate-950/80 backdrop-blur-2xl text-slate-300 flex flex-col justify-between shrink-0 border-r border-white/10 z-20">
+    <div>
+      <div class="h-16 px-6 flex items-center gap-3 border-b border-white/10 bg-slate-950/80">
+        <img src="../assets/images/logo.svg" alt="SIGARUM Logo" class="w-8 h-8 rounded-lg drop-shadow">
+        <div>
+          <span class="font-extrabold text-white text-base tracking-tight">SIGA<span class="text-ocean-400">RUM</span></span>
+          <span id="sidebar-role-title" class="text-[10px] text-slate-400 block -mt-1 font-semibold uppercase">Admin Panel</span>
+        </div>
+      </div>
+
+      <nav class="p-4 space-y-1 text-xs font-semibold">
+        <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+          Dashboard
+        </a>
+        <a href="umkm.html" id="nav-link-umkm" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+          <span id="nav-text-umkm">Data UMKM</span>
+        </a>
+        <a href="produk.html" id="nav-link-produk" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-ocean-600 text-white shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+          <span id="nav-text-produk">Data Produk</span>
+        </a>
+        <a href="kategori.html" class="admin-only-nav flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+          Data Kategori
+        </a>
+        <a href="wilayah.html" class="admin-only-nav flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+          Data Wilayah
+        </a>
+        <a href="pengguna.html" class="admin-only-nav flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          Data Pengguna
+        </a>
+
+        <div class="pt-4 mt-4 border-t border-slate-800">
+          <a href="../peta.html" id="nav-link-peta" target="_blank" class="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+            <span class="flex items-center gap-3">
+              <svg class="w-4 h-4 text-ocean-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+              Peta WebGIS
+            </span>
+            <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+          </a>
+        </div>
+      </nav>
+    </div>
+
+    <div class="p-4 border-t border-slate-800 bg-slate-950/60">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2.5 overflow-hidden">
+          <div id="user-display-avatar" class="w-8 h-8 rounded-full bg-slate-800 text-sky-400 font-bold flex items-center justify-center text-xs shrink-0">
+            AD
+          </div>
+          <div class="overflow-hidden">
+            <div id="user-display-name" class="font-bold text-white text-xs leading-none truncate">Administrator</div>
+            <div id="user-display-role" class="text-[10px] text-emerald-400 font-semibold mt-0.5 truncate">Online • Role: Admin</div>
+          </div>
+        </div>
+        <a href="../login.html" class="text-slate-400 hover:text-rose-400 text-xs">Keluar</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col overflow-y-auto">
+    
+    <header class="h-16 bg-white border-b border-slate-200 px-6 sm:px-8 flex items-center justify-between shrink-0">
+      <div>
+        <h1 id="page-title" class="text-lg font-extrabold text-slate-900">Pengelolaan Data Produk</h1>
+        <p id="page-subtitle" class="text-xs text-slate-500">Kelola katalog produk, harga, stok, dan asosiasi UMKM produsen</p>
+      </div>
+
+      <button onclick="openModalCreateProduk()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white bg-ocean-600 hover:bg-ocean-700 shadow-md shadow-ocean-600/20 transition-all">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+        Tambah Produk Baru
+      </button>
+    </header>
+
+    <main class="p-6 sm:p-8 space-y-6">
+
+      <!-- RBAC Notice Banner for Pelaku UMKM -->
+      <div id="rbac-produk-notice" class="hidden p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-start gap-3">
+        <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <div>
+          <span class="font-bold">Akses Khusus Pelaku UMKM (Aturan Bisnis BR-10):</span>
+          <p class="mt-0.5 leading-relaxed text-amber-800">
+            Tabel di bawah ini hanya menampilkan katalog produk yang diproduksi oleh unit usaha Anda (<strong id="notice-umkm-name">Garam Makmur Bunder</strong>). Produk baru yang Anda tambahkan akan otomatis diasosiasikan ke unit usaha Anda.
+          </p>
+        </div>
+      </div>
+      
+      <!-- Toolbar -->
+      <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="w-full sm:w-80 relative">
+          <input type="text" id="search-crud-produk" placeholder="Cari nama produk..." class="w-full text-xs pl-8 pr-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-ocean-500">
+          <svg class="w-4 h-4 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        </div>
+
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <select id="filter-crud-kategori" class="text-xs px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-ocean-500 bg-white">
+            <option value="Semua">Semua Kategori</option>
+            <option value="Olahan Laut">Olahan Laut</option>
+            <option value="Garam">Garam</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-slate-400 font-extrabold uppercase text-[10px] tracking-wider">
+                <th class="py-3.5 px-4 text-center w-12">ID</th>
+                <th class="py-3.5 px-4">Nama Produk</th>
+                <th class="py-3.5 px-4">UMKM Produsen</th>
+                <th class="py-3.5 px-4">Kategori</th>
+                <th class="py-3.5 px-4">Harga Satuan</th>
+                <th class="py-3.5 px-4">Berat/Kemasan</th>
+                <th class="py-3.5 px-4 text-center">Status Stok</th>
+                <th class="py-3.5 px-4 text-right">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="crud-produk-tbody" class="divide-y divide-slate-100">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- MODAL CREATE / EDIT PRODUK -->
+  <div id="modal-produk" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl my-8">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div>
+          <h3 id="modal-produk-title" class="text-base font-bold text-slate-900">Tambah Produk Baru</h3>
+          <p class="text-xs text-slate-500">Lengkapi data komoditas olahan hasil laut atau garam</p>
+        </div>
+        <button onclick="closeModalProduk()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <form id="form-produk" class="mt-4 space-y-4">
+        <input type="hidden" id="form-p-id_produk">
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Nama Produk <span class="text-rose-500">*</span></label>
+          <input type="text" id="form-p-nama" required placeholder="Contoh: Kerupuk Ikan Payus Madura" class="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">UMKM Produsen <span class="text-rose-500">*</span></label>
+          <select id="form-p-umkm" required class="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none bg-white">
+            <!-- Dynamically populated -->
+          </select>
+          <span id="umkm-lock-hint" class="hidden text-[11px] text-amber-700 font-medium mt-1">
+            * Terkunci otomatis pada unit usaha Anda.
+          </span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Kategori Produk <span class="text-rose-500">*</span></label>
+            <select id="form-p-kategori" required class="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none bg-white">
+              <option value="Olahan Laut">Olahan Laut</option>
+              <option value="Garam">Garam</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Harga (Rp) (BR-13) <span class="text-rose-500">*</span></label>
+            <input type="number" id="form-p-harga" min="0" required placeholder="Contoh: 25000" class="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Berat / Kemasan</label>
+            <input type="text" id="form-p-berat" placeholder="Contoh: 250 gram" class="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Status Stok</label>
+            <select id="form-p-stok" class="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none bg-white">
+              <option value="Tersedia">Tersedia</option>
+              <option value="Pre-order">Pre-order</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">URL Foto Produk</label>
+          <input type="url" id="form-p-foto" placeholder="https://images.unsplash.com/..." class="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Deskripsi Produk</label>
+          <textarea id="form-p-deskripsi" rows="2" placeholder="Komposisi bahan, cita rasa, dan izin edar..." class="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none"></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeModalProduk()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 rounded-xl">
+            Batal
+          </button>
+          <button type="submit" class="px-5 py-2 bg-ocean-600 hover:bg-ocean-700 text-white text-xs font-bold rounded-xl shadow-md shadow-ocean-600/30">
+            Simpan Produk
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let currentUser = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Inisialisasi RBAC
+      currentUser = SigarumStore.applyAdminRBAC();
+
+      // 2. Sesuaikan header dan tampilan jika pelaku UMKM
+      if (currentUser.role === 'umkm') {
+        document.getElementById('sidebar-role-title').textContent = 'Portal UMKM';
+        document.getElementById('page-title').textContent = 'Katalog Produk Usaha Saya';
+        document.getElementById('page-subtitle').textContent = `Kelola aneka produk komoditas olahan ${currentUser.nama_umkm || 'Garam Makmur Bunder'}`;
+        
+        document.getElementById('rbac-produk-notice').classList.remove('hidden');
+        document.getElementById('notice-umkm-name').textContent = currentUser.nama_umkm || 'Garam Makmur Bunder';
+      }
+
+      loadProdukTable();
+      populateUMKMSelect();
+
+      document.getElementById('search-crud-produk').addEventListener('input', loadProdukTable);
+      document.getElementById('filter-crud-kategori').addEventListener('change', loadProdukTable);
+      document.getElementById('form-produk').addEventListener('submit', handleProdukSubmit);
+    });
+
+    function populateUMKMSelect() {
+      const select = document.getElementById('form-p-umkm');
+      
+      if (currentUser && currentUser.role === 'umkm') {
+        // Kunci pilihan UMKM hanya pada milik pelaku UMKM yang login
+        const targetId = currentUser.id_umkm || 1;
+        const myUmkm = SigarumStore.getUMKMById(targetId);
+        select.innerHTML = `<option value="${targetId}" selected>${myUmkm ? myUmkm.nama_umkm : 'Garam Makmur Bunder'} (Unit Anda)</option>`;
+        select.disabled = true;
+        document.getElementById('umkm-lock-hint').classList.remove('hidden');
+      } else {
+        const umkmList = SigarumStore.getUMKM();
+        select.innerHTML = umkmList.map(u => `
+          <option value="${u.id_umkm}">${u.nama_umkm} (Kec. ${u.kecamatan})</option>
+        `).join('');
+        select.disabled = false;
+        document.getElementById('umkm-lock-hint').classList.add('hidden');
+      }
+    }
+
+    function loadProdukTable() {
+      const q = document.getElementById('search-crud-produk').value;
+      const kat = document.getElementById('filter-crud-kategori').value;
+
+      let filters = {
+        keyword: q,
+        kategori: kat
+      };
+
+      // BR-10: Jika role === 'umkm', HANYA TAMPILKAN PRODUK MILIK UMKM USER
+      if (currentUser && currentUser.role === 'umkm') {
+        filters.id_umkm = currentUser.id_umkm || 1;
+      }
+
+      const list = SigarumStore.getProduk(filters);
+
+      const tbody = document.getElementById('crud-produk-tbody');
+
+      if (list.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" class="py-8 text-center text-slate-500">
+              Belum ada produk yang sesuai dengan filter.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = list.map(p => {
+        const u = SigarumStore.getUMKMById(p.id_umkm) || { nama_umkm: 'UMKM Tidak Diketahui' };
+        return `
+          <tr class="hover:bg-slate-50 transition-colors ${currentUser.role === 'umkm' ? 'bg-amber-50/20' : ''}">
+            <td class="py-3.5 px-4 text-center font-mono font-bold text-slate-400">#${p.id_produk}</td>
+            <td class="py-3.5 px-4 font-bold text-slate-800">
+              <div class="flex items-center gap-2.5">
+                <img src="${p.foto}" alt="" class="w-8 h-8 rounded-lg object-cover bg-slate-100 border border-slate-200 shrink-0">
+                <span>${p.nama_produk}</span>
+              </div>
+            </td>
+            <td class="py-3.5 px-4 font-semibold text-ocean-700">${u.nama_umkm}</td>
+            <td class="py-3.5 px-4 whitespace-nowrap">${SigarumUtils.getCategoryBadge(p.kategori)}</td>
+            <td class="py-3.5 px-4 font-extrabold text-slate-900">${SigarumUtils.formatRupiah(p.harga)}</td>
+            <td class="py-3.5 px-4 text-slate-500 font-medium">${p.berat || '-'}</td>
+            <td class="py-3.5 px-4 text-center">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                ${p.stok_status || 'Tersedia'}
+              </span>
+            </td>
+            <td class="py-3.5 px-4 text-right whitespace-nowrap">
+              <div class="flex items-center justify-end gap-1.5">
+                <button onclick="openModalEditProduk(${p.id_produk})" class="p-1.5 text-sky-600 hover:text-sky-800 rounded-lg hover:bg-sky-50" title="Edit Produk">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                </button>
+                <button onclick="handleDeleteProduk(${p.id_produk})" class="p-1.5 text-rose-500 hover:text-rose-700 rounded-lg hover:bg-rose-50" title="Hapus Produk">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openModalCreateProduk() {
+      document.getElementById('modal-produk-title').textContent = 'Tambah Produk Baru';
+      document.getElementById('form-p-id_produk').value = '';
+      document.getElementById('form-p-nama').value = '';
+      document.getElementById('form-p-harga').value = '';
+      document.getElementById('form-p-berat').value = '250 gram';
+      document.getElementById('form-p-foto').value = 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80';
+      document.getElementById('form-p-deskripsi').value = '';
+
+      if (currentUser && currentUser.role === 'umkm') {
+        document.getElementById('form-p-umkm').value = currentUser.id_umkm || 1;
+      }
+      
+      const modal = document.getElementById('modal-produk');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function openModalEditProduk(id) {
+      const p = SigarumStore.getProdukById(id);
+      if (!p) return;
+
+      // Validasi BR-10: Pelaku UMKM hanya dapat mengedit produk miliknya sendiri
+      if (currentUser && currentUser.role === 'umkm') {
+        const allowedId = currentUser.id_umkm || 1;
+        if (p.id_umkm !== allowedId) {
+          SigarumUtils.showToast("Pelanggaran BR-10: Anda tidak dapat menyunting produk UMKM lain!", "error");
+          return;
+        }
+      }
+
+      document.getElementById('modal-produk-title').textContent = 'Edit Produk #' + id;
+      document.getElementById('form-p-id_produk').value = p.id_produk;
+      document.getElementById('form-p-nama').value = p.nama_produk;
+      document.getElementById('form-p-umkm').value = p.id_umkm;
+      document.getElementById('form-p-kategori').value = p.kategori;
+      document.getElementById('form-p-harga').value = p.harga;
+      document.getElementById('form-p-berat').value = p.berat || '';
+      document.getElementById('form-p-stok').value = p.stok_status || 'Tersedia';
+      document.getElementById('form-p-foto').value = p.foto || '';
+      document.getElementById('form-p-deskripsi').value = p.deskripsi || '';
+
+      const modal = document.getElementById('modal-produk');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeModalProduk() {
+      const modal = document.getElementById('modal-produk');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function handleProdukSubmit(e) {
+      e.preventDefault();
+      try {
+        const id = document.getElementById('form-p-id_produk').value;
+        const targetUmkmId = (currentUser && currentUser.role === 'umkm') 
+          ? (currentUser.id_umkm || 1) 
+          : parseInt(document.getElementById('form-p-umkm').value);
+
+        const data = {
+          id_produk: id ? parseInt(id) : null,
+          nama_produk: document.getElementById('form-p-nama').value,
+          id_umkm: targetUmkmId,
+          kategori: document.getElementById('form-p-kategori').value,
+          harga: parseFloat(document.getElementById('form-p-harga').value),
+          berat: document.getElementById('form-p-berat').value,
+          stok_status: document.getElementById('form-p-stok').value,
+          foto: document.getElementById('form-p-foto').value,
+          deskripsi: document.getElementById('form-p-deskripsi').value
+        };
+
+        SigarumStore.saveProduk(data);
+        closeModalProduk();
+        loadProdukTable();
+        SigarumUtils.showToast("Data produk berhasil disimpan!", "success");
+      } catch (err) {
+        SigarumUtils.showToast(err.message, "error");
+      }
+    }
+
+    function handleDeleteProduk(id) {
+      const p = SigarumStore.getProdukById(id);
+      if (!p) return;
+
+      if (currentUser && currentUser.role === 'umkm') {
+        const allowedId = currentUser.id_umkm || 1;
+        if (p.id_umkm !== allowedId) {
+          SigarumUtils.showToast("Pelanggaran BR-10: Anda tidak berhak menghapus produk UMKM lain!", "error");
+          return;
+        }
+      }
+
+      if (confirm(`Apakah Anda yakin ingin menghapus produk "${p.nama_produk}"?`)) {
+        SigarumStore.deleteProduk(id);
+        loadProdukTable();
+        SigarumUtils.showToast("Data produk berhasil dihapus.", "success");
+      }
+    }
+  </script>
+  <script src="../assets/js/liquid-background.js"></script>
+</body>
+</html>

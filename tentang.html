@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tentang Sistem WebGIS - SIGARUM</title>
+  <!-- Tailwind CSS CDN -->
+  <script>
+    (function(){
+      const origWarn = console.warn;
+      console.warn = function(...args) {
+        if (args[0] && typeof args[0] === 'string' && args[0].indexOf('cdn.tailwindcss.com') !== -1) return;
+        origWarn.apply(console, args);
+      };
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ocean: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e' },
+            navy: { 900: '#0f172a', 950: '#020617' },
+            salt: { 500: '#f59e0b', 600: '#d97706', 700: '#b45309' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-black text-slate-100 flex flex-col min-h-screen has-liquid-bg">
+  <!-- Fixed Full-Page Liquid Blue Glass Canvas -->
+  <canvas id="liquid-canvas" class="liquid-canvas-fixed"></canvas>
+
+  <!-- Demo Notice Banner -->
+  <div class="demo-banner bg-slate-950/60 backdrop-blur-md border-b border-white/5">
+    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase">
+      Data Demo / Prototype
+    </span>
+    <span class="text-slate-300">SIGARUM WebGIS • Dokumentasi Perancangan Sistem Informasi</span>
+  </div>
+
+  <!-- Navbar -->
+  <header class="sticky top-0 z-50 glass-nav border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center gap-3">
+          <img src="assets/images/logo.svg" alt="SIGARUM Logo" class="w-10 h-10 rounded-xl drop-shadow-md">
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-extrabold text-xl tracking-tight text-slate-900">SIGA<span class="text-ocean-600">RUM</span></span>
+              <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-ocean-100 text-ocean-800 uppercase">WebGIS</span>
+            </div>
+            <p class="text-[11px] text-slate-500 leading-none">Olahan Laut & Garam Pamekasan</p>
+          </div>
+        </a>
+
+        <!-- Desktop Menu -->
+        <nav class="hidden md:flex items-center gap-1 lg:gap-2">
+          <a href="index.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Beranda</a>
+          <a href="peta.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Peta UMKM</a>
+          <a href="umkm.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Data UMKM</a>
+          <a href="produk.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Produk</a>
+          <a href="statistik.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Statistik</a>
+          <a href="tentang.html" class="px-3 py-2 rounded-lg text-sm font-semibold text-ocean-700 bg-ocean-50">Tentang</a>
+        </nav>
+
+        <div id="nav-auth-slot">
+          <a href="login.html" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 shadow-sm transition-all border border-slate-700/50">
+            <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+            <span>Masuk / Login</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Header -->
+  <div class="bg-white border-b border-slate-200 py-10">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ocean-100 text-ocean-800 text-xs font-bold mb-3">
+        Profil & Arsitektur Sistem
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+        Tentang SIGARUM WebGIS
+      </h1>
+      <p class="text-slate-600 text-sm sm:text-base mt-2 max-w-2xl mx-auto leading-relaxed">
+        Sistem Informasi Geografis UMKM Olahan Laut dan Garam dirancang sebagai media pemetaan spasial dan integrasi potensi ekonomi maritim lokal.
+      </p>
+    </div>
+  </div>
+
+  <!-- Content Section -->
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-1 space-y-10">
+    
+    <!-- Latar Belakang & Identitas -->
+    <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-4">
+      <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+        <span class="w-2.5 h-6 rounded bg-ocean-600"></span>
+        Identitas & Latar Belakang
+      </h2>
+      <p class="text-slate-600 text-sm leading-relaxed">
+        <strong>SIGARUM (Sistem Informasi Geografis UMKM Olahan Laut dan Garam)</strong> merupakan aplikasi WebGIS yang dikembangkan untuk memetakan persebaran dan potensi ekonomi para pelaku usaha mikro, kecil, dan menengah (UMKM) yang bergerak di bidang pengolahan hasil laut (seperti ikan asin, kerupuk payus, terasi rebon, petis madura, abon ikan) serta sentra produksi garam rakyat dan garam industri di pesisir Kabupaten Pamekasan, Madura.
+      </p>
+      <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-700 space-y-1">
+        <div><strong>Tagline:</strong> "Pemetaan UMKM, Potensi Lokal, dan Informasi Ekonomi Berbasis Lokasi."</div>
+        <div><strong>Studi Kasus Wilayah:</strong> Kabupaten Pamekasan (Pesisir Selatan: Pademawu, Tlanakan, Galis; Pesisir Utara: Pasean, Batumarmar).</div>
+      </div>
+    </div>
+
+    <!-- Tujuan Sistem -->
+    <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-4">
+      <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+        <span class="w-2.5 h-6 rounded bg-salt-600"></span>
+        Tujuan Perancangan Sistem
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-slate-700">
+        <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50">
+          <span class="w-6 h-6 rounded-full bg-ocean-100 text-ocean-700 font-bold text-xs flex items-center justify-center shrink-0">1</span>
+          <div>
+            <strong>Pendataan & Pemetaan</strong>
+            <p class="text-xs text-slate-500 mt-0.5">Menginventarisasi koordinat presisi titik UMKM dalam format standar geospasial.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50">
+          <span class="w-6 h-6 rounded-full bg-ocean-100 text-ocean-700 font-bold text-xs flex items-center justify-center shrink-0">2</span>
+          <div>
+            <strong>Informasi Terintegrasi</strong>
+            <p class="text-xs text-slate-500 mt-0.5">Menyatukan data profil usaha, pemilik, legalitas izin, dan katalog produk.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50">
+          <span class="w-6 h-6 rounded-full bg-ocean-100 text-ocean-700 font-bold text-xs flex items-center justify-center shrink-0">3</span>
+          <div>
+            <strong>Aksesibilitas Pasar</strong>
+            <p class="text-xs text-slate-500 mt-0.5">Memudahkan masyarakat dan wisatawan menemukan produk lokal dengan kontak langsung.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50">
+          <span class="w-6 h-6 rounded-full bg-ocean-100 text-ocean-700 font-bold text-xs flex items-center justify-center shrink-0">4</span>
+          <div>
+            <strong>Dukungan Kebijakan Publik</strong>
+            <p class="text-xs text-slate-500 mt-0.5">Memberikan analisis spasial agregat per kecamatan bagi dinas koperasi dan perikanan.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Teknologi yang Digunakan -->
+    <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+      <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+        <span class="w-2.5 h-6 rounded bg-emerald-600"></span>
+        Teknologi & GIS Stack
+      </h2>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        
+        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
+          <div class="font-bold text-slate-900 text-sm">Leaflet.js & OSM</div>
+          <div class="text-xs text-ocean-600 font-semibold mt-0.5">Frontend WebGIS Client</div>
+          <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+            Peta interaktif berbasis open-source yang ringan, mendukung multi-tile layers, custom marker pins, GeoJSON vector layers, dan popup responsif.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
+          <div class="font-bold text-slate-900 text-sm">PostgreSQL + PostGIS</div>
+          <div class="text-xs text-indigo-600 font-semibold mt-0.5">Spatial Database Engine</div>
+          <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+            Penyimpanan data relasional dan spasial bertipe Geometri POINT dan MULTIPOLYGON SRID 4326 dengan GiST Spatial Indexing.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
+          <div class="font-bold text-slate-900 text-sm">QGIS 3.28 Desktop</div>
+          <div class="text-xs text-emerald-600 font-semibold mt-0.5">GIS Data Processing</div>
+          <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+            Perangkat lunak desktop untuk digitasi batas administrasi kecamatan, validasi topologi geometri, dan ekspor GeoJSON standar.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
+          <div class="font-bold text-slate-900 text-sm">Tailwind CSS & JS</div>
+          <div class="text-xs text-sky-600 font-semibold mt-0.5">User Interface Framework</div>
+          <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+            Desain antarmuka modern bertema lautan dan kristal garam yang adaptif untuk desktop, tablet, dan smartphone.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
+          <div class="font-bold text-slate-900 text-sm">Chart.js</div>
+          <div class="text-xs text-amber-600 font-semibold mt-0.5">Data Visualizations</div>
+          <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+            Grafik interaktif donat, batang bertumpuk, dan lingkaran untuk penyajian analisis statistik persebaran UMKM.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
+          <div class="font-bold text-slate-900 text-sm">GeoJSON WGS84</div>
+          <div class="text-xs text-rose-600 font-semibold mt-0.5">Open Spatial Standard</div>
+          <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+            Format pertukaran data spasial berbasis JSON yang interoperabel antara QGIS, PostGIS, dan antarmuka Leaflet.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Akademik Disclaimer -->
+    <div class="p-5 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 leading-relaxed">
+      <div class="font-bold text-sm mb-1 flex items-center gap-1.5 text-amber-950">
+        <svg class="w-4 h-4 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        Pemberitahuan Akademik & Status Data Demo
+      </div>
+      Seluruh entitas UMKM, nama pemilik, dan titik koordinat yang disajikan dalam prototype ini merupakan <strong>Data Demo/Simulasi</strong> yang dirancang untuk keperluan pemenuhan tugas mahasiswa Sistem Informasi dan demonstrasi fungsional WebGIS. Data tidak mengklaim representasi resmi dari instansi pemerintah Kabupaten Pamekasan.
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-auto bg-slate-900 text-slate-400 text-sm border-t border-slate-800 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs">
+      <div>&copy; 2026 SIGARUM WebGIS • Data Demo Simulasi Pamekasan</div>
+      <div class="mt-2 sm:mt-0 flex gap-4">
+        <a href="peta.html" class="hover:text-white">Peta Interaktif</a>
+        <a href="umkm.html" class="hover:text-white">Data UMKM</a>
+        <a href="login.html" class="hover:text-white">Portal Masuk</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/liquid-background.js"></script>
+</body>
+</html>

@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Profil UMKM - SIGARUM WebGIS</title>
+  <!-- Tailwind CSS CDN -->
+  <script>
+    (function(){
+      const origWarn = console.warn;
+      console.warn = function(...args) {
+        if (args[0] && typeof args[0] === 'string' && args[0].indexOf('cdn.tailwindcss.com') !== -1) return;
+        origWarn.apply(console, args);
+      };
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ocean: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e' },
+            navy: { 900: '#0f172a', 950: '#020617' },
+            salt: { 500: '#f59e0b', 600: '#d97706', 700: '#b45309' }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-black text-slate-100 flex flex-col min-h-screen has-liquid-bg">
+  <!-- Fixed Full-Page Liquid Blue Glass Canvas -->
+  <canvas id="liquid-canvas" class="liquid-canvas-fixed"></canvas>
+
+  <!-- Demo Notice Banner -->
+  <div class="demo-banner bg-slate-950/60 backdrop-blur-md border-b border-white/5">
+    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase">
+      Data Demo / Prototype
+    </span>
+    <span class="text-slate-300">SIGARUM WebGIS • Detail Profil UMKM Kabupaten Pamekasan</span>
+  </div>
+
+  <!-- Navbar -->
+  <header class="sticky top-0 z-50 glass-nav border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center gap-3">
+          <img src="assets/images/logo.svg" alt="SIGARUM Logo" class="w-10 h-10 rounded-xl drop-shadow-md">
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-extrabold text-xl tracking-tight text-slate-900">SIGA<span class="text-ocean-600">RUM</span></span>
+              <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-ocean-100 text-ocean-800 uppercase">WebGIS</span>
+            </div>
+            <p class="text-[11px] text-slate-500 leading-none">Olahan Laut & Garam Pamekasan</p>
+          </div>
+        </a>
+
+        <!-- Desktop Menu -->
+        <nav class="hidden md:flex items-center gap-1 lg:gap-2">
+          <a href="index.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Beranda</a>
+          <a href="peta.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Peta UMKM</a>
+          <a href="umkm.html" class="px-3 py-2 rounded-lg text-sm font-semibold text-ocean-700 bg-ocean-50">Data UMKM</a>
+          <a href="produk.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Produk</a>
+          <a href="statistik.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Statistik</a>
+          <a href="tentang.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Tentang</a>
+        </nav>
+
+        <div id="nav-auth-slot">
+          <a href="login.html" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 shadow-sm transition-all border border-slate-700/50">
+            <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+            <span>Masuk / Login</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumb -->
+  <div class="bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center text-xs text-slate-500 gap-2">
+      <a href="index.html" class="hover:text-ocean-600">Beranda</a>
+      <span>/</span>
+      <a href="umkm.html" class="hover:text-ocean-600">Data UMKM</a>
+      <span>/</span>
+      <span id="breadcrumb-nama" class="font-bold text-slate-800">Detail UMKM</span>
+    </div>
+  </div>
+
+  <!-- Detail Content Section -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
+    
+    <!-- Dynamic UMKM Detail Container -->
+    <div id="umkm-detail-container" class="space-y-8">
+      <!-- Injected by JavaScript -->
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-auto bg-slate-900 text-slate-400 text-sm border-t border-slate-800 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs">
+      <div>&copy; 2026 SIGARUM WebGIS • Data Demo Simulasi Pamekasan</div>
+      <div class="mt-2 sm:mt-0 flex gap-4">
+        <a href="peta.html" class="hover:text-white">Peta Interaktif</a>
+        <a href="umkm.html" class="hover:text-white">Data UMKM</a>
+        <a href="login.html" class="hover:text-white">Admin Login</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get('id') || 1;
+      const item = SigarumStore.getUMKMById(id);
+
+      if (!item) {
+        document.getElementById('umkm-detail-container').innerHTML = `
+          <div class="p-12 text-center bg-white rounded-2xl border border-slate-200 shadow-sm max-w-xl mx-auto">
+            <h3 class="text-xl font-bold text-slate-900 mb-2">UMKM Tidak Ditemukan</h3>
+            <p class="text-sm text-slate-600 mb-6">Data UMKM dengan ID ${id} tidak ada dalam basis data sistem.</p>
+            <a href="umkm.html" class="inline-flex px-5 py-2.5 bg-ocean-600 text-white font-semibold rounded-xl text-sm hover:bg-ocean-700">
+              Kembali ke Daftar UMKM
+            </a>
+          </div>
+        `;
+        return;
+      }
+
+      // Update breadcrumb
+      document.getElementById('breadcrumb-nama').textContent = item.nama_umkm;
+
+      // Get related products for this UMKM
+      const products = SigarumStore.getProduk({ id_umkm: item.id_umkm });
+
+      // Render Layout
+      const container = document.getElementById('umkm-detail-container');
+      container.innerHTML = `
+        <!-- Top Profile Banner & Primary Info -->
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-0">
+            
+            <!-- Left: High-Res Photo -->
+            <div class="lg:col-span-5 relative h-72 sm:h-96 lg:h-auto bg-slate-100">
+              <img src="${item.foto}" alt="${item.nama_umkm}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80'">
+              <div class="absolute top-4 left-4">
+                ${SigarumUtils.getCategoryBadge(item.kategori)}
+              </div>
+              <div class="absolute top-4 right-4">
+                ${SigarumUtils.getStatusBadge(item.status)}
+              </div>
+            </div>
+
+            <!-- Right: Identity & Actions -->
+            <div class="lg:col-span-7 p-6 sm:p-8 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center gap-2 text-xs text-slate-500 font-semibold mb-2">
+                  <span>Kabupaten ${item.kabupaten}</span>
+                  <span>•</span>
+                  <span>Tahun Berdiri: ${item.tahun_berdiri || 2015}</span>
+                </div>
+                
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                  ${item.nama_umkm}
+                </h1>
+                
+                <p class="text-sm font-semibold text-ocean-700 mt-1">
+                  Pemilik: ${item.pemilik}
+                </p>
+
+                <p class="text-sm text-slate-600 mt-4 leading-relaxed">
+                  ${item.deskripsi}
+                </p>
+
+                <!-- Key Attributes Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 pt-6 border-t border-slate-100 text-xs">
+                  <div>
+                    <span class="text-slate-400 font-medium block">Alamat Usaha:</span>
+                    <span class="font-bold text-slate-800 mt-0.5 block">${item.alamat}</span>
+                    <span class="text-slate-500 block">Desa ${item.desa}, Kec. ${item.kecamatan}</span>
+                  </div>
+
+                  <div>
+                    <span class="text-slate-400 font-medium block">Legalitas & Sertifikasi:</span>
+                    <span class="font-bold text-slate-800 mt-0.5 block">${item.legalitas || 'NIB Resmi'}</span>
+                    <span class="text-slate-500 block">Karyawan: ${item.jumlah_karyawan || 8} orang</span>
+                  </div>
+
+                  <div>
+                    <span class="text-slate-400 font-medium block">Koordinat Geografis (WGS84):</span>
+                    <div class="flex items-center gap-2 mt-0.5">
+                      <span class="font-mono font-bold text-slate-800 bg-slate-100 px-2 py-1 rounded">
+                        ${item.latitude}, ${item.longitude}
+                      </span>
+                      <button onclick="copyCoords('${item.latitude}', '${item.longitude}')" class="text-ocean-600 hover:text-ocean-700 font-bold underline text-[11px]">
+                        Salin
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <span class="text-slate-400 font-medium block">Nomor Kontak WhatsApp:</span>
+                    <span class="font-bold text-slate-800 mt-0.5 block">${item.kontak}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="flex flex-wrap items-center gap-3 mt-8 pt-6 border-t border-slate-100">
+                <a href="peta.html?id=${item.id_umkm}" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-white bg-ocean-600 hover:bg-ocean-700 shadow-md shadow-ocean-600/20 transition-all text-xs sm:text-sm">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                  <span>Lihat Lokasi di Peta WebGIS</span>
+                </a>
+
+                <a href="https://www.google.com/maps/search/?api=1&query=${item.latitude},${item.longitude}" target="_blank" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-slate-700 bg-white hover:bg-slate-50 border border-slate-300 shadow-sm transition-colors text-xs sm:text-sm" title="Buka titik koordinat langsung di Google Maps">
+                  <svg class="w-4 h-4 text-ocean-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                  <span>Navigasi Peta Dunia (Google Maps)</span>
+                </a>
+
+                <a href="https://api.whatsapp.com/send?phone=${(item.kontak || '').replace(/[^0-9]/g, '')}&text=Halo%20${encodeURIComponent(item.nama_umkm)},%20saya%20tertarik%20dengan%20produk%20Anda%20dari%20SIGARUM." target="_blank" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 transition-colors text-xs sm:text-sm">
+                  <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.301-.15-1.78-.879-2.056-.979-.275-.1-.476-.15-.676.15-.2.301-.777.979-.953 1.179-.175.201-.351.226-.652.075-.301-.15-1.272-.469-2.423-1.496-.896-.799-1.501-1.786-1.677-2.087-.175-.301-.019-.464.132-.614.136-.135.301-.351.452-.527.15-.175.2-.301.3-.501.101-.2.05-.376-.025-.527-.075-.15-.676-1.631-.927-2.233-.245-.587-.494-.508-.676-.517-.175-.009-.376-.009-.577-.009-.201 0-.527.075-.802.376-.276.301-1.054 1.03-1.054 2.511 0 1.482 1.079 2.912 1.23 3.113.15.201 2.124 3.243 5.145 4.549.719.311 1.28.497 1.718.636.723.23 1.38.197 1.9.12.58-.087 1.78-.727 2.03-1.43.25-.703.25-1.305.176-1.43-.076-.126-.276-.201-.577-.351z"/></svg>
+                  <span>Hubungi via WhatsApp</span>
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Section: Interactive Mini Map for UMKM Location -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-base font-bold text-slate-900">Peta Posisi Spasial Titik Usaha</h3>
+              <p class="text-xs text-slate-500">Koordinat akurat: Lat ${item.latitude} | Long ${item.longitude}</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <a href="https://www.google.com/maps/dir/?api=1&destination=${item.latitude},${item.longitude}" target="_blank" class="text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg border border-emerald-200 flex items-center gap-1.5 transition-colors shadow-sm">
+                <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                Petunjuk Arah Google Maps &nearr;
+              </a>
+              <a href="peta.html?id=${item.id_umkm}" class="text-xs font-bold text-ocean-600 hover:text-ocean-700 flex items-center gap-1">
+                Buka Penuh di WebGIS &rarr;
+              </a>
+            </div>
+          </div>
+          <div id="detail-mini-map" class="h-64 w-full rounded-xl overflow-hidden border border-slate-200"></div>
+        </div>
+
+        <!-- Section: Produk Dihasilkan -->
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-xl font-extrabold text-slate-900">Produk yang Dihasilkan</h3>
+              <p class="text-xs text-slate-500">Daftar produk unggulan yang diproduksi dan dijual oleh ${item.nama_umkm}</p>
+            </div>
+            <span class="text-xs font-bold bg-slate-100 text-slate-700 px-3 py-1 rounded-full">
+              ${products.length} Produk Terdaftar
+            </span>
+          </div>
+
+          <!-- Product Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            ${products.map(p => `
+              <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                <div>
+                  <div class="relative h-44 w-full bg-slate-100 overflow-hidden">
+                    <img src="${p.foto}" alt="${p.nama_produk}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80'">
+                    <span class="absolute top-2.5 left-2.5 px-2 py-0.5 text-[10px] font-bold rounded bg-white/90 text-slate-800 shadow-sm">
+                      ${p.berat || 'Kemasan Standar'}
+                    </span>
+                    <span class="absolute top-2.5 right-2.5 px-2 py-0.5 text-[10px] font-semibold rounded bg-emerald-500 text-white shadow-sm">
+                      ${p.stok_status || 'Tersedia'}
+                    </span>
+                  </div>
+                  <div class="p-4">
+                    <h4 class="font-bold text-slate-900 text-sm leading-snug">${p.nama_produk}</h4>
+                    <p class="text-xs text-slate-600 mt-2 line-clamp-2">${p.deskripsi}</p>
+                  </div>
+                </div>
+                <div class="p-4 pt-0 border-t border-slate-100 flex items-center justify-between mt-2">
+                  <span class="font-extrabold text-ocean-700 text-base">
+                    ${SigarumUtils.formatRupiah(p.harga)}
+                  </span>
+                  <a href="https://api.whatsapp.com/send?phone=${(item.kontak || '').replace(/[^0-9]/g, '')}&text=Halo%20${encodeURIComponent(item.nama_umkm)},%20saya%20ingin%20memesan%20produk%20${encodeURIComponent(p.nama_produk)}." target="_blank" class="text-xs font-semibold px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg transition-colors">
+                    Pesan Produk
+                  </a>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+
+      // Render Leaflet Mini Map (Google Maps Satelit Nyata)
+      const googleHybrid = L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '&copy; Google Maps'
+      });
+
+      const googleRoadmap = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '&copy; Google Maps'
+      });
+
+      const map = L.map('detail-mini-map', {
+        center: [item.latitude, item.longitude],
+        zoom: 15,
+        minZoom: 2,
+        maxZoom: 20,
+        zoomControl: true,
+        attributionControl: false,
+        layers: [googleHybrid]
+      });
+
+      L.control.layers({
+        "Google Maps Satelit (Citra Nyata)": googleHybrid,
+        "Google Maps Jalan (Roadmap)": googleRoadmap
+      }, null, { position: 'topright' }).addTo(map);
+      
+      const isG = item.kategori === 'Garam';
+      L.circleMarker([item.latitude, item.longitude], {
+        radius: 10,
+        fillColor: isG ? '#f59e0b' : '#0284c7',
+        color: '#ffffff',
+        weight: 3,
+        opacity: 1,
+        fillOpacity: 1
+      }).addTo(map).bindPopup(`
+        <div class="p-2 text-xs font-sans">
+          <strong class="text-sm font-bold text-slate-900 block">${item.nama_umkm}</strong>
+          <p class="text-slate-600 mt-1">${item.alamat}</p>
+          <div class="mt-2 pt-2 border-t border-slate-100">
+            <a href="https://www.google.com/maps/dir/?api=1&destination=${item.latitude},${item.longitude}" target="_blank" class="inline-flex items-center gap-1 text-emerald-600 font-bold hover:underline">
+              Petunjuk Arah Google Maps &nearr;
+            </a>
+          </div>
+        </div>
+      `).openPopup();
+    });
+
+    function copyCoords(lat, lng) {
+      navigator.clipboard.writeText(`${lat}, ${lng}`).then(() => {
+        SigarumUtils.showToast("Koordinat berhasil disalin ke clipboard!", "success");
+      });
+    }
+  </script>
+  <script src="assets/js/liquid-background.js"></script>
+</body>
+</html>

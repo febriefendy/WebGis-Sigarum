@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kelola Kategori Usaha - SIGARUM Admin</title>
+  <!-- Tailwind CSS CDN -->
+  <script>
+    (function(){
+      const origWarn = console.warn;
+      console.warn = function(...args) {
+        if (args[0] && typeof args[0] === 'string' && args[0].indexOf('cdn.tailwindcss.com') !== -1) return;
+        origWarn.apply(console, args);
+      };
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ocean: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e' },
+            navy: { 900: '#0f172a', 950: '#020617' },
+            salt: { 500: '#f59e0b', 600: '#d97706', 700: '#b45309' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="bg-black text-slate-100 flex h-screen overflow-hidden has-liquid-bg">
+  <!-- Fixed Full-Page Liquid Blue Glass Canvas -->
+  <canvas id="liquid-canvas" class="liquid-canvas-fixed"></canvas>
+
+  <!-- Admin Sidebar -->
+  <aside class="w-64 bg-slate-950/80 backdrop-blur-2xl text-slate-300 flex flex-col justify-between shrink-0 border-r border-white/10 z-20">
+    <div>
+      <div class="h-16 px-6 flex items-center gap-3 border-b border-white/10 bg-slate-950/80">
+        <img src="../assets/images/logo.svg" alt="SIGARUM Logo" class="w-8 h-8 rounded-lg drop-shadow">
+        <div>
+          <span class="font-extrabold text-white text-base tracking-tight">SIGA<span class="text-ocean-400">RUM</span></span>
+          <span class="text-[10px] text-slate-400 block -mt-1 font-semibold uppercase">Admin Panel</span>
+        </div>
+      </div>
+
+      <nav class="p-4 space-y-1 text-xs font-semibold">
+        <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+          Dashboard
+        </a>
+        <a href="umkm.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+          Data UMKM
+        </a>
+        <a href="produk.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+          Data Produk
+        </a>
+        <a href="kategori.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-ocean-600 text-white shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+          Data Kategori
+        </a>
+        <a href="wilayah.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+          Data Wilayah
+        </a>
+        <a href="pengguna.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          Data Pengguna
+        </a>
+      </nav>
+    </div>
+
+    <div class="p-4 border-t border-slate-800 bg-slate-950/60">
+      <div class="flex items-center justify-between">
+        <div class="text-xs">
+          <div class="font-bold text-white leading-none">Admin SIGARUM</div>
+          <div class="text-[10px] text-emerald-400 mt-1 font-semibold">Master Kategori</div>
+        </div>
+        <a href="../login.html" class="text-slate-400 hover:text-rose-400 text-xs">Keluar</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col overflow-y-auto">
+    
+    <header class="h-16 bg-white border-b border-slate-200 px-6 sm:px-8 flex items-center justify-between shrink-0">
+      <div>
+        <h1 class="text-lg font-extrabold text-slate-900">Manajemen Kategori UMKM (CRUD)</h1>
+        <p class="text-xs text-slate-500">Kelola master klasifikasi sektor komoditas olahan laut dan garam</p>
+      </div>
+
+      <button onclick="openModalKategori()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white bg-ocean-600 hover:bg-ocean-700 shadow-sm transition-all">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+        Tambah Kategori
+      </button>
+    </header>
+
+    <main class="p-6 sm:p-8 space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="kategori-grid">
+        <!-- Rendered by JS -->
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Modal Kategori -->
+  <div id="modal-kat" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <h3 class="font-bold text-slate-900 text-sm">Tambah Kategori Baru</h3>
+        <button onclick="closeModalKategori()" class="text-slate-400 hover:text-slate-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <form id="form-kat" class="mt-4 space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Nama Kategori</label>
+          <input type="text" id="kat-nama" required placeholder="Contoh: Budidaya Rumput Laut" class="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Kode Warna Aksen (HEX)</label>
+          <input type="color" id="kat-warna" value="#059669" class="w-full h-10 p-1 rounded-xl border border-slate-300 cursor-pointer">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Deskripsi Sektor</label>
+          <textarea id="kat-deskripsi" rows="2" placeholder="Penjelasan cakupan UMKM..." class="w-full text-xs px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none"></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeModalKategori()" class="px-4 py-2 text-xs font-semibold text-slate-600 rounded-xl hover:bg-slate-50">Batal</button>
+          <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-ocean-600 hover:bg-ocean-700 rounded-xl">Simpan Kategori</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderKategoriCards();
+      document.getElementById('form-kat').addEventListener('submit', handleKatSubmit);
+    });
+
+    function renderKategoriCards() {
+      const list = SigarumStore.getKategori();
+      const allUMKM = SigarumStore.getUMKM();
+      const container = document.getElementById('kategori-grid');
+
+      container.innerHTML = list.map(k => {
+        const count = allUMKM.filter(u => u.kategori.toLowerCase() === k.nama_kategori.toLowerCase()).length;
+        return `
+          <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="w-4 h-4 rounded-full" style="background-color: ${k.warna}"></span>
+                <span class="text-xs font-extrabold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">
+                  ${count} UMKM Terkait
+                </span>
+              </div>
+              <h3 class="text-base font-extrabold text-slate-900">${k.nama_kategori}</h3>
+              <p class="text-xs text-slate-600 mt-2 leading-relaxed">${k.deskripsi}</p>
+            </div>
+            <div class="pt-4 mt-6 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span>Slug: <code class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-700 font-mono">${k.slug}</code></span>
+              <span class="text-emerald-600 font-semibold">Tersinkronisasi DB</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openModalKategori() {
+      document.getElementById('kat-nama').value = '';
+      document.getElementById('kat-deskripsi').value = '';
+      document.getElementById('modal-kat').classList.remove('hidden');
+      document.getElementById('modal-kat').classList.add('flex');
+    }
+
+    function closeModalKategori() {
+      document.getElementById('modal-kat').classList.add('hidden');
+      document.getElementById('modal-kat').classList.remove('flex');
+    }
+
+    function handleKatSubmit(e) {
+      e.preventDefault();
+      try {
+        const nama = document.getElementById('kat-nama').value;
+        const warna = document.getElementById('kat-warna').value;
+        const deskripsi = document.getElementById('kat-deskripsi').value;
+
+        SigarumStore.saveKategori({ nama_kategori: nama, warna, deskripsi });
+        closeModalKategori();
+        renderKategoriCards();
+        SigarumUtils.showToast("Kategori baru berhasil ditambahkan!", "success");
+      } catch (err) {
+        SigarumUtils.showToast(err.message, "error");
+      }
+    }
+  </script>
+  <script src="../assets/js/liquid-background.js"></script>
+</body>
+</html>

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Katalog Produk Olahan Laut & Garam - SIGARUM Pamekasan</title>
+  <!-- Tailwind CSS CDN -->
+  <script>
+    (function(){
+      const origWarn = console.warn;
+      console.warn = function(...args) {
+        if (args[0] && typeof args[0] === 'string' && args[0].indexOf('cdn.tailwindcss.com') !== -1) return;
+        origWarn.apply(console, args);
+      };
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ocean: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e' },
+            navy: { 900: '#0f172a', 950: '#020617' },
+            salt: { 500: '#f59e0b', 600: '#d97706', 700: '#b45309' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-black text-slate-100 flex flex-col min-h-screen has-liquid-bg">
+  <!-- Fixed Full-Page Liquid Blue Glass Canvas -->
+  <canvas id="liquid-canvas" class="liquid-canvas-fixed"></canvas>
+
+  <!-- Navbar -->
+  <header class="sticky top-0 z-50 glass-nav border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center gap-3">
+          <img src="assets/images/logo.svg" alt="SIGARUM Logo" class="w-10 h-10 rounded-xl drop-shadow-md">
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-extrabold text-xl tracking-tight text-slate-900">SIGA<span class="text-ocean-600">RUM</span></span>
+              <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-ocean-100 text-ocean-800 uppercase">E-Commerce</span>
+            </div>
+            <p class="text-[11px] text-slate-500 leading-none">Olahan Laut & Garam Pamekasan</p>
+          </div>
+        </a>
+
+        <!-- Desktop Menu -->
+        <nav class="hidden md:flex items-center gap-1 lg:gap-2">
+          <a href="index.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Beranda</a>
+          <a href="peta.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Peta UMKM</a>
+          <a href="umkm.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Data UMKM</a>
+          <a href="produk.html" class="px-3 py-2 rounded-lg text-sm font-semibold text-ocean-700 bg-ocean-50">Produk</a>
+          <a href="statistik.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Statistik</a>
+          <a href="tentang.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Tentang</a>
+        </nav>
+
+        <!-- Cart & Auth Actions -->
+        <div class="flex items-center gap-3">
+          <!-- Cart Link -->
+          <a href="keranjang.html" class="relative p-2 text-slate-600 hover:text-ocean-600 rounded-xl hover:bg-slate-100 transition-colors" title="Lihat Keranjang">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+            <span id="nav-cart-badge" class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-ocean-600 text-white text-[9px] font-black flex items-center justify-center">0</span>
+          </a>
+
+          <div id="nav-auth-slot">
+            <a href="login.html" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 shadow-sm transition-all">
+              <span>Masuk / Akun</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Header -->
+  <div class="bg-white border-b border-slate-200 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Katalog Produk Pesisir</h1>
+          <p class="text-sm text-slate-600 mt-1">Eksplorasi komoditas olahan laut segar & garam kristal geomembran langsung dari produsen lokal Pamekasan.</p>
+        </div>
+        <div id="product-count-badge" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-ocean-50 text-ocean-700 font-bold text-xs">
+          28 Produk Tersedia
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Section -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
+    
+    <!-- Filter and Search Toolbar -->
+    <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+        
+        <!-- Search Box -->
+        <div class="md:col-span-6 relative">
+          <input type="text" id="search-produk" placeholder="Cari nama produk (garam meja, terasi, kerupuk, abon)..." class="w-full text-xs sm:text-sm pl-9 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-ocean-500">
+          <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        </div>
+
+        <!-- Filter Category Tabs -->
+        <div class="md:col-span-6 flex flex-wrap items-center justify-start md:justify-end gap-2">
+          <button onclick="setCategoryFilter('Semua')" id="btn-cat-all" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white transition-colors">
+            Semua Produk
+          </button>
+          <button onclick="setCategoryFilter('Olahan Laut')" id="btn-cat-laut" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition-colors">
+            Olahan Laut
+          </button>
+          <button onclick="setCategoryFilter('Garam')" id="btn-cat-garam" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition-colors">
+            Sentra Garam
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <!-- Injected by JS -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="product-empty-state" class="hidden py-16 text-center bg-white rounded-2xl border border-slate-200">
+      <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+      </div>
+      <h4 class="font-bold text-slate-800 text-base">Produk Tidak Ditemukan</h4>
+      <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+        Belum terdapat komoditas produk yang cocok dengan kata kunci pencarian Anda.
+      </p>
+      <button onclick="resetProductFilter()" class="mt-4 px-4 py-2 bg-ocean-50 text-ocean-700 hover:bg-ocean-100 rounded-lg text-xs font-bold transition-colors">
+        Tampilkan Semua Produk
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Modal Detail Produk & Ulasan Publik (Tanpa Login) -->
+  <div id="modal-product-detail" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative p-6 sm:p-8 space-y-6">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider" id="modal-p-cat">Olahan Laut</span>
+        <button type="button" onclick="closeProductModal()" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-6">
+        <img id="modal-p-img" src="" alt="" class="w-full sm:w-56 h-56 rounded-2xl object-cover border border-slate-200 shrink-0">
+        <div class="space-y-3 flex-1">
+          <h3 id="modal-p-title" class="text-xl font-black text-slate-900 leading-tight">-</h3>
+          <div class="text-xs text-slate-500">
+            Produsen: <strong id="modal-p-store" class="text-ocean-700 font-bold">-</strong>
+          </div>
+          <div class="text-2xl font-black text-ocean-700" id="modal-p-price">Rp 0</div>
+          <p id="modal-p-desc" class="text-xs text-slate-600 leading-relaxed">-</p>
+          <div class="text-xs text-slate-500 font-semibold">
+            Berat Kemasan: <span id="modal-p-weight">-</span>
+          </div>
+
+          <div class="pt-3 flex gap-2">
+            <button type="button" id="modal-btn-add-cart" class="flex-1 py-2.5 rounded-xl bg-ocean-600 hover:bg-ocean-700 text-white font-bold text-xs shadow-md transition-colors flex items-center justify-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+              <span>+ Keranjang</span>
+            </button>
+            <button type="button" id="modal-btn-buy-now" class="flex-1 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-md transition-colors">
+              Beli Sekarang
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Public Reviews Section -->
+      <div class="pt-4 border-t border-slate-100 space-y-3">
+        <div class="flex items-center justify-between">
+          <h4 class="font-extrabold text-sm text-slate-900">Ulasan & Testimoni Pembeli</h4>
+          <span id="modal-p-rating-avg" class="text-xs font-bold text-amber-600">★ 5.0 (Ulasan Terverifikasi)</span>
+        </div>
+
+        <div id="modal-reviews-list" class="space-y-2.5 max-h-48 overflow-y-auto">
+          <p class="text-xs text-slate-400">Belum ada ulasan untuk produk ini.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-auto bg-slate-900 text-slate-400 text-sm border-t border-slate-800 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs gap-3">
+      <div>&copy; 2026 SIGARUM WebGIS & Marketplace Pamekasan • Komoditas Pesisir Madura</div>
+      <div class="flex gap-4">
+        <a href="peta.html" class="hover:text-white">Peta Interaktif</a>
+        <a href="umkm.html" class="hover:text-white">Data UMKM</a>
+        <a href="login.html" class="hover:text-white">Portal Masuk</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="assets/js/app.js"></script>
+  <script>
+    let activeCategory = 'Semua';
+    let currentSelectedProduct = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderNavAuth();
+      updateNavCartCount();
+      renderProducts();
+
+      document.getElementById('search-produk').addEventListener('input', () => {
+        renderProducts();
+      });
+    });
+
+    function renderNavAuth() {
+      const user = SigarumStore.getCurrentUser();
+      const slot = document.getElementById('nav-auth-slot');
+      if (user) {
+        const dest = user.role === 'pelanggan' ? 'pelanggan/dashboard.html' : 'admin/dashboard.html';
+        slot.innerHTML = `
+          <a href="${dest}" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-xs font-bold text-slate-800 transition-colors">
+            <span class="w-6 h-6 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-[10px] font-black">${(user.nama || 'U').substring(0, 2).toUpperCase()}</span>
+            <span>${user.nama.split(' ')[0]}</span>
+          </a>
+        `;
+      }
+    }
+
+    async function updateNavCartCount() {
+      try {
+        const res = await SigarumApi.getCart();
+        if (res && res.success && res.data) {
+          document.getElementById('nav-cart-badge').textContent = res.data.total_items || 0;
+        }
+      } catch {}
+    }
+
+    function setCategoryFilter(cat) {
+      activeCategory = cat;
+      const allBtn = document.getElementById('btn-cat-all');
+      const lautBtn = document.getElementById('btn-cat-laut');
+      const garamBtn = document.getElementById('btn-cat-garam');
+
+      [allBtn, lautBtn, garamBtn].forEach(b => {
+        b.className = "px-3.5 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition-colors";
+      });
+
+      if (cat === 'Semua') {
+        allBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white transition-colors";
+      } else if (cat === 'Olahan Laut') {
+        lautBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold bg-sky-600 text-white transition-colors";
+      } else if (cat === 'Garam') {
+        garamBtn.className = "px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-600 text-white transition-colors";
+      }
+
+      renderProducts();
+    }
+
+    function resetProductFilter() {
+      document.getElementById('search-produk').value = '';
+      setCategoryFilter('Semua');
+    }
+
+    function toggleProductFav(id) {
+      const res = SigarumStore.toggleFavorite('produk', id);
+      if (res.added) {
+        SigarumUtils.showToast("Produk ditambahkan ke Favorit Pelanggan!", "success");
+      } else {
+        SigarumUtils.showToast("Produk dihapus dari daftar favorit.", "info");
+      }
+      renderProducts();
+    }
+
+    async function handleAddToCart(id_produk, e) {
+      if (e) e.stopPropagation();
+      const user = SigarumStore.getCurrentUser();
+      if (!user) {
+        window.location.href = `login.html?redirect=keranjang.html`;
+        return;
+      }
+
+      try {
+        const res = await SigarumApi.addToCart(id_produk, 1);
+        if (res.success) {
+          SigarumUtils.showToast("Produk berhasil ditambahkan ke keranjang belanja!", "success");
+          updateNavCartCount();
+        }
+      } catch (err) {
+        SigarumUtils.showToast(err.message, "error");
+      }
+    }
+
+    async function handleBuyDirect(id_produk, e) {
+      if (e) e.stopPropagation();
+      const user = SigarumStore.getCurrentUser();
+      if (!user) {
+        window.location.href = `login.html?redirect=keranjang.html`;
+        return;
+      }
+      try {
+        await SigarumApi.addToCart(id_produk, 1);
+        window.location.href = 'keranjang.html';
+      } catch (err) {
+        SigarumUtils.showToast(err.message, "error");
+      }
+    }
+
+    async function openProductModal(p) {
+      currentSelectedProduct = p;
+      const parentUMKM = SigarumStore.getUMKMById(p.id_umkm) || { nama_umkm: 'UMKM Pamekasan' };
+
+      document.getElementById('modal-p-cat').textContent = p.kategori;
+      document.getElementById('modal-p-title').textContent = p.nama_produk;
+      document.getElementById('modal-p-store').textContent = parentUMKM.nama_umkm;
+      document.getElementById('modal-p-price').textContent = SigarumUtils.formatRupiah(p.harga);
+      document.getElementById('modal-p-desc').textContent = p.deskripsi || 'Produk olahan unggulan pesisir Pamekasan bersertifikat mutu terjamin.';
+      document.getElementById('modal-p-weight').textContent = p.berat || '250 gram';
+      document.getElementById('modal-p-img').src = p.foto;
+
+      document.getElementById('modal-btn-add-cart').onclick = () => handleAddToCart(p.id_produk);
+      document.getElementById('modal-btn-buy-now').onclick = () => handleBuyDirect(p.id_produk);
+
+      // Load reviews
+      const reviewsList = document.getElementById('modal-reviews-list');
+      try {
+        const revRes = await SigarumApi.getProductReviews(p.id_produk);
+        const reviews = (revRes && revRes.data) || [];
+        if (reviews.length === 0) {
+          reviewsList.innerHTML = `<p class="text-xs text-slate-400">Belum ada ulasan untuk produk ini. Jadilah pembeli pertama yang memberikan testimoni!</p>`;
+        } else {
+          reviewsList.innerHTML = reviews.map(r => `
+            <div class="p-3 bg-slate-50 rounded-xl text-xs space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-800">${r.nama_pembeli || 'Pembeli'}</span>
+                <span class="text-amber-500 font-bold">★ ${r.rating}</span>
+              </div>
+              <p class="text-slate-600">${r.komentar}</p>
+            </div>
+          `).join('');
+        }
+      } catch {
+        reviewsList.innerHTML = `<p class="text-xs text-slate-400">Ulasan komoditas terverifikasi.</p>`;
+      }
+
+      document.getElementById('modal-product-detail').classList.remove('hidden');
+    }
+
+    function closeProductModal() {
+      document.getElementById('modal-product-detail').classList.add('hidden');
+    }
+
+    function renderProducts() {
+      const q = document.getElementById('search-produk').value;
+      const list = SigarumStore.getProduk({
+        kategori: activeCategory,
+        keyword: q
+      });
+
+      const grid = document.getElementById('product-grid');
+      const empty = document.getElementById('product-empty-state');
+      const badge = document.getElementById('product-count-badge');
+
+      badge.textContent = `${list.length} Produk Ditemukan`;
+
+      if (list.length === 0) {
+        grid.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+      }
+
+      empty.classList.add('hidden');
+
+      grid.innerHTML = list.map(p => {
+        const parentUMKM = SigarumStore.getUMKMById(p.id_umkm) || { nama_umkm: 'UMKM Pamekasan', kecamatan: 'Pamekasan', kontak: '' };
+        const isFav = SigarumStore.isFavorite('produk', p.id_produk);
+        return `
+          <div onclick="openProductModal(${JSON.stringify(p).replace(/"/g, '&quot;')})" class="bg-white rounded-3xl border border-slate-200 overflow-hidden card-lift glass-card-hover flex flex-col justify-between group transition-all relative cursor-pointer">
+            <div>
+              <div class="relative h-48 w-full bg-slate-100 overflow-hidden">
+                <img src="${p.foto}" alt="${p.nama_produk}" class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500" onerror="this.src='https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80'">
+                <div class="absolute top-2.5 left-2.5">
+                  ${SigarumUtils.getCategoryBadge(p.kategori)}
+                </div>
+                <!-- Favorite Heart Button -->
+                <button type="button" onclick="event.stopPropagation(); toggleProductFav(${p.id_produk})" title="Simpan ke Favorit" class="absolute top-2.5 right-2.5 w-8 h-8 rounded-full ${isFav ? 'bg-rose-500 text-white' : 'bg-white/90 text-slate-400 hover:text-rose-500'} shadow-md flex items-center justify-center transition-all hover:scale-110">
+                  <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                </button>
+                <span class="absolute bottom-2.5 right-2.5 px-2 py-0.5 text-[10px] font-semibold rounded bg-slate-900/80 text-white backdrop-blur-sm">
+                  ${p.berat || 'Standar'}
+                </span>
+              </div>
+              <div class="p-4 sm:p-5">
+                <div class="text-[11px] text-slate-500 font-medium flex items-center gap-1 mb-1">
+                  <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                  Kec. ${parentUMKM.kecamatan}
+                </div>
+                <h4 class="font-bold text-slate-900 text-sm leading-snug group-hover:text-ocean-600 transition-colors line-clamp-2">
+                  ${p.nama_produk}
+                </h4>
+                <span class="text-xs font-semibold text-ocean-700 block mt-1 truncate">
+                  Oleh: ${parentUMKM.nama_umkm}
+                </span>
+                <p class="text-xs text-slate-600 mt-2 line-clamp-2 leading-relaxed">
+                  ${p.deskripsi}
+                </p>
+              </div>
+            </div>
+
+            <div class="p-4 sm:p-5 pt-0 border-t border-slate-100 flex flex-col gap-2 mt-2">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="text-[10px] text-slate-400 block font-semibold uppercase">Harga Satuan</span>
+                  <span class="font-extrabold text-ocean-700 text-base">
+                    ${SigarumUtils.formatRupiah(p.harga)}
+                  </span>
+                </div>
+                <button type="button" onclick="handleAddToCart(${p.id_produk}, event)" class="px-3 py-1.5 rounded-xl bg-ocean-50 text-ocean-700 hover:bg-ocean-100 font-bold text-xs transition-colors flex items-center gap-1">
+                  <span>+ Keranjang</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  </script>
+  <script src="assets/js/liquid-background.js"></script>
+</body>
+</html>

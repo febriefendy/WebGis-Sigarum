@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout Pesanan - SIGARUM E-Commerce Pamekasan</title>
+  <!-- Tailwind CSS CDN -->
+  <script>
+    (function(){
+      const origWarn = console.warn;
+      console.warn = function(...args) {
+        if (args[0] && typeof args[0] === 'string' && args[0].indexOf('cdn.tailwindcss.com') !== -1) return;
+        origWarn.apply(console, args);
+      };
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ocean: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e' },
+            navy: { 900: '#0f172a', 950: '#020617' },
+            salt: { 500: '#f59e0b', 600: '#d97706', 700: '#b45309' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-black text-slate-100 flex flex-col min-h-screen has-liquid-bg">
+  <!-- Fixed Full-Page Liquid Blue Glass Canvas -->
+  <canvas id="liquid-canvas" class="liquid-canvas-fixed"></canvas>
+
+  <!-- Navbar Simple Checkout -->
+  <header class="glass-nav border-b border-white/10 py-4 px-4 sm:px-8 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="assets/images/logo.svg" alt="SIGARUM Logo" class="w-9 h-9 rounded-xl drop-shadow-sm">
+        <span class="font-extrabold text-lg text-slate-900 tracking-tight">SIGA<span class="text-ocean-600">RUM</span> <span class="text-xs font-bold text-slate-400">| Checkout Aman</span></span>
+      </a>
+      <a href="keranjang.html" class="text-xs font-bold text-ocean-600 hover:text-ocean-700 flex items-center gap-1">
+        <span>&larr; Kembali ke Keranjang</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+    
+    <div id="checkout-loading" class="py-16 text-center text-slate-500 text-sm">
+      <svg class="animate-spin h-6 w-6 text-ocean-600 mx-auto mb-3" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+      Menyiapkan ringkasan checkout Anda...
+    </div>
+
+    <form id="form-checkout" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Left Column: Address, Order Items per Store, Payment Method -->
+      <div class="lg:col-span-8 space-y-6">
+
+        <!-- Section 1: Alamat Pengiriman -->
+        <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+          <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg bg-ocean-50 text-ocean-600 font-bold text-xs flex items-center justify-center">1</span>
+              <h2 class="text-base font-extrabold text-slate-900">Alamat Pengiriman</h2>
+            </div>
+            <button type="button" onclick="openAddAddressModal()" class="text-xs font-bold text-ocean-600 hover:text-ocean-700 flex items-center gap-1">
+              <span>+ Tambah Alamat</span>
+            </button>
+          </div>
+
+          <div id="address-list-container" class="space-y-3">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Section 2: Items Breakdown grouped per Store (UMKM) -->
+        <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+          <div class="flex items-center gap-2 pb-4 border-b border-slate-100 mb-4">
+            <span class="w-7 h-7 rounded-lg bg-ocean-50 text-ocean-600 font-bold text-xs flex items-center justify-center">2</span>
+            <div>
+              <h2 class="text-base font-extrabold text-slate-900">Pesanan per Toko UMKM</h2>
+              <p class="text-[11px] text-slate-500">Item akan diproses dan dikirim langsung dari pengrajin terdaftar.</p>
+            </div>
+          </div>
+
+          <div id="checkout-store-groups" class="space-y-5">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- Catatan Tambahan -->
+          <div class="mt-5 pt-4 border-t border-slate-100">
+            <label class="block text-xs font-bold text-slate-700 mb-1">Catatan Tambahan untuk Penjual (Opsional)</label>
+            <textarea id="catatan-pembeli" rows="2" placeholder="Contoh: Titipkan di pos satpam, mohon kemasan ekstra rapi..." class="w-full text-xs p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-ocean-500"></textarea>
+          </div>
+        </div>
+
+        <!-- Section 3: Pilihan Metode Pembayaran -->
+        <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+          <div class="flex items-center gap-2 pb-4 border-b border-slate-100 mb-4">
+            <span class="w-7 h-7 rounded-lg bg-ocean-50 text-ocean-600 font-bold text-xs flex items-center justify-center">3</span>
+            <div>
+              <h2 class="text-base font-extrabold text-slate-900">Metode Pembayaran</h2>
+              <p class="text-[11px] text-slate-500">Pilih channel pembayaran resmi yang Anda inginkan.</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- QRIS -->
+            <label class="flex items-start gap-3 p-4 rounded-2xl border-2 border-ocean-600 bg-ocean-50/40 cursor-pointer transition-all payment-method-card">
+              <input type="radio" name="payment-method" value="QRIS" checked class="mt-1 text-ocean-600 focus:ring-ocean-500">
+              <div>
+                <span class="block text-xs font-bold text-slate-900">QRIS Dinamis (Semua E-Wallet)</span>
+                <span class="block text-[11px] text-slate-500 mt-0.5">BCA Mobile, Livin, GoPay, OVO, Dana, LinkAja</span>
+                <span class="inline-block mt-2 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">Verifikasi Otomatis</span>
+              </div>
+            </label>
+
+            <!-- Transfer Bank Manual -->
+            <label class="flex items-start gap-3 p-4 rounded-2xl border-2 border-slate-200 hover:border-slate-300 bg-white cursor-pointer transition-all payment-method-card">
+              <input type="radio" name="payment-method" value="Transfer_Bank" class="mt-1 text-ocean-600 focus:ring-ocean-500">
+              <div>
+                <span class="block text-xs font-bold text-slate-900">Transfer Bank & Unggah Bukti</span>
+                <span class="block text-[11px] text-slate-500 mt-0.5">Rekening Bank Mandiri, BCA, atau BRI resmi platform</span>
+                <span class="inline-block mt-2 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">Verifikasi Admin Manual</span>
+              </div>
+            </label>
+
+            <!-- Virtual Account -->
+            <label class="flex items-start gap-3 p-4 rounded-2xl border-2 border-slate-200 hover:border-slate-300 bg-white cursor-pointer transition-all payment-method-card">
+              <input type="radio" name="payment-method" value="Virtual_Account" class="mt-1 text-ocean-600 focus:ring-ocean-500">
+              <div>
+                <span class="block text-xs font-bold text-slate-900">Virtual Account (VA)</span>
+                <span class="block text-[11px] text-slate-500 mt-0.5">Nomor Virtual Account bank langsung</span>
+              </div>
+            </label>
+
+            <!-- E-Wallet Direct -->
+            <label class="flex items-start gap-3 p-4 rounded-2xl border-2 border-slate-200 hover:border-slate-300 bg-white cursor-pointer transition-all payment-method-card">
+              <input type="radio" name="payment-method" value="E-Wallet" class="mt-1 text-ocean-600 focus:ring-ocean-500">
+              <div>
+                <span class="block text-xs font-bold text-slate-900">E-Wallet Direct</span>
+                <span class="block text-[11px] text-slate-500 mt-0.5">GoPay / ShopeePay / OVO</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Final Cost Breakdown & Confirmation -->
+      <div class="lg:col-span-4 bg-white rounded-3xl border border-slate-200 p-6 shadow-sm sticky top-24 space-y-5">
+        <h3 class="text-base font-extrabold text-slate-900 pb-3 border-b border-slate-100">
+          Ringkasan Tagihan
+        </h3>
+
+        <div class="space-y-3 text-xs text-slate-600">
+          <div class="flex justify-between">
+            <span>Subtotal Produk</span>
+            <span id="bill-subtotal" class="font-bold text-slate-800">Rp 0</span>
+          </div>
+
+          <div class="flex justify-between">
+            <div>
+              <span>Ongkos Kirim Total</span>
+              <span id="bill-store-count" class="text-[10px] text-slate-400 block leading-tight">1 Toko @ Rp 12.000</span>
+            </div>
+            <span id="bill-shipping" class="font-bold text-slate-800">Rp 12.000</span>
+          </div>
+
+          <div class="flex justify-between">
+            <span>Biaya Layanan Sistem</span>
+            <span class="font-bold text-slate-800">Rp 1.000</span>
+          </div>
+
+          <div id="bill-discount-row" class="flex justify-between text-emerald-600 font-semibold" style="display: none;">
+            <span>Diskon Kupon</span>
+            <span id="bill-discount">- Rp 0</span>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-200 flex justify-between items-baseline">
+          <div>
+            <span class="block text-xs font-medium text-slate-500">Total Pembayaran:</span>
+            <span class="text-[10px] text-slate-400">Termasuk PPN & Biaya Penanganan</span>
+          </div>
+          <span id="bill-grandtotal" class="text-xl font-black text-ocean-700">Rp 0</span>
+        </div>
+
+        <button type="submit" id="btn-submit-order" class="w-full py-4 rounded-2xl bg-gradient-to-r from-ocean-600 to-sky-600 hover:from-ocean-700 hover:to-sky-700 text-white font-extrabold text-sm shadow-lg shadow-ocean-600/30 transition-all flex items-center justify-center gap-2">
+          <span>Konfirmasi & Buat Pesanan</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        </button>
+
+        <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100 text-[11px] text-slate-500 space-y-1">
+          <div class="flex items-center gap-1.5 font-bold text-slate-700">
+            <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+            Jaminan Transaksi Aman
+          </div>
+          <p>Dana Anda diteruskan ke mitra UMKM setelah paket terkonfirmasi sampai di tujuan Anda.</p>
+        </div>
+      </div>
+
+    </form>
+
+  </main>
+
+  <!-- Modal Tambah Alamat Baru -->
+  <div id="modal-address" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+        <h3 class="font-bold text-slate-900 text-base">Tambah Alamat Pengiriman Baru</h3>
+        <button type="button" onclick="closeAddAddressModal()" class="text-slate-400 hover:text-slate-600">✕</button>
+      </div>
+
+      <form id="form-new-address" class="space-y-3.5 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Nama Penerima</label>
+          <input type="text" id="new-addr-name" required placeholder="Contoh: Achmad Subarjo" class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">No. WhatsApp</label>
+            <input type="tel" id="new-addr-phone" required placeholder="+62 8..." class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Label Alamat</label>
+            <input type="text" id="new-addr-label" placeholder="Rumah / Kantor / Kos" class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Kecamatan (Kab. Pamekasan / Sekitar)</label>
+          <select id="new-addr-kecamatan" class="w-full text-xs px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none bg-white">
+            <option value="Pademawu">Kecamatan Pademawu</option>
+            <option value="Tlanakan">Kecamatan Tlanakan</option>
+            <option value="Galis">Kecamatan Galis</option>
+            <option value="Larangan">Kecamatan Larangan</option>
+            <option value="Pasean">Kecamatan Pasean</option>
+            <option value="Batumarmar">Kecamatan Batumarmar</option>
+            <option value="Pamekasan Kota">Kecamatan Kota Pamekasan</option>
+            <option value="Lainnya">Kecamatan Lainnya (Luar Pamekasan)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Alamat Lengkap & Patokan</label>
+          <textarea id="new-addr-full" required rows="3" placeholder="Jl. Raya No..., RT/RW, Dusun, Desa, Patokan dekat masjid/toko..." class="w-full text-xs p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none"></textarea>
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeAddAddressModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold">
+            Batal
+          </button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-ocean-600 hover:bg-ocean-700 text-white font-bold">
+            Simpan Alamat
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="assets/js/app.js"></script>
+  <script>
+    let checkoutCart = null;
+    let savedAddresses = [];
+    let selectedAddressId = null;
+    let appliedCoupon = null;
+    const SHIPPING_PER_STORE = 12000;
+    const SERVICE_FEE = 1000;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const user = SigarumStore.getCurrentUser();
+      if (!user) {
+        window.location.href = 'login.html?redirect=checkout.html';
+        return;
+      }
+
+      // Check for stored coupon
+      const storedCoupon = sessionStorage.getItem('sigarum_applied_coupon');
+      if (storedCoupon) {
+        try { appliedCoupon = JSON.parse(storedCoupon); } catch {}
+      }
+
+      await Promise.all([loadAddresses(), loadCheckoutCart()]);
+      setupPaymentSelection();
+    });
+
+    function setupPaymentSelection() {
+      document.querySelectorAll('input[name="payment-method"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+          document.querySelectorAll('.payment-method-card').forEach(card => {
+            card.classList.remove('border-ocean-600', 'bg-ocean-50/40');
+            card.classList.add('border-slate-200', 'bg-white');
+          });
+          const parentCard = e.target.closest('.payment-method-card');
+          if (parentCard) {
+            parentCard.classList.remove('border-slate-200', 'bg-white');
+            parentCard.classList.add('border-ocean-600', 'bg-ocean-50/40');
+          }
+        });
+      });
+    }
+
+    async function loadAddresses() {
+      try {
+        const res = await SigarumApi.getAddresses();
+        savedAddresses = (res && res.data) || [];
+        renderAddresses();
+      } catch (err) {
+        console.warn('Failed to load addresses:', err);
+      }
+    }
+
+    function renderAddresses() {
+      const container = document.getElementById('address-list-container');
+      if (savedAddresses.length === 0) {
+        container.innerHTML = `
+          <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-800 flex items-center justify-between">
+            <span>Belum ada alamat tersimpan. Silakan tambahkan alamat pengiriman.</span>
+            <button type="button" onclick="openAddAddressModal()" class="px-3 py-1.5 rounded-lg bg-amber-600 text-white font-bold text-[11px]">Tambah Sekarang</button>
+          </div>
+        `;
+        selectedAddressId = null;
+        return;
+      }
+
+      if (!selectedAddressId) {
+        const primary = savedAddresses.find(a => a.is_utama) || savedAddresses[0];
+        selectedAddressId = primary.id_alamat;
+      }
+
+      container.innerHTML = savedAddresses.map(addr => `
+        <label class="flex items-start gap-3 p-4 rounded-2xl border-2 ${selectedAddressId === addr.id_alamat ? 'border-ocean-600 bg-ocean-50/20' : 'border-slate-200 bg-white hover:border-slate-300'} cursor-pointer transition-all">
+          <input type="radio" name="selected-address" value="${addr.id_alamat}" ${selectedAddressId === addr.id_alamat ? 'checked' : ''} onchange="selectAddress(${addr.id_alamat})" class="mt-1 text-ocean-600 focus:ring-ocean-500">
+          <div class="flex-1">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-slate-900 text-xs sm:text-sm">${addr.nama_penerima}</span>
+              <span class="text-[11px] text-slate-500 font-semibold">(${addr.nomor_telepon})</span>
+              ${addr.is_utama ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">Utama</span>' : ''}
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-600">${addr.label || 'Alamat'}</span>
+            </div>
+            <p class="text-xs text-slate-600 mt-1 leading-relaxed">${addr.alamat_lengkap}, Kec. ${addr.kecamatan}, Kab. Pamekasan</p>
+          </div>
+        </label>
+      `).join('');
+    }
+
+    function selectAddress(id) {
+      selectedAddressId = id;
+      renderAddresses();
+    }
+
+    async function loadCheckoutCart() {
+      const loading = document.getElementById('checkout-loading');
+      const form = document.getElementById('form-checkout');
+
+      try {
+        const res = await SigarumApi.getCart();
+        loading.classList.add('hidden');
+        if (res.success && res.data && res.data.groups && res.data.groups.length > 0) {
+          checkoutCart = res.data;
+          renderCheckoutGroups(res.data);
+          calculateBill(res.data);
+          form.classList.remove('hidden');
+        } else {
+          alert('Keranjang belanja Anda kosong.');
+          window.location.href = 'keranjang.html';
+        }
+      } catch (err) {
+        console.warn('Checkout cart load error:', err);
+        loading.classList.add('hidden');
+        alert('Gagal memuat keranjang belanja: ' + err.message);
+        window.location.href = 'keranjang.html';
+      }
+    }
+
+    function renderCheckoutGroups(cartData) {
+      const container = document.getElementById('checkout-store-groups');
+      container.innerHTML = cartData.groups.map(group => `
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-200 mb-3">
+            <div class="flex items-center gap-2">
+              <span class="text-base">🏪</span>
+              <span class="font-extrabold text-xs sm:text-sm text-slate-900">${group.nama_umkm}</span>
+              <span class="text-[11px] text-slate-500">• Kec. ${group.kecamatan || 'Pamekasan'}</span>
+            </div>
+            <span class="text-xs font-bold text-ocean-700">${SigarumUtils.formatRupiah(group.subtotal_toko)}</span>
+          </div>
+
+          <div class="space-y-3">
+            ${group.items.map(item => `
+              <div class="flex items-center justify-between text-xs">
+                <div class="flex items-center gap-3">
+                  <img src="${item.foto}" class="w-10 h-10 rounded-xl object-cover border border-slate-200 shrink-0" onerror="this.src='https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80'">
+                  <div>
+                    <h5 class="font-bold text-slate-900 leading-snug">${item.nama_produk}</h5>
+                    <span class="text-[10px] text-slate-400">${item.kuantitas} x ${SigarumUtils.formatRupiah(item.harga)}</span>
+                  </div>
+                </div>
+                <span class="font-bold text-slate-800">${SigarumUtils.formatRupiah(item.subtotal)}</span>
+              </div>
+            `).join('')}
+          </div>
+
+          <!-- Courier Selection for this store -->
+          <div class="mt-4 pt-3 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+            <span class="text-slate-500 font-medium">Jasa Kirim Toko:</span>
+            <select class="px-3 py-1.5 rounded-xl border border-slate-300 text-xs font-semibold text-slate-800 bg-white focus:outline-none">
+              <option value="JNT">J&T Express - Reguler (Rp 12.000)</option>
+              <option value="SICEPAT">SiCepat - Hemat (Rp 12.000)</option>
+              <option value="POS">Pos Indonesia - Kilat Khusus (Rp 12.000)</option>
+              <option value="LOKAL">Kurir Lokal Madura (Rp 12.000)</option>
+            </select>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function calculateBill(cartData) {
+      const storeCount = cartData.groups.length;
+      const totalOngkir = storeCount * SHIPPING_PER_STORE;
+      const subtotal = cartData.subtotal;
+
+      document.getElementById('bill-subtotal').textContent = SigarumUtils.formatRupiah(subtotal);
+      document.getElementById('bill-store-count').textContent = `${storeCount} Toko @ ${SigarumUtils.formatRupiah(SHIPPING_PER_STORE)}`;
+      document.getElementById('bill-shipping').textContent = SigarumUtils.formatRupiah(totalOngkir);
+
+      let discount = 0;
+      if (appliedCoupon) {
+        if (appliedCoupon.tipe_diskon === 'persen') {
+          discount = Math.round((subtotal * appliedCoupon.nilai_diskon) / 100);
+          if (appliedCoupon.maksimal_potongan && discount > appliedCoupon.maksimal_potongan) {
+            discount = appliedCoupon.maksimal_potongan;
+          }
+        } else {
+          discount = appliedCoupon.nilai_diskon;
+        }
+        document.getElementById('bill-discount-row').style.display = 'flex';
+        document.getElementById('bill-discount').textContent = `- ${SigarumUtils.formatRupiah(discount)}`;
+      } else {
+        document.getElementById('bill-discount-row').style.display = 'none';
+      }
+
+      const grandTotal = Math.max(0, subtotal + totalOngkir + SERVICE_FEE - discount);
+      document.getElementById('bill-grandtotal').textContent = SigarumUtils.formatRupiah(grandTotal);
+    }
+
+    // Modal Add Address
+    function openAddAddressModal() {
+      document.getElementById('modal-address').classList.remove('hidden');
+    }
+    function closeAddAddressModal() {
+      document.getElementById('modal-address').classList.add('hidden');
+    }
+
+    document.getElementById('form-new-address').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nama_penerima = document.getElementById('new-addr-name').value.trim();
+      const nomor_telepon = document.getElementById('new-addr-phone').value.trim();
+      const label = document.getElementById('new-addr-label').value.trim() || 'Rumah';
+      const kecamatan = document.getElementById('new-addr-kecamatan').value;
+      const alamat_lengkap = document.getElementById('new-addr-full').value.trim();
+
+      try {
+        const res = await SigarumApi.addAddress({
+          nama_penerima,
+          nomor_telepon,
+          label,
+          kecamatan,
+          alamat_lengkap,
+          is_utama: savedAddresses.length === 0 ? 1 : 0
+        });
+
+        if (res.success && res.data) {
+          savedAddresses.unshift(res.data);
+          selectedAddressId = res.data.id_alamat;
+          renderAddresses();
+          closeAddAddressModal();
+          SigarumUtils.showToast('Alamat baru berhasil ditambahkan!', 'success');
+        }
+      } catch (err) {
+        SigarumUtils.showToast(err.message, 'error');
+      }
+    });
+
+    // Form Checkout Submit
+    document.getElementById('form-checkout').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (!selectedAddressId && savedAddresses.length === 0) {
+        alert('Silakan masukkan alamat pengiriman terlebih dahulu.');
+        openAddAddressModal();
+        return;
+      }
+
+      const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
+      const catatan_pembeli = document.getElementById('catatan-pembeli').value.trim();
+      const submitBtn = document.getElementById('btn-submit-order');
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>Membuat Pesanan...</span>';
+
+      try {
+        const payload = {
+          id_alamat: selectedAddressId,
+          metode_pembayaran: paymentMethod,
+          catatan_pembeli: catatan_pembeli,
+          kode_kupon: appliedCoupon ? appliedCoupon.kode_kupon : null
+        };
+
+        const res = await SigarumApi.checkoutOrder(payload);
+        if (res.success && res.data) {
+          sessionStorage.removeItem('sigarum_applied_coupon');
+          SigarumUtils.showToast('Pesanan berhasil dibuat! Mengarahkan ke pembayaran...', 'success');
+          setTimeout(() => {
+            window.location.href = `pembayaran.html?orderId=${res.data.id_order}&nomorOrder=${res.data.nomor_order}`;
+          }, 800);
+        }
+      } catch (err) {
+        SigarumUtils.showToast(err.message, 'error');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Konfirmasi & Buat Pesanan</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+      }
+    });
+  </script>
+  <script src="assets/js/liquid-background.js"></script>
+</body>
+</html>

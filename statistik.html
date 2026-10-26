@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Statistik & Sebaran Spasial - SIGARUM</title>
+  <!-- Tailwind CSS CDN -->
+  <script>
+    (function(){
+      const origWarn = console.warn;
+      console.warn = function(...args) {
+        if (args[0] && typeof args[0] === 'string' && args[0].indexOf('cdn.tailwindcss.com') !== -1) return;
+        origWarn.apply(console, args);
+      };
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ocean: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e' },
+            navy: { 900: '#0f172a', 950: '#020617' },
+            salt: { 500: '#f59e0b', 600: '#d97706', 700: '#b45309' }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-black text-slate-100 flex flex-col min-h-screen has-liquid-bg">
+  <!-- Fixed Full-Page Liquid Blue Glass Canvas -->
+  <canvas id="liquid-canvas" class="liquid-canvas-fixed"></canvas>
+
+  <!-- Demo Notice Banner -->
+  <div class="demo-banner bg-slate-950/60 backdrop-blur-md border-b border-white/5">
+    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase">
+      Data Demo / Prototype
+    </span>
+    <span class="text-slate-300">SIGARUM WebGIS • Analisis Statistik Potensi Wilayah Pamekasan</span>
+  </div>
+
+  <!-- Navbar -->
+  <header class="sticky top-0 z-50 glass-nav border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center gap-3">
+          <img src="assets/images/logo.svg" alt="SIGARUM Logo" class="w-10 h-10 rounded-xl drop-shadow-md">
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-extrabold text-xl tracking-tight text-slate-900">SIGA<span class="text-ocean-600">RUM</span></span>
+              <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-ocean-100 text-ocean-800 uppercase">WebGIS</span>
+            </div>
+            <p class="text-[11px] text-slate-500 leading-none">Olahan Laut & Garam Pamekasan</p>
+          </div>
+        </a>
+
+        <!-- Desktop Menu -->
+        <nav class="hidden md:flex items-center gap-1 lg:gap-2">
+          <a href="index.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Beranda</a>
+          <a href="peta.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Peta UMKM</a>
+          <a href="umkm.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Data UMKM</a>
+          <a href="produk.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Produk</a>
+          <a href="statistik.html" class="px-3 py-2 rounded-lg text-sm font-semibold text-ocean-700 bg-ocean-50">Statistik</a>
+          <a href="tentang.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Tentang</a>
+        </nav>
+
+        <div id="nav-auth-slot">
+          <a href="login.html" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 shadow-sm transition-all border border-slate-700/50">
+            <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+            <span>Masuk / Login</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Header -->
+  <div class="bg-white border-b border-slate-200 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Statistik & Analisis Spasial</h1>
+          <p class="text-sm text-slate-600 mt-1">Visualisasi metrik kuantitatif dan persebaran geografis UMKM pesisir Kabupaten Pamekasan.</p>
+        </div>
+        <div class="text-xs text-slate-500 bg-slate-100 px-3.5 py-1.5 rounded-lg border border-slate-200">
+          Metode Agregasi: <span class="font-bold text-slate-700">Spatial Grouping SRID 4326</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Section -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 space-y-8">
+    
+    <!-- 5 Utama KPI Cards -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 reveal-on-scroll">
+      
+      <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm card-lift glass-card-hover delay-100">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Total UMKM</span>
+        <div id="stat-total-umkm" class="text-3xl font-extrabold text-slate-900 mt-1" data-counter="18">18</div>
+        <div class="text-[11px] text-slate-500 mt-1">Terdata di sistem WebGIS</div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm card-lift glass-card-hover delay-200">
+        <span class="text-xs font-bold text-ocean-600 uppercase tracking-wider block">Olahan Laut</span>
+        <div id="stat-laut" class="text-3xl font-extrabold text-ocean-600 mt-1" data-counter="10">10</div>
+        <div class="text-[11px] text-slate-500 mt-1">Ikan asin, terasi, petis, dll</div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm card-lift glass-card-hover delay-300">
+        <span class="text-xs font-bold text-salt-600 uppercase tracking-wider block">Sentra Garam</span>
+        <div id="stat-garam" class="text-3xl font-extrabold text-salt-600 mt-1" data-counter="8">8</div>
+        <div class="text-[11px] text-slate-500 mt-1">Tambak garam & konsumsi</div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm card-lift glass-card-hover delay-400">
+        <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider block">Total Produk</span>
+        <div id="stat-produk" class="text-3xl font-extrabold text-emerald-600 mt-1" data-counter="32">32</div>
+        <div class="text-[11px] text-slate-500 mt-1">Varian produk terdaftar</div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm col-span-2 sm:col-span-1 card-lift glass-card-hover delay-500">
+        <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider block">Kecamatan Aktif</span>
+        <div id="stat-kecamatan" class="text-3xl font-extrabold text-indigo-600 mt-1" data-counter="6">6</div>
+        <div class="text-[11px] text-slate-500 mt-1">Kecamatan pesisir Pamekasan</div>
+      </div>
+
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 reveal-on-scroll delay-200">
+      
+      <!-- Chart 1: Sebaran UMKM Berdasarkan Kategori -->
+      <div class="lg:col-span-4 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm card-lift flex flex-col justify-between">
+        <div>
+          <h3 class="text-sm font-bold text-slate-900">Proporsi Kategori UMKM</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Perbandingan persentase Olahan Laut vs Sentra Garam</p>
+        </div>
+        <div class="h-64 relative mt-4">
+          <canvas id="chart-kategori"></canvas>
+        </div>
+        <div class="text-[11px] text-slate-400 text-center mt-3 pt-3 border-t border-slate-100">
+          Mayoritas UMKM bergerak pada bidang hilirisasi hasil tangkapan laut.
+        </div>
+      </div>
+
+      <!-- Chart 2: Sebaran UMKM per Kecamatan -->
+      <div class="lg:col-span-8 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">Persebaran UMKM Berdasarkan Wilayah Kecamatan</h3>
+            <p class="text-xs text-slate-500 mt-0.5">Jumlah unit usaha pada masing-masing kecamatan pesisir</p>
+          </div>
+          <span class="text-[11px] font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md">
+            Pamekasan Madura
+          </span>
+        </div>
+        <div class="h-64 relative mt-4">
+          <canvas id="chart-kecamatan"></canvas>
+        </div>
+        <div class="text-[11px] text-slate-400 text-center mt-3 pt-3 border-t border-slate-100">
+          Kecamatan Pademawu dan Tlanakan mendominasi konsentrasi kluster UMKM pesisir selatan.
+        </div>
+      </div>
+
+      <!-- Chart 3: Proporsi Produk per Kategori -->
+      <div class="lg:col-span-6 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+        <h3 class="text-sm font-bold text-slate-900">Komposisi Katalog Produk</h3>
+        <p class="text-xs text-slate-500 mt-0.5">Distribusi varian produk olahan laut dibanding olahan garam</p>
+        <div class="h-60 relative mt-4">
+          <canvas id="chart-produk"></canvas>
+        </div>
+      </div>
+
+      <!-- Chart 4: Status Operasional UMKM (Aktif vs Nonaktif) -->
+      <div class="lg:col-span-6 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+        <h3 class="text-sm font-bold text-slate-900">Status Operasional Usaha (BR-07 & BR-08)</h3>
+        <p class="text-xs text-slate-500 mt-0.5">Tingkat verifikasi keaktifan legalitas dan operasional UMKM</p>
+        <div class="h-60 relative mt-4">
+          <canvas id="chart-status"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Spatial Analysis Table Breakdown per Kecamatan -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+        <div>
+          <h3 class="text-base font-bold text-slate-900">Tabel Analisis Persebaran Spasial Wilayah</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Breakdown potensi komoditas dan jumlah UMKM per kecamatan pesisir</p>
+        </div>
+        <a href="peta.html" class="text-xs font-bold text-ocean-600 hover:text-ocean-700 flex items-center gap-1">
+          Lihat di Peta WebGIS &rarr;
+        </a>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs sm:text-sm">
+          <thead>
+            <tr class="bg-slate-50/80 border-b border-slate-200 text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">
+              <th class="py-3.5 px-6">Kecamatan</th>
+              <th class="py-3.5 px-6">Klasifikasi Kawasan Pesisir</th>
+              <th class="py-3.5 px-4 text-center">Olahan Laut</th>
+              <th class="py-3.5 px-4 text-center">Garam</th>
+              <th class="py-3.5 px-4 text-center">Total UMKM</th>
+              <th class="py-3.5 px-6">Komoditas Unggulan</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr class="hover:bg-slate-50">
+              <td class="py-4 px-6 font-bold text-slate-900">Pademawu</td>
+              <td class="py-4 px-6 text-slate-600 text-xs">Pantai Selatan & Sentra Garam Rakyat</td>
+              <td class="py-4 px-4 text-center font-bold text-ocean-600">2</td>
+              <td class="py-4 px-4 text-center font-bold text-salt-600">3</td>
+              <td class="py-4 px-4 text-center font-extrabold text-slate-900">5</td>
+              <td class="py-4 px-6 text-xs text-slate-600">Garam Krosok, Kerupuk Terung, Salt Spa, Garam Pure</td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+              <td class="py-4 px-6 font-bold text-slate-900">Tlanakan</td>
+              <td class="py-4 px-6 text-slate-600 text-xs">Pelabuhan Pendaratan Ikan (PPI Branta)</td>
+              <td class="py-4 px-4 text-center font-bold text-ocean-600">4</td>
+              <td class="py-4 px-4 text-center font-bold text-salt-600">0</td>
+              <td class="py-4 px-4 text-center font-extrabold text-slate-900">4</td>
+              <td class="py-4 px-6 text-xs text-slate-600">Terasi Rebon, Petis Cakalang, Teri Nasi Tawar, Rengginang Lorjuk</td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+              <td class="py-4 px-6 font-bold text-slate-900">Galis</td>
+              <td class="py-4 px-6 text-slate-600 text-xs">Tambak Garam Kristal Pesisir Tenggara</td>
+              <td class="py-4 px-4 text-center font-bold text-ocean-600">0</td>
+              <td class="py-4 px-4 text-center font-bold text-salt-600">4</td>
+              <td class="py-4 px-4 text-center font-extrabold text-slate-900">4</td>
+              <td class="py-4 px-6 text-xs text-slate-600">Garam Halus Meja, Garam Industri, Salt Lick Pakan Sapi</td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+              <td class="py-4 px-6 font-bold text-slate-900">Pasean</td>
+              <td class="py-4 px-6 text-slate-600 text-xs">Pantai Utara (Laut Jawa) & Perikanan Tangkap</td>
+              <td class="py-4 px-4 text-center font-bold text-ocean-600">2</td>
+              <td class="py-4 px-4 text-center font-bold text-salt-600">0</td>
+              <td class="py-4 px-4 text-center font-extrabold text-slate-900">2</td>
+              <td class="py-4 px-6 text-xs text-slate-600">Abon Tongkol, Cumi Asin, Teri Belah Tawar, Dendeng Ikan</td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+              <td class="py-4 px-6 font-bold text-slate-900">Batumarmar</td>
+              <td class="py-4 px-6 text-slate-600 text-xs">Pesisir Utara Berkarang & Kerupuk Ikan</td>
+              <td class="py-4 px-4 text-center font-bold text-ocean-600">1</td>
+              <td class="py-4 px-4 text-center font-bold text-salt-600">0</td>
+              <td class="py-4 px-4 text-center font-extrabold text-slate-900">1</td>
+              <td class="py-4 px-6 text-xs text-slate-600">Kerupuk Udang Pesisir, Ikan Asin Layang Belah</td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+              <td class="py-4 px-6 font-bold text-slate-900">Larangan</td>
+              <td class="py-4 px-6 text-slate-600 text-xs">Pesisir Timur (Pantai Talang Siring)</td>
+              <td class="py-4 px-4 text-center font-bold text-ocean-600">1</td>
+              <td class="py-4 px-4 text-center font-bold text-salt-600">1</td>
+              <td class="py-4 px-4 text-center font-extrabold text-slate-900">2</td>
+              <td class="py-4 px-6 text-xs text-slate-600">Ikan Cucut Asap Talang Siring, Garam Tambak Tanjung Mas</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-auto bg-slate-900 text-slate-400 text-sm border-t border-slate-800 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs">
+      <div>&copy; 2026 SIGARUM WebGIS • Data Demo Simulasi Pamekasan</div>
+      <div class="mt-2 sm:mt-0 flex gap-4">
+        <a href="peta.html" class="hover:text-white">Peta Interaktif</a>
+        <a href="umkm.html" class="hover:text-white">Data UMKM</a>
+        <a href="login.html" class="hover:text-white">Portal Masuk</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/charts.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Populate top KPIs and trigger rolling counter animations
+      const stats = SigarumStore.getStats();
+      const elTotal = document.getElementById('stat-total-umkm');
+      const elLaut = document.getElementById('stat-laut');
+      const elGaram = document.getElementById('stat-garam');
+      const elProduk = document.getElementById('stat-produk');
+      const elKec = document.getElementById('stat-kecamatan');
+
+      if (elTotal) elTotal.dataset.counter = stats.totalUMKM || 18;
+      if (elLaut) elLaut.dataset.counter = stats.totalLaut || 10;
+      if (elGaram) elGaram.dataset.counter = stats.totalGaram || 8;
+      if (elProduk) elProduk.dataset.counter = stats.totalProduk || 32;
+      if (elKec) elKec.dataset.counter = stats.totalKecamatan || 6;
+
+      setTimeout(() => {
+        SigarumAnimations.animateCounter(elTotal, true);
+        SigarumAnimations.animateCounter(elLaut, true);
+        SigarumAnimations.animateCounter(elGaram, true);
+        SigarumAnimations.animateCounter(elProduk, true);
+        SigarumAnimations.animateCounter(elKec, true);
+      }, 100);
+
+      // 2. Render Charts
+      SigarumCharts.renderKategoriChart('chart-kategori');
+      SigarumCharts.renderKecamatanChart('chart-kecamatan');
+      SigarumCharts.renderProdukChart('chart-produk');
+      SigarumCharts.renderStatusChart('chart-status');
+    });
+  </script>
+  <script src="assets/js/liquid-background.js"></script>
+</body>
+</html>

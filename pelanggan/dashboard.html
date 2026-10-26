@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Pelanggan - SIGARUM E-Commerce & WebGIS</title>
+  <!-- Tailwind CSS CDN -->
+  <script>
+    (function(){
+      const origWarn = console.warn;
+      console.warn = function(...args) {
+        if (args[0] && typeof args[0] === 'string' && args[0].indexOf('cdn.tailwindcss.com') !== -1) return;
+        origWarn.apply(console, args);
+      };
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ocean: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e' },
+            navy: { 900: '#0f172a', 950: '#020617' },
+            salt: { 500: '#f59e0b', 600: '#d97706', 700: '#b45309' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="bg-black text-slate-100 min-h-screen flex flex-col justify-between selection:bg-ocean-500 selection:text-white has-liquid-bg">
+  <!-- Fixed Full-Page Liquid Blue Glass Canvas -->
+  <canvas id="liquid-canvas" class="liquid-canvas-fixed"></canvas>
+
+  <!-- Navbar Pelanggan -->
+  <header class="glass-nav border-b border-white/10 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Brand -->
+        <a href="../index.html" class="flex items-center gap-3 group">
+          <img src="../assets/images/logo.svg" alt="SIGARUM Logo" class="w-10 h-10 rounded-xl group-hover:scale-105 transition-transform drop-shadow-md">
+          <div>
+            <span class="font-extrabold text-slate-900 text-lg tracking-tight">SIGA<span class="text-ocean-600">RUM</span></span>
+            <span class="text-[10px] text-emerald-600 block -mt-1 font-bold uppercase tracking-wider">Portal Pembeli</span>
+          </div>
+        </a>
+
+        <!-- Main Nav -->
+        <nav class="hidden md:flex items-center gap-1 text-xs font-semibold">
+          <a href="../index.html" class="px-3 py-2 rounded-lg text-slate-600 hover:text-ocean-600 hover:bg-slate-100 transition-colors">Beranda</a>
+          <a href="../peta.html" class="px-3 py-2 rounded-lg text-slate-600 hover:text-ocean-600 hover:bg-slate-100 transition-colors flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            Peta WebGIS
+          </a>
+          <a href="../produk.html" class="px-3 py-2 rounded-lg text-slate-600 hover:text-ocean-600 hover:bg-slate-100 transition-colors">Katalog Produk</a>
+          <a href="../umkm.html" class="px-3 py-2 rounded-lg text-slate-600 hover:text-ocean-600 hover:bg-slate-100 transition-colors">Direktori UMKM</a>
+        </nav>
+
+        <!-- Cart Button & User Pill -->
+        <div class="flex items-center gap-3">
+          <!-- Cart Icon -->
+          <a href="../keranjang.html" class="relative p-2 text-slate-600 hover:text-ocean-600 rounded-xl hover:bg-slate-100 transition-colors" title="Keranjang Belanja">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+            <span id="nav-cart-badge" class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-ocean-600 text-white text-[9px] font-black flex items-center justify-center">0</span>
+          </a>
+
+          <div class="flex items-center gap-2.5 px-3 py-1.5 rounded-2xl bg-slate-100 border border-slate-200">
+            <div id="customer-avatar" class="w-7 h-7 rounded-xl bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-sm">
+              PL
+            </div>
+            <div class="leading-tight hidden sm:block">
+              <span id="customer-name" class="block text-xs font-bold text-slate-800 truncate max-w-[130px]">Pelanggan</span>
+              <span class="text-[10px] text-emerald-600 font-semibold block">Pembeli Terdaftar</span>
+            </div>
+          </div>
+
+          <button type="button" onclick="handleLogout()" class="px-3 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-xl transition-colors flex items-center gap-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+            <span class="hidden sm:inline">Keluar</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    
+    <!-- Welcome Hero Card with Unified Liquid Blue Glass -->
+    <div class="rounded-3xl p-6 sm:p-8 liquid-glass text-white shadow-2xl relative overflow-hidden border border-white/10">
+      <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 mb-3 backdrop-blur-md">
+            <span>🛍️</span>
+            <span>Dashboard Pembeli SIGARUM</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Halo, <span id="welcome-customer-name" class="text-sky-300">Pelanggan</span>!</h1>
+          <p class="text-slate-300 text-xs sm:text-sm mt-1.5 max-w-2xl leading-relaxed">
+            Pantau status pesanan, pembayaran, pengiriman paket, dan berikan ulasan komoditas pesisir Pamekasan secara langsung dan aman.
+          </p>
+        </div>
+
+        <!-- Quick Summary Badges with Liquid Glass -->
+        <div class="grid grid-cols-3 gap-2.5 shrink-0 text-center">
+          <div class="bg-black/40 backdrop-blur-md p-3.5 rounded-2xl border border-white/10 min-w-[90px] shadow-lg">
+            <span id="stat-total-orders" class="text-xl sm:text-2xl font-black text-white block">0</span>
+            <span class="text-[10px] text-slate-300 font-medium">Pesanan</span>
+          </div>
+          <div class="bg-black/40 backdrop-blur-md p-3.5 rounded-2xl border border-white/10 min-w-[90px] shadow-lg">
+            <span id="stat-pending-orders" class="text-xl sm:text-2xl font-black text-amber-300 block">0</span>
+            <span class="text-[10px] text-slate-300 font-medium">Perlu Bayar</span>
+          </div>
+          <div class="bg-black/40 backdrop-blur-md p-3.5 rounded-2xl border border-white/10 min-w-[90px] shadow-lg">
+            <span id="stat-fav-products" class="text-xl sm:text-2xl font-black text-sky-300 block">0</span>
+            <span class="text-[10px] text-slate-300 font-medium">Favorit</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="flex items-center gap-2 border-b border-slate-200 overflow-x-auto pb-1 text-xs sm:text-sm font-semibold">
+      <button type="button" onclick="switchCustomerTab('pesanan')" id="tab-btn-pesanan" class="px-4 py-2.5 border-b-2 border-ocean-600 text-ocean-600 font-bold flex items-center gap-2 transition-all">
+        <span>📦</span>
+        <span>Pesanan Saya</span>
+      </button>
+
+      <button type="button" onclick="switchCustomerTab('favorit')" id="tab-btn-favorit" class="px-4 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 transition-all">
+        <span>⭐</span>
+        <span>Wishlist Favorit</span>
+      </button>
+
+      <button type="button" onclick="switchCustomerTab('alamat')" id="tab-btn-alamat" class="px-4 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 transition-all">
+        <span>📍</span>
+        <span>Buku Alamat</span>
+      </button>
+
+      <button type="button" onclick="switchCustomerTab('profil')" id="tab-btn-profil" class="px-4 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 transition-all">
+        <span>👤</span>
+        <span>Profil & Keamanan</span>
+      </button>
+    </div>
+
+    <!-- 1. TAB: PESANAN SAYA -->
+    <section id="sec-pesanan" class="space-y-5">
+      
+      <!-- Sub-filter buttons -->
+      <div class="flex flex-wrap items-center gap-2">
+        <button type="button" onclick="filterOrderStatus('Semua')" id="btn-status-all" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white transition-colors">
+          Semua
+        </button>
+        <button type="button" onclick="filterOrderStatus('Menunggu_Pembayaran')" id="btn-status-pending" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">
+          Menunggu Pembayaran
+        </button>
+        <button type="button" onclick="filterOrderStatus('Diproses')" id="btn-status-process" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">
+          Diproses Penjual
+        </button>
+        <button type="button" onclick="filterOrderStatus('Dalam_Pengiriman')" id="btn-status-shipping" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">
+          Dalam Pengiriman
+        </button>
+        <button type="button" onclick="filterOrderStatus('Selesai')" id="btn-status-done" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">
+          Selesai
+        </button>
+      </div>
+
+      <!-- Orders Container -->
+      <div id="orders-container" class="space-y-4">
+        <div class="py-12 text-center text-slate-400 text-xs">
+          Memuat riwayat transaksi pesanan Anda...
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 2. TAB: WISHLIST FAVORIT -->
+    <section id="sec-favorit" class="space-y-4 hidden">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold text-slate-900">Daftar Produk Favorit (Wishlist)</h2>
+          <p class="text-xs text-slate-500">Produk yang telah Anda tandai untuk dipesan</p>
+        </div>
+        <a href="../produk.html" class="inline-flex items-center gap-1 text-xs font-bold text-ocean-600 hover:text-ocean-700">
+          <span>+ Eksplor Produk Lain</span>
+        </a>
+      </div>
+
+      <div id="favorit-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- 3. TAB: BUKU ALAMAT PENGIRIMAN -->
+    <section id="sec-alamat" class="space-y-4 hidden">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold text-slate-900">Buku Alamat Pengiriman</h2>
+          <p class="text-xs text-slate-500">Kelola tujuan pengiriman paket pesanan Anda di Kab. Pamekasan dan sekitarnya</p>
+        </div>
+        <button type="button" onclick="openAddAddressModal()" class="px-3.5 py-2 rounded-xl bg-ocean-600 hover:bg-ocean-700 text-white text-xs font-bold shadow-sm transition-colors">
+          + Tambah Alamat Baru
+        </button>
+      </div>
+
+      <div id="addresses-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- 4. TAB: PROFIL & KEAMANAN -->
+    <section id="sec-profil" class="space-y-6 hidden">
+      <div class="max-w-xl mx-auto bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-5">
+        <div>
+          <h2 class="text-base font-bold text-slate-900">Profil & Data Akun</h2>
+          <p class="text-xs text-slate-500">Perbarui identitas profil dan kontak telepon Anda</p>
+        </div>
+
+        <form id="form-profile-update" class="space-y-4 text-xs" onsubmit="handleUpdateProfile(event)">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Nama Lengkap</label>
+            <input type="text" id="prof-nama" required class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Username (ID Akun)</label>
+            <input type="text" id="prof-username" readonly class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-100 text-slate-500 cursor-not-allowed">
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Alamat Email</label>
+            <input type="email" id="prof-email" required class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Nomor WhatsApp</label>
+            <input type="tel" id="prof-telepon" class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none">
+          </div>
+
+          <button type="submit" class="w-full py-3 rounded-xl bg-ocean-600 hover:bg-ocean-700 text-white font-bold text-xs shadow-sm transition-colors">
+            Simpan Perubahan Profil
+          </button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal Beri Ulasan & Rating Produk -->
+  <div id="modal-review" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+        <h3 class="font-bold text-slate-900 text-base">Beri Ulasan Produk</h3>
+        <button type="button" onclick="closeReviewModal()" class="text-slate-400 hover:text-slate-600">✕</button>
+      </div>
+
+      <form id="form-submit-review" class="space-y-4 text-xs" onsubmit="handleSubmitReview(event)">
+        <input type="hidden" id="rev-product-id">
+        <input type="hidden" id="rev-order-id">
+        <input type="hidden" id="rev-store-id">
+
+        <div>
+          <span class="text-[11px] text-slate-400 block font-semibold">Produk yang diulas:</span>
+          <h4 id="rev-product-name" class="text-sm font-extrabold text-slate-900 mt-0.5">-</h4>
+        </div>
+
+        <!-- Star Picker -->
+        <div>
+          <label class="block font-bold text-slate-700 mb-1.5">Penilaian Anda (Bintang 1 - 5):</label>
+          <div class="flex items-center gap-2" id="star-picker">
+            <button type="button" onclick="setStarRating(1)" class="text-2xl text-slate-300 hover:text-amber-400 transition-colors star-btn" data-val="1">★</button>
+            <button type="button" onclick="setStarRating(2)" class="text-2xl text-slate-300 hover:text-amber-400 transition-colors star-btn" data-val="2">★</button>
+            <button type="button" onclick="setStarRating(3)" class="text-2xl text-slate-300 hover:text-amber-400 transition-colors star-btn" data-val="3">★</button>
+            <button type="button" onclick="setStarRating(4)" class="text-2xl text-slate-300 hover:text-amber-400 transition-colors star-btn" data-val="4">★</button>
+            <button type="button" onclick="setStarRating(5)" class="text-2xl text-amber-400 hover:text-amber-400 transition-colors star-btn" data-val="5">★</button>
+            <span id="star-label" class="text-xs font-bold text-amber-600 ml-2">5 Bintang (Sangat Puas)</span>
+          </div>
+          <input type="hidden" id="rev-rating" value="5">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Ulasan / Testimoni Anda</label>
+          <textarea id="rev-comment" required rows="3" placeholder="Ceritakan kualitas komoditas, kemasan, dan kecepatan pengiriman..." class="w-full text-xs p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none"></textarea>
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeReviewModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold">
+            Batal
+          </button>
+          <button type="submit" id="btn-save-review" class="px-5 py-2.5 rounded-xl bg-ocean-600 hover:bg-ocean-700 text-white font-bold">
+            Kirim Ulasan
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Tambah Alamat Baru -->
+  <div id="modal-address" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+        <h3 class="font-bold text-slate-900 text-base">Tambah Alamat Pengiriman Baru</h3>
+        <button type="button" onclick="closeAddAddressModal()" class="text-slate-400 hover:text-slate-600">✕</button>
+      </div>
+
+      <form id="form-new-address" class="space-y-3.5 text-xs" onsubmit="handleSaveAddress(event)">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Nama Penerima</label>
+          <input type="text" id="new-addr-name" required placeholder="Contoh: Achmad Subarjo" class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">No. WhatsApp</label>
+            <input type="tel" id="new-addr-phone" required placeholder="+62 8..." class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Label Alamat</label>
+            <input type="text" id="new-addr-label" placeholder="Rumah / Kantor" class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Kecamatan</label>
+          <select id="new-addr-kecamatan" class="w-full text-xs px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none bg-white">
+            <option value="Pademawu">Pademawu</option>
+            <option value="Tlanakan">Tlanakan</option>
+            <option value="Galis">Galis</option>
+            <option value="Larangan">Larangan</option>
+            <option value="Pasean">Pasean</option>
+            <option value="Batumarmar">Batumarmar</option>
+            <option value="Pamekasan Kota">Pamekasan Kota</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Alamat Lengkap & Patokan</label>
+          <textarea id="new-addr-full" required rows="3" placeholder="Jl. Raya No..., RT/RW, Dusun, Desa..." class="w-full text-xs p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none"></textarea>
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeAddAddressModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold">
+            Batal
+          </button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-ocean-600 hover:bg-ocean-700 text-white font-bold">
+            Simpan Alamat
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="py-4 text-center text-xs text-slate-500 border-t border-slate-200 bg-white">
+    &copy; 2026 SIGARUM WebGIS & E-Commerce • Sistem Perlindungan Transaksi Pembeli
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let currentUser = null;
+    let customerOrders = [];
+    let currentFilterStatus = 'Semua';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      currentUser = SigarumStore.getCurrentUser();
+      if (!currentUser) {
+        window.location.href = '../login.html?redirect=pelanggan/dashboard.html';
+        return;
+      }
+
+      document.getElementById('customer-name').textContent = currentUser.nama;
+      document.getElementById('welcome-customer-name').textContent = currentUser.nama;
+      document.getElementById('customer-avatar').textContent = (currentUser.nama || 'P').substring(0, 2).toUpperCase();
+
+      document.getElementById('prof-nama').value = currentUser.nama || '';
+      document.getElementById('prof-username').value = currentUser.username || '';
+      document.getElementById('prof-email').value = currentUser.email || '';
+      document.getElementById('prof-telepon').value = currentUser.nomor_telepon || '';
+
+      await Promise.all([loadOrders(), loadAddresses(), loadCartCount()]);
+      renderFavorites();
+    });
+
+    function switchCustomerTab(tab) {
+      const tabs = ['pesanan', 'favorit', 'alamat', 'profil'];
+      tabs.forEach(t => {
+        const btn = document.getElementById('tab-btn-' + t);
+        const sec = document.getElementById('sec-' + t);
+        if (t === tab) {
+          btn.className = 'px-4 py-2.5 border-b-2 border-ocean-600 text-ocean-600 font-bold flex items-center gap-2 transition-all';
+          sec.classList.remove('hidden');
+        } else {
+          btn.className = 'px-4 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 transition-all';
+          sec.classList.add('hidden');
+        }
+      });
+    }
+
+    async function loadCartCount() {
+      try {
+        const res = await SigarumApi.getCart();
+        if (res.success && res.data) {
+          document.getElementById('nav-cart-badge').textContent = res.data.total_items || 0;
+        }
+      } catch {}
+    }
+
+    async function loadOrders() {
+      const container = document.getElementById('orders-container');
+      try {
+        const res = await SigarumApi.getOrders();
+        customerOrders = (res && res.data) || [];
+
+        document.getElementById('stat-total-orders').textContent = customerOrders.length;
+        const pendingCount = customerOrders.filter(o => o.status_pembayaran === 'Menunggu_Pembayaran').length;
+        document.getElementById('stat-pending-orders').textContent = pendingCount;
+
+        renderOrders();
+      } catch (err) {
+        container.innerHTML = `
+          <div class="p-8 text-center bg-white rounded-3xl border border-slate-200 text-xs text-rose-600">
+            Gagal memuat pesanan: ${err.message}
+          </div>
+        `;
+      }
+    }
+
+    function filterOrderStatus(status) {
+      currentFilterStatus = status;
+      const btns = {
+        'Semua': 'btn-status-all',
+        'Menunggu_Pembayaran': 'btn-status-pending',
+        'Diproses': 'btn-status-process',
+        'Dalam_Pengiriman': 'btn-status-shipping',
+        'Selesai': 'btn-status-done'
+      };
+
+      Object.keys(btns).forEach(s => {
+        const btn = document.getElementById(btns[s]);
+        if (s === status) {
+          btn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white transition-colors';
+        } else {
+          btn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors';
+        }
+      });
+
+      renderOrders();
+    }
+
+    function renderOrders() {
+      const container = document.getElementById('orders-container');
+      let filtered = customerOrders;
+      if (currentFilterStatus !== 'Semua') {
+        filtered = customerOrders.filter(o => o.status_pesanan === currentFilterStatus || o.status_pembayaran === currentFilterStatus);
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="py-16 text-center bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
+            <span class="text-4xl block mb-2">🛍️</span>
+            <h3 class="text-base font-bold text-slate-800">Tidak Ada Pesanan Ditemukan</h3>
+            <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Anda belum memiliki transaksi pada status ini. Beli beragam hasil olahan laut segar dan garam khas Pamekasan sekarang!</p>
+            <a href="../produk.html" class="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-ocean-600 text-white font-bold text-xs hover:bg-ocean-700 transition-colors">
+              Mulai Belanja &rarr;
+            </a>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(order => {
+        const isPending = order.status_pembayaran === 'Menunggu_Pembayaran';
+        const isVerifying = order.status_pembayaran === 'Menunggu_Verifikasi';
+        const isPaid = order.status_pembayaran === 'Dibayar';
+        const isDone = order.status_pesanan === 'Selesai';
+
+        let badgeClass = 'bg-amber-100 text-amber-800 border-amber-200';
+        let badgeLabel = 'Menunggu Pembayaran';
+        if (isVerifying) {
+          badgeClass = 'bg-sky-100 text-sky-800 border-sky-200';
+          badgeLabel = 'Menunggu Verifikasi Admin';
+        } else if (order.status_pesanan === 'Selesai') {
+          badgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-200';
+          badgeLabel = 'Pesanan Selesai';
+        } else if (order.status_pesanan === 'Dalam_Pengiriman') {
+          badgeClass = 'bg-indigo-100 text-indigo-800 border-indigo-200';
+          badgeLabel = 'Dalam Pengiriman';
+        } else if (order.status_pesanan === 'Diproses') {
+          badgeClass = 'bg-blue-100 text-blue-800 border-blue-200';
+          badgeLabel = 'Diproses Penjual';
+        }
+
+        const subOrders = order.sub_orders || [];
+
+        return `
+          <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden p-5 sm:p-6 space-y-4">
+            
+            <!-- Order Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2">
+              <div>
+                <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">ID Transaksi:</span>
+                <span class="text-sm font-extrabold text-slate-900 font-mono">${order.nomor_order}</span>
+                <span class="text-[11px] text-slate-500 ml-2">${order.created_at || 'Baru saja'}</span>
+              </div>
+              <span class="px-3 py-1 rounded-full text-xs font-bold border uppercase tracking-wider self-start sm:self-auto ${badgeClass}">
+                ${badgeLabel}
+              </span>
+            </div>
+
+            <!-- Sub-orders per Toko UMKM -->
+            <div class="space-y-3">
+              ${subOrders.length > 0 ? subOrders.map(sub => `
+                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-2">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-extrabold text-slate-800 flex items-center gap-1.5">
+                      <span>🏪</span> ${sub.nama_umkm || 'Mitra UMKM'}
+                    </span>
+                    <span class="text-[11px] font-semibold text-ocean-700">Sub-Status: ${sub.status_sub_order}</span>
+                  </div>
+
+                  ${sub.nomor_resi ? `
+                    <div class="p-2 bg-emerald-50 rounded-xl border border-emerald-200/60 text-[11px] text-emerald-900 flex items-center justify-between">
+                      <span>Resi Pengiriman (${sub.kurir || 'Kurir'}): <strong class="font-mono">${sub.nomor_resi}</strong></span>
+                      <span class="text-[10px] font-bold uppercase text-emerald-700">Paket Terlacak</span>
+                    </div>
+                  ` : ''}
+
+                  <!-- Items in sub-order -->
+                  <div class="space-y-1.5 pt-1">
+                    ${(sub.items || []).map(item => `
+                      <div class="flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2">
+                          <img src="${item.foto_snapshot || 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=200&q=80'}" class="w-8 h-8 rounded-lg object-cover border border-slate-200">
+                          <div>
+                            <span class="font-bold text-slate-900 block leading-tight">${item.nama_produk_snapshot}</span>
+                            <span class="text-[10px] text-slate-400">${item.kuantitas} x ${SigarumUtils.formatRupiah(item.harga_snapshot)}</span>
+                          </div>
+                        </div>
+
+                        ${isDone ? `
+                          <button type="button" onclick="openReviewModal(${item.id_produk}, ${order.id_order}, ${sub.id_umkm}, '${item.nama_produk_snapshot.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 text-[11px] font-bold border border-amber-200 transition-colors">
+                            ★ Beri Ulasan
+                          </button>
+                        ` : ''}
+                      </div>
+                    `).join('')}
+                  </div>
+
+                  ${sub.status_sub_order === 'Dalam_Pengiriman' ? `
+                    <div class="pt-2 text-right">
+                      <button type="button" onclick="handleConfirmReceived(${sub.id_sub_order})" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition-colors">
+                        Konfirmasi Barang Diterima ✓
+                      </button>
+                    </div>
+                  ` : ''}
+                </div>
+              `).join('') : '<p class="text-xs text-slate-400">Rincian produk tersimpan di invoice.</p>'}
+            </div>
+
+            <!-- Order Footer & Action -->
+            <div class="pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <span class="text-[10px] text-slate-400 font-semibold block uppercase">Total Tagihan Transaksi:</span>
+                <span class="text-base sm:text-lg font-black text-ocean-700">${SigarumUtils.formatRupiah(order.total_tagihan)}</span>
+                <span class="text-[11px] text-slate-500 ml-1">(${order.metode_pembayaran})</span>
+              </div>
+
+              <div class="flex items-center gap-2">
+                ${isPending ? `
+                  <a href="../pembayaran.html?orderId=${order.id_order}&nomorOrder=${order.nomor_order}" class="px-4 py-2 rounded-xl bg-gradient-to-r from-ocean-600 to-sky-600 hover:from-ocean-700 hover:to-sky-700 text-white font-bold text-xs shadow-md transition-all flex items-center gap-1.5">
+                    <span>Bayar / Unggah Bukti</span>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                  </a>
+                ` : `
+                  <a href="../pembayaran.html?orderId=${order.id_order}&nomorOrder=${order.nomor_order}" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition-colors">
+                    Lihat Bukti Bayar
+                  </a>
+                `}
+              </div>
+            </div>
+
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function handleConfirmReceived(subOrderId) {
+      if (!confirm('Apakah pesanan ini benar-benar sudah Anda terima dengan baik?')) return;
+      try {
+        const res = await SigarumApi.confirmReceived(subOrderId);
+        if (res.success) {
+          SigarumUtils.showToast('Barang berhasil dikonfirmasi diterima! Terima kasih.', 'success');
+          loadOrders();
+        }
+      } catch (err) {
+        SigarumUtils.showToast(err.message, 'error');
+      }
+    }
+
+    // REVIEW MODAL
+    function openReviewModal(prodId, orderId, storeId, prodName) {
+      document.getElementById('rev-product-id').value = prodId;
+      document.getElementById('rev-order-id').value = orderId;
+      document.getElementById('rev-store-id').value = storeId;
+      document.getElementById('rev-product-name').textContent = prodName;
+      setStarRating(5);
+      document.getElementById('modal-review').classList.remove('hidden');
+    }
+    function closeReviewModal() {
+      document.getElementById('modal-review').classList.add('hidden');
+    }
+
+    function setStarRating(val) {
+      document.getElementById('rev-rating').value = val;
+      const labels = {
+        1: '1 Bintang (Kecewa)',
+        2: '2 Bintang (Kurang Puas)',
+        3: '3 Bintang (Cukup Baik)',
+        4: '4 Bintang (Puas)',
+        5: '5 Bintang (Sangat Puas)'
+      };
+      document.getElementById('star-label').textContent = labels[val];
+      document.querySelectorAll('.star-btn').forEach(btn => {
+        const btnVal = parseInt(btn.getAttribute('data-val'));
+        if (btnVal <= val) {
+          btn.className = 'text-2xl text-amber-400 hover:text-amber-400 transition-colors star-btn';
+        } else {
+          btn.className = 'text-2xl text-slate-300 hover:text-amber-400 transition-colors star-btn';
+        }
+      });
+    }
+
+    async function handleSubmitReview(e) {
+      e.preventDefault();
+      const id_produk = document.getElementById('rev-product-id').value;
+      const id_order = document.getElementById('rev-order-id').value;
+      const rating = document.getElementById('rev-rating').value;
+      const komentar = document.getElementById('rev-comment').value.trim();
+      const btn = document.getElementById('btn-save-review');
+
+      btn.disabled = true;
+      btn.textContent = 'Mengirim...';
+
+      try {
+        const res = await SigarumApi.submitReview({
+          id_produk,
+          id_order,
+          rating,
+          komentar
+        });
+        if (res.success) {
+          SigarumUtils.showToast('Ulasan dan rating bintang berhasil dikirim! Terima kasih.', 'success');
+          closeReviewModal();
+          loadOrders();
+        }
+      } catch (err) {
+        SigarumUtils.showToast(err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Kirim Ulasan';
+      }
+    }
+
+    // ADDRESSES
+    async function loadAddresses() {
+      const container = document.getElementById('addresses-grid');
+      try {
+        const res = await SigarumApi.getAddresses();
+        const list = (res && res.data) || [];
+
+        if (list.length === 0) {
+          container.innerHTML = `
+            <div class="col-span-full p-8 text-center bg-white rounded-3xl border border-slate-200">
+              <span class="text-3xl block mb-2">📍</span>
+              <h4 class="font-bold text-slate-800 text-sm">Belum Ada Alamat Tersimpan</h4>
+              <p class="text-xs text-slate-500 mt-1">Tambahkan alamat untuk mempermudah pengiriman pesanan Anda.</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = list.map(a => `
+          <div class="bg-white rounded-2xl p-5 border ${a.is_utama ? 'border-ocean-600 bg-ocean-50/10' : 'border-slate-200'} shadow-sm space-y-3 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="font-extrabold text-slate-900 text-sm">${a.nama_penerima}</span>
+                ${a.is_utama ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">Alamat Utama</span>' : ''}
+              </div>
+              <div class="text-xs text-slate-500 font-semibold mt-0.5">${a.nomor_telepon} &bull; ${a.label || 'Alamat'}</div>
+              <p class="text-xs text-slate-600 mt-2 leading-relaxed">${a.alamat_lengkap}, Kec. ${a.kecamatan}, Kab. Pamekasan</p>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2 text-xs">
+              <button type="button" onclick="deleteAddress(${a.id_alamat})" class="text-rose-600 hover:underline">Hapus</button>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        container.innerHTML = `<div class="text-xs text-rose-600">Gagal memuat alamat.</div>`;
+      }
+    }
+
+    function openAddAddressModal() {
+      document.getElementById('modal-address').classList.remove('hidden');
+    }
+    function closeAddAddressModal() {
+      document.getElementById('modal-address').classList.add('hidden');
+    }
+
+    async function handleSaveAddress(e) {
+      e.preventDefault();
+      const nama_penerima = document.getElementById('new-addr-name').value.trim();
+      const nomor_telepon = document.getElementById('new-addr-phone').value.trim();
+      const label = document.getElementById('new-addr-label').value.trim() || 'Rumah';
+      const kecamatan = document.getElementById('new-addr-kecamatan').value;
+      const alamat_lengkap = document.getElementById('new-addr-full').value.trim();
+
+      try {
+        const res = await SigarumApi.addAddress({
+          nama_penerima,
+          nomor_telepon,
+          label,
+          kecamatan,
+          alamat_lengkap
+        });
+        if (res.success) {
+          SigarumUtils.showToast('Alamat baru berhasil ditambahkan!', 'success');
+          closeAddAddressModal();
+          loadAddresses();
+        }
+      } catch (err) {
+        SigarumUtils.showToast(err.message, 'error');
+      }
+    }
+
+    async function deleteAddress(id) {
+      if (!confirm('Hapus alamat ini?')) return;
+      try {
+        await SigarumApi.deleteAddress(id);
+        SigarumUtils.showToast('Alamat dihapus.', 'info');
+        loadAddresses();
+      } catch (err) {
+        SigarumUtils.showToast(err.message, 'error');
+      }
+    }
+
+    // FAVORITES
+    function renderFavorites() {
+      const favIds = SigarumStore.getFavorites('produk');
+      const allProduk = SigarumStore.getProduk();
+      const favProducts = allProduk.filter(p => favIds.includes(p.id_produk));
+      document.getElementById('stat-fav-products').textContent = favProducts.length;
+
+      const container = document.getElementById('favorit-grid');
+      if (favProducts.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full bg-white rounded-3xl p-10 text-center border border-slate-200">
+            <span class="text-4xl block mb-2">⭐</span>
+            <h3 class="text-base font-bold text-slate-800">Belum Ada Wishlist</h3>
+            <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Tandai produk olahan laut atau garam yang Anda sukai di katalog untuk disimpan di sini.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = favProducts.map(p => `
+        <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="h-40 w-full relative overflow-hidden bg-slate-100">
+              <img src="${p.foto}" alt="${p.nama_produk}" class="w-full h-full object-cover">
+              <span class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded text-[10px] font-bold bg-slate-900/80 text-white">${p.kategori}</span>
+            </div>
+            <div class="p-4">
+              <h3 class="font-bold text-slate-900 text-sm leading-tight">${p.nama_produk}</h3>
+              <div class="text-ocean-700 font-extrabold text-sm mt-1">${SigarumUtils.formatRupiah(p.harga)}</div>
+            </div>
+          </div>
+          <div class="p-4 pt-0">
+            <button type="button" onclick="addToCartDirect(${p.id_produk})" class="w-full py-2 px-3 rounded-xl bg-ocean-600 hover:bg-ocean-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-colors">
+              + Tambah ke Keranjang
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function addToCartDirect(id_produk) {
+      try {
+        const res = await SigarumApi.addToCart(id_produk, 1);
+        if (res.success) {
+          SigarumUtils.showToast('Produk ditambahkan ke keranjang!', 'success');
+          loadCartCount();
+        }
+      } catch (err) {
+        SigarumUtils.showToast(err.message, 'error');
+      }
+    }
+
+    // PROFILE
+    async function handleUpdateProfile(e) {
+      e.preventDefault();
+      const nama = document.getElementById('prof-nama').value.trim();
+      const email = document.getElementById('prof-email').value.trim();
+      const nomor_telepon = document.getElementById('prof-telepon').value.trim();
+
+      try {
+        const res = await SigarumApi.updateProfile({ nama, email, nomor_telepon });
+        if (res.success) {
+          currentUser.nama = nama;
+          currentUser.email = email;
+          currentUser.nomor_telepon = nomor_telepon;
+          sessionStorage.setItem('sigarum_session_user', JSON.stringify(currentUser));
+          document.getElementById('customer-name').textContent = nama;
+          document.getElementById('welcome-customer-name').textContent = nama;
+          SigarumUtils.showToast('Profil akun berhasil disimpan!', 'success');
+        }
+      } catch (err) {
+        SigarumUtils.showToast(err.message, 'error');
+      }
+    }
+
+    function handleLogout() {
+      SigarumStore.logout();
+      SigarumUtils.showToast('Anda telah keluar dari akun.', 'info');
+      setTimeout(() => {
+        window.location.href = '../login.html';
+      }, 500);
+    }
+  </script>
+  <script src="../assets/js/liquid-background.js"></script>
+</body>
+</html>

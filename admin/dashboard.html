@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Panel - SIGARUM Marketplace & WebGIS</title>
+  <!-- Tailwind CSS CDN -->
+  <script>
+    (function(){
+      const origWarn = console.warn;
+      console.warn = function(...args) {
+        if (args[0] && typeof args[0] === 'string' && args[0].indexOf('cdn.tailwindcss.com') !== -1) return;
+        origWarn.apply(console, args);
+      };
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ocean: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e' },
+            navy: { 900: '#0f172a', 950: '#020617' },
+            salt: { 500: '#f59e0b', 600: '#d97706', 700: '#b45309' }
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="bg-black text-slate-100 flex h-screen overflow-hidden has-liquid-bg">
+  <!-- Fixed Full-Page Liquid Blue Glass Canvas -->
+  <canvas id="liquid-canvas" class="liquid-canvas-fixed"></canvas>
+
+  <!-- Admin / UMKM Sidebar -->
+  <aside class="w-64 bg-slate-950/80 backdrop-blur-2xl text-slate-300 flex flex-col justify-between shrink-0 border-r border-white/10 z-20">
+    <div>
+      <!-- Brand -->
+      <div class="h-16 px-6 flex items-center gap-3 border-b border-white/10 bg-slate-950/80">
+        <img src="../assets/images/logo.svg" alt="SIGARUM Logo" class="w-8 h-8 rounded-lg drop-shadow">
+        <div>
+          <span class="font-extrabold text-white text-base tracking-tight">SIGA<span class="text-ocean-400">RUM</span></span>
+          <span id="sidebar-role-title" class="text-[10px] text-slate-400 block -mt-1 font-semibold uppercase">Admin Panel</span>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="p-4 space-y-1 text-xs font-semibold">
+        <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-ocean-600 text-white shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+          Dashboard & Operasional
+        </a>
+        <a href="umkm.html" id="nav-link-umkm" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+          <span id="nav-text-umkm">Data Toko UMKM</span>
+        </a>
+        <a href="produk.html" id="nav-link-produk" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+          <span id="nav-text-produk">Katalog Produk</span>
+        </a>
+        
+        <!-- Admin Only Navigation Links -->
+        <a href="kategori.html" class="admin-only-nav flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+          Kategori Produk
+        </a>
+        <a href="wilayah.html" class="admin-only-nav flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+          Wilayah WebGIS
+        </a>
+        <a href="pengguna.html" class="admin-only-nav flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white transition-colors">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          Manajemen Pengguna
+        </a>
+        
+        <div class="pt-4 mt-4 border-t border-slate-800">
+          <span class="text-[10px] uppercase tracking-wider text-slate-500 font-bold px-3">Tautan Eksternal</span>
+          <a href="../peta.html" id="nav-link-peta" target="_blank" class="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white mt-1 transition-colors">
+            <span class="flex items-center gap-3">
+              <svg class="w-4 h-4 text-ocean-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+              Peta WebGIS
+            </span>
+            <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+          </a>
+          <a href="../produk.html" target="_blank" class="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-slate-800 hover:text-white mt-1 transition-colors">
+            <span class="flex items-center gap-3">
+              <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+              Katalog Publik
+            </span>
+            <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+          </a>
+        </div>
+      </nav>
+    </div>
+
+    <!-- User Profile & Logout -->
+    <div class="p-4 border-t border-slate-800 bg-slate-950/60">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2.5 overflow-hidden">
+          <div id="user-display-avatar" class="w-8 h-8 rounded-full bg-slate-800 text-sky-400 font-bold flex items-center justify-center text-xs shrink-0">
+            AD
+          </div>
+          <div class="overflow-hidden">
+            <div id="user-display-name" class="font-bold text-white text-xs leading-none truncate">Administrator</div>
+            <div id="user-display-role" class="text-[10px] text-emerald-400 font-semibold mt-0.5 truncate">Online</div>
+          </div>
+        </div>
+        <button onclick="handleLogout()" class="p-1.5 text-slate-400 hover:text-rose-400 rounded-lg transition-colors shrink-0" title="Logout">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Area -->
+  <div class="flex-1 flex flex-col overflow-y-auto">
+    
+    <!-- Top Header -->
+    <header class="h-16 glass-nav border-b border-white/10 px-6 sm:px-8 flex items-center justify-between shrink-0">
+      <div>
+        <h1 id="dash-header-title" class="text-lg font-extrabold text-white">Dashboard Pengelolaan</h1>
+        <p id="dash-header-subtitle" class="text-xs text-slate-400">Operasional marketplace & WebGIS SIGARUM Pamekasan</p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a id="dash-quick-btn" href="umkm.html" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-ocean-600 hover:bg-ocean-700 shadow-sm transition-all">
+          <span id="dash-quick-btn-text">Kelola Data Toko</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Content: Switch dynamically based on Role -->
+    <main class="p-6 sm:p-8 space-y-6">
+
+      <!-- ========================================================================= -->
+      <!-- VIEW 1: KHUSUS ROLE PENJUAL / MITRA UMKM -->
+      <!-- ========================================================================= -->
+      <div id="view-pelaku-umkm" class="hidden space-y-6">
+        
+        <!-- Welcome Banner for UMKM Owner with Unified Liquid Blue Glass -->
+        <div class="rounded-3xl p-6 sm:p-8 liquid-glass text-white shadow-2xl relative overflow-hidden border border-white/10">
+          <div class="relative z-10 max-w-2xl">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/20 backdrop-blur-md text-sky-100 mb-3">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              Portal Mitra Penjual UMKM Pesisir
+            </span>
+            <h2 id="umkm-owner-welcome" class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+              Selamat Datang!
+            </h2>
+            <p id="umkm-owner-subtitle" class="text-xs sm:text-sm text-sky-100 mt-2 leading-relaxed">
+              Kelola pesanan masuk, pemrosesan resi pengiriman kurir, dan pantau pendapatan bersih usaha toko Anda.
+            </p>
+          </div>
+        </div>
+
+        <!-- 4 Real Seller KPI Cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Total Produk Aktif</span>
+            <div id="seller-kpi-products" class="text-2xl font-extrabold text-slate-900 mt-1">0</div>
+            <div class="text-[11px] text-slate-500 mt-1">Katalog komoditas</div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+            <span class="text-[11px] font-bold text-amber-500 uppercase tracking-wider block">Pesanan Baru Masuk</span>
+            <div id="seller-kpi-new-orders" class="text-2xl font-extrabold text-amber-600 mt-1">0</div>
+            <div class="text-[11px] text-slate-500 mt-1">Menunggu diproses</div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+            <span class="text-[11px] font-bold text-ocean-600 uppercase tracking-wider block">Pendapatan Kotor</span>
+            <div id="seller-kpi-revenue" class="text-xl sm:text-2xl font-extrabold text-ocean-700 mt-1">Rp 0</div>
+            <div class="text-[11px] text-slate-500 mt-1">Total nilai penjualan</div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+            <span class="text-[11px] font-bold text-emerald-600 uppercase tracking-wider block">Pendapatan Bersih</span>
+            <div id="seller-kpi-net" class="text-xl sm:text-2xl font-extrabold text-emerald-600 mt-1">Rp 0</div>
+            <div class="text-[11px] text-slate-500 mt-1">Setelah komisi sistem 5%</div>
+          </div>
+        </div>
+
+        <!-- Seller Incoming Orders Table -->
+        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden space-y-4 p-6">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div>
+              <h3 class="font-extrabold text-slate-900 text-base">Pesanan Masuk ke Toko Anda</h3>
+              <p class="text-xs text-slate-500">Proses pesanan yang pembayarannya telah terkonfirmasi dan masukkan nomor resi pengiriman</p>
+            </div>
+            <button type="button" onclick="loadSellerDashboardData()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl">
+              Perbarui Data
+            </button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="bg-slate-50 text-slate-400 font-bold uppercase text-[10px] tracking-wider border-b border-slate-100">
+                  <th class="py-3 px-4">Sub-Order & Pembeli</th>
+                  <th class="py-3 px-4">Item Snapshot</th>
+                  <th class="py-3 px-4">Alamat Kirim</th>
+                  <th class="py-3 px-4">Subtotal</th>
+                  <th class="py-3 px-4 text-center">Status</th>
+                  <th class="py-3 px-4 text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="seller-orders-tbody" class="divide-y divide-slate-100">
+                <tr><td colspan="6" class="py-8 text-center text-slate-400">Memuat pesanan masuk toko...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Detail Store Card -->
+        <div id="owner-detail-card" class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+          <!-- Injected by JS -->
+        </div>
+
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- VIEW 2: KHUSUS ROLE ADMINISTRATOR SISTEM -->
+      <!-- ========================================================================= -->
+      <div id="view-administrator" class="space-y-6">
+        
+        <!-- Admin Master Overview Banner with Unified Liquid Blue Glass -->
+        <div class="rounded-3xl p-6 sm:p-8 liquid-glass text-white shadow-2xl relative overflow-hidden border border-white/10">
+          <div class="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-sky-500/20 text-sky-300 border border-sky-500/30 mb-2 backdrop-blur-md">
+                <span>🛡️</span>
+                <span>Pusat Kendali Operasional Marketplace</span>
+              </div>
+              <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Overview Marketplace SIGARUM</h2>
+              <p class="text-xs sm:text-sm text-slate-300 mt-1 max-w-2xl leading-relaxed">Pantau GMV transaksi, komisi platform, verifikasi pembayaran manual, dan moderasi toko UMKM secara real-time.</p>
+            </div>
+            <button onclick="loadAdminDashboardData()" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-bold text-white transition-all backdrop-blur-md shrink-0 shadow-lg">
+              Refresh Data
+            </button>
+          </div>
+        </div>
+
+        <!-- 5 Metric Cards (Data Aktual) -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Total Pengguna</span>
+            <div id="admin-kpi-users" class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">0</div>
+            <div class="text-[11px] text-slate-500 mt-1">Pembeli & Penjual</div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+            <span class="text-[11px] font-bold text-ocean-600 uppercase tracking-wider block">Total Mitra Toko</span>
+            <div id="admin-kpi-stores" class="text-2xl sm:text-3xl font-extrabold text-ocean-600 mt-1">0</div>
+            <div class="text-[11px] text-slate-500 mt-1">UMKM Terdaftar</div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+            <span class="text-[11px] font-bold text-salt-600 uppercase tracking-wider block">Total Pesanan</span>
+            <div id="admin-kpi-orders" class="text-2xl sm:text-3xl font-extrabold text-salt-600 mt-1">0</div>
+            <div class="text-[11px] text-slate-500 mt-1">Transaksi Marketplace</div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+            <span class="text-[11px] font-bold text-emerald-600 uppercase tracking-wider block">Nilai Transaksi</span>
+            <div id="admin-kpi-gmv" class="text-xl sm:text-2xl font-extrabold text-emerald-600 mt-1">Rp 0</div>
+            <div class="text-[11px] text-slate-500 mt-1">Volume Penjualan Riil</div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm col-span-2 sm:col-span-1">
+            <span class="text-[11px] font-bold text-indigo-600 uppercase tracking-wider block">Komisi Platform</span>
+            <div id="admin-kpi-commission" class="text-xl sm:text-2xl font-extrabold text-indigo-600 mt-1">Rp 0</div>
+            <div class="text-[11px] text-slate-500 mt-1">Pendapatan Marketplace</div>
+          </div>
+        </div>
+
+        <!-- Section 1: Verifikasi Pembayaran Transaksi -->
+        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div>
+              <h3 class="font-extrabold text-slate-900 text-base">Verifikasi Pembayaran Manual & Transaksi</h3>
+              <p class="text-xs text-slate-500">Periksa bukti transfer pembeli dan verifikasi status pembayaran untuk meneruskan ke penjual</p>
+            </div>
+            <span class="px-3 py-1 bg-sky-50 text-sky-700 text-xs font-bold rounded-xl border border-sky-100">
+              Verifikasi Server RBAC
+            </span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="bg-slate-50 text-slate-400 font-bold uppercase text-[10px] tracking-wider border-b border-slate-100">
+                  <th class="py-3 px-4">No. Order & Pembeli</th>
+                  <th class="py-3 px-4">Nominal</th>
+                  <th class="py-3 px-4">Metode</th>
+                  <th class="py-3 px-4">Bukti Transfer</th>
+                  <th class="py-3 px-4 text-center">Status Bayar</th>
+                  <th class="py-3 px-4 text-right">Tindakan Admin</th>
+                </tr>
+              </thead>
+              <tbody id="admin-payments-tbody" class="divide-y divide-slate-100">
+                <tr><td colspan="6" class="py-8 text-center text-slate-400">Memuat data transaksi pembayaran...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Section 2: Moderasi Mitra Toko UMKM -->
+        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div>
+              <h3 class="font-extrabold text-slate-900 text-base">Moderasi Status Mitra Toko UMKM</h3>
+              <p class="text-xs text-slate-500">Persetujuan pendaftaran toko dan kontrol penangguhan operasional</p>
+            </div>
+            <a href="umkm.html" class="text-xs font-bold text-ocean-600 hover:text-ocean-700">Kelola Direktori UMKM &rarr;</a>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="bg-slate-50 text-slate-400 font-bold uppercase text-[10px] tracking-wider border-b border-slate-100">
+                  <th class="py-3 px-4">Nama Toko & Pemilik</th>
+                  <th class="py-3 px-4">Kategori & Wilayah</th>
+                  <th class="py-3 px-4">Kontak</th>
+                  <th class="py-3 px-4 text-center">Status Toko</th>
+                  <th class="py-3 px-4 text-right">Moderasi</th>
+                </tr>
+              </thead>
+              <tbody id="admin-stores-tbody" class="divide-y divide-slate-100">
+                <!-- Rendered by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Section 3: Audit Logs Log Aktivitas -->
+        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div>
+              <h3 class="font-extrabold text-slate-900 text-base">Catatan Audit Log Keamanan Platform</h3>
+              <p class="text-xs text-slate-500">Rekam jejak setiap aksi administratif dan perubahan data penting</p>
+            </div>
+            <button type="button" onclick="loadAuditLogs()" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg">
+              Refresh Log
+            </button>
+          </div>
+
+          <div class="overflow-x-auto max-h-60">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="bg-slate-50 text-slate-400 font-bold uppercase text-[10px] tracking-wider border-b border-slate-100 sticky top-0">
+                  <th class="py-2.5 px-4">Waktu</th>
+                  <th class="py-2.5 px-4">User</th>
+                  <th class="py-2.5 px-4">Aksi / Tindakan</th>
+                  <th class="py-2.5 px-4">Keterangan</th>
+                </tr>
+              </thead>
+              <tbody id="admin-audit-tbody" class="divide-y divide-slate-100">
+                <!-- Rendered by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Modal Input Resi (Seller) -->
+  <div id="modal-resi" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 sm:p-7 max-w-md w-full shadow-2xl relative">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+        <h3 class="font-bold text-slate-900 text-base">Input Resi & Kirim Pesanan</h3>
+        <button type="button" onclick="closeResiModal()" class="text-slate-400 hover:text-slate-600">✕</button>
+      </div>
+
+      <form id="form-submit-resi" class="space-y-4 text-xs" onsubmit="handleSaveResi(event)">
+        <input type="hidden" id="resi-sub-order-id">
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Jasa Kurir Pengiriman</label>
+          <input type="text" id="resi-kurir" required placeholder="Contoh: J&T Express / SiCepat / Pos" class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Nomor Resi / AWB Asli</label>
+          <input type="text" id="resi-number" required placeholder="Contoh: JNT9182374619" class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none font-mono">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Catatan Pengiriman (Opsional)</label>
+          <input type="text" id="resi-notes" placeholder="Paket diserahkan ke drop point..." class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-ocean-500 focus:outline-none">
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeResiModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold">
+            Batal
+          </button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-ocean-600 hover:bg-ocean-700 text-white font-bold">
+            Simpan Resi & Kirim
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Preview Bukti Transfer (Admin) -->
+  <div id="modal-preview-receipt" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 max-w-lg w-full shadow-2xl relative">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+        <h3 class="font-bold text-slate-900 text-base">Bukti Transfer Pembeli</h3>
+        <button type="button" onclick="closeReceiptModal()" class="text-slate-400 hover:text-slate-600">✕</button>
+      </div>
+      <div class="text-center">
+        <img id="modal-receipt-img" src="" alt="Bukti Transfer" class="max-h-96 mx-auto rounded-xl object-contain border border-slate-200 shadow-sm">
+      </div>
+      <div class="mt-4 pt-3 border-t border-slate-100 text-right">
+        <button type="button" onclick="closeReceiptModal()" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-xs font-semibold">
+          Tutup
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../assets/js/app.js"></script>
+  <script src="../assets/js/charts.js"></script>
+  <script>
+    let activeUser = null;
+    let allOrdersData = [];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      activeUser = SigarumStore.getCurrentUser();
+      if (!activeUser) {
+        window.location.href = '../login.html';
+        return;
+      }
+
+      if (activeUser.role === 'pelanggan') {
+        window.location.href = '../pelanggan/dashboard.html';
+        return;
+      }
+
+      document.getElementById('user-display-name').textContent = activeUser.nama;
+      document.getElementById('user-display-role').textContent = `Role: ${activeUser.role.toUpperCase()}`;
+      document.getElementById('user-display-avatar').textContent = (activeUser.nama || 'A').substring(0, 2).toUpperCase();
+
+      if (activeUser.role === 'umkm' || activeUser.role === 'penjual') {
+        // SELLER VIEW
+        document.getElementById('sidebar-role-title').textContent = 'Panel Penjual';
+        document.getElementById('dash-header-title').textContent = 'Panel Penjual UMKM';
+        document.getElementById('dash-header-subtitle').textContent = `Pengelolaan pesanan & produk mitra: ${activeUser.nama_umkm || 'Unit Usaha Anda'}`;
+        document.getElementById('dash-quick-btn-text').textContent = 'Katalog Produk Saya';
+        document.getElementById('dash-quick-btn').href = 'produk.html';
+
+        document.getElementById('view-administrator').classList.add('hidden');
+        document.getElementById('view-pelaku-umkm').classList.remove('hidden');
+
+        document.querySelectorAll('.admin-only-nav').forEach(el => el.classList.add('hidden'));
+
+        await loadSellerDashboardData();
+      } else {
+        // ADMIN VIEW
+        document.getElementById('sidebar-role-title').textContent = 'Superadmin Panel';
+        document.getElementById('dash-header-title').textContent = 'Dashboard Administrator Marketplace';
+        document.getElementById('dash-header-subtitle').textContent = 'Operasional, verifikasi transaksi keuangan, dan moderasi toko UMKM SIGARUM';
+
+        document.getElementById('view-pelaku-umkm').classList.add('hidden');
+        document.getElementById('view-administrator').classList.remove('hidden');
+
+        await Promise.all([loadAdminDashboardData(), loadAuditLogs()]);
+      }
+    });
+
+    // ==========================================
+    // SELLER DASHBOARD LOGIC
+    // ==========================================
+    async function loadSellerDashboardData() {
+      try {
+        const res = await SigarumApi.getSellerDashboard();
+        if (res.success && res.data) {
+          const d = res.data;
+          document.getElementById('umkm-owner-welcome').textContent = `Selamat Datang, ${d.store.pemilik || activeUser.nama}!`;
+          document.getElementById('seller-kpi-products').textContent = d.metrics.total_produk || 0;
+          document.getElementById('seller-kpi-new-orders').textContent = (d.metrics.pesanan_baru || 0) + (d.metrics.pesanan_diproses || 0);
+          document.getElementById('seller-kpi-revenue').textContent = SigarumUtils.formatRupiah(d.metrics.pendapatan_kotor || 0);
+          document.getElementById('seller-kpi-net').textContent = SigarumUtils.formatRupiah(d.metrics.pendapatan_bersih || 0);
+
+          renderSellerOrders(d.sub_orders || []);
+          renderSellerStoreProfile(d.store);
+        }
+      } catch (err) {
+        console.warn('Seller dashboard load error:', err);
+      }
+    }
+
+    function renderSellerOrders(orders) {
+      const tbody = document.getElementById('seller-orders-tbody');
+      if (orders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400">Belum ada pesanan masuk untuk toko Anda.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = orders.map(so => {
+        let statusBadge = 'bg-slate-100 text-slate-700';
+        if (so.status_sub_order === 'Menunggu_Diproses') statusBadge = 'bg-amber-100 text-amber-800';
+        else if (so.status_sub_order === 'Diproses') statusBadge = 'bg-blue-100 text-blue-800';
+        else if (so.status_sub_order === 'Dalam_Pengiriman') statusBadge = 'bg-indigo-100 text-indigo-800';
+        else if (so.status_sub_order === 'Selesai') statusBadge = 'bg-emerald-100 text-emerald-800';
+
+        const items = so.items || [];
+
+        return `
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="py-3 px-4 font-bold text-slate-900">
+              ${so.nomor_sub_order}
+              <span class="block text-[11px] text-slate-500 font-normal">Pembeli: <strong>${so.nama_pembeli || 'Pelanggan'}</strong></span>
+              <span class="text-[10px] text-slate-400 font-mono">${so.created_at || ''}</span>
+            </td>
+            <td class="py-3 px-4">
+              <div class="space-y-1">
+                ${items.map(i => `
+                  <div class="text-[11px] text-slate-700">
+                    <strong>${i.kuantitas}x</strong> ${i.nama_produk_snapshot} (${SigarumUtils.formatRupiah(i.harga_snapshot)})
+                  </div>
+                `).join('')}
+              </div>
+            </td>
+            <td class="py-3 px-4 text-slate-600 text-[11px] max-w-[180px]">
+              ${so.alamat_pengiriman ? `
+                <span class="font-bold block text-slate-800">${so.alamat_pengiriman.nama_penerima}</span>
+                <span>${so.alamat_pengiriman.alamat_lengkap}, Kec. ${so.alamat_pengiriman.kecamatan}</span>
+              ` : '-'}
+            </td>
+            <td class="py-3 px-4 font-bold text-ocean-700">
+              ${SigarumUtils.formatRupiah(so.total_sub_order)}
+              <span class="block text-[10px] text-slate-400 font-normal">Bersih: ${SigarumUtils.formatRupiah(so.pendapatan_bersih)}</span>
+            </td>
+            <td class="py-3 px-4 text-center">
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${statusBadge}">
+                ${so.status_sub_order}
+              </span>
+              ${so.nomor_resi ? `<span class="block text-[10px] font-mono text-emerald-700 mt-1 font-bold">Resi: ${so.nomor_resi}</span>` : ''}
+            </td>
+            <td class="py-3 px-4 text-right space-y-1">
+              ${so.status_sub_order === 'Menunggu_Diproses' ? `
+                <button type="button" onclick="updateOrderStatusAction(${so.id_sub_order}, 'Diproses')" class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[11px] font-bold">
+                  Proses Pesanan
+                </button>
+              ` : ''}
+              ${so.status_sub_order === 'Diproses' ? `
+                <button type="button" onclick="openResiModal(${so.id_sub_order})" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[11px] font-bold">
+                  Input Resi & Kirim
+                </button>
+              ` : ''}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function updateOrderStatusAction(subOrderId, nextStatus) {
+      try {
+        const res = await SigarumApi.updateSubOrderStatus(subOrderId, nextStatus);
+        if (res.success) {
+          SigarumUtils.showToast(`Status pesanan diperbarui menjadi: ${nextStatus}`, 'success');
+          loadSellerDashboardData();
+        }
+      } catch (err) {
+        SigarumUtils.showToast(err.message, 'error');
+      }
+    }
+
+    function openResiModal(subOrderId) {
+      document.getElementById('resi-sub-order-id').value = subOrderId;
+      document.getElementById('modal-resi').classList.remove('hidden');
+    }
+    function closeResiModal() {
+      document.getElementById('modal-resi').classList.add('hidden');
+    }
+
+    async function handleSaveResi(e) {
+      e.preventDefault();
+      const subOrderId = document.getElementById('resi-sub-order-id').value;
+      const kurir = document.getElementById('resi-kurir').value.trim();
+      const nomor_resi = document.getElementById('resi-number').value.trim();
+      const notes = document.getElementById('resi-notes').value.trim();
+
+      try {
+        const res = await SigarumApi.updateSubOrderStatus(subOrderId, 'Dalam_Pengiriman', nomor_resi, notes);
+        if (res.success) {
+          SigarumUtils.showToast('Nomor resi disimpan dan status diubah ke Dalam Pengiriman!', 'success');
+          closeResiModal();
+          loadSellerDashboardData();
+        }
+      } catch (err) {
+        SigarumUtils.showToast(err.message, 'error');
+      }
+    }
+
+    function renderSellerStoreProfile(store) {
+      if (!store) return;
+      document.getElementById('owner-detail-card').innerHTML = `
+        <div class="flex flex-col md:flex-row gap-6">
+          <img src="${store.foto || 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80'}" alt="" class="w-full md:w-56 h-48 rounded-2xl object-cover border border-slate-200 shadow-sm shrink-0">
+          <div class="flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-slate-500 uppercase">Unit Usaha Terdaftar</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${store.verifikasi_status === 'Terverifikasi' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                  ${store.verifikasi_status || 'Aktif'}
+                </span>
+              </div>
+              <h3 class="text-xl font-extrabold text-slate-900 mt-1">${store.nama_umkm}</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Pemilik: <strong>${store.pemilik}</strong> | Desa ${store.desa}, Kec. ${store.kecamatan}</p>
+              <p class="text-xs text-slate-600 mt-2 leading-relaxed">${store.deskripsi}</p>
+              
+              <div class="grid grid-cols-2 gap-3 mt-4 text-xs">
+                <div>
+                  <span class="text-slate-400 block font-semibold">Kontak WhatsApp:</span>
+                  <span class="font-bold text-slate-800">${store.kontak}</span>
+                </div>
+                <div>
+                  <span class="text-slate-400 block font-semibold">Rating Toko:</span>
+                  <span class="font-bold text-amber-600">★ ${store.rating_avg ? store.rating_avg.toFixed(1) : '5.0'} (${store.rating_count || 0} Ulasan)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 mt-6 pt-4 border-t border-slate-100">
+              <a href="umkm.html" class="px-4 py-2 bg-ocean-600 hover:bg-ocean-700 text-white rounded-xl text-xs font-bold shadow-sm transition-colors">
+                Perbarui Profil & Koordinat Toko
+              </a>
+              <a href="../detail-umkm.html?id=${store.id_umkm}" target="_blank" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-colors">
+                Lihat Tampilan Publik &rarr;
+              </a>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ==========================================
+    // ADMINISTRATOR LOGIC
+    // ==========================================
+    async function loadAdminDashboardData() {
+      try {
+        const [ordersRes, usersRes, umkmRes] = await Promise.all([
+          SigarumApi.getOrders(),
+          SigarumApi.getAdminUsers(),
+          SigarumApi.getUMKM()
+        ]);
+
+        const orders = (ordersRes && ordersRes.data) || [];
+        const users = (usersRes && usersRes.data) || [];
+        const stores = (umkmRes && umkmRes.data) || [];
+
+        allOrdersData = orders;
+
+        // Calculate GMV & Commission
+        let totalGMV = 0;
+        let totalCommission = 0;
+        orders.forEach(o => {
+          if (o.status_pembayaran === 'Dibayar' || o.status_pesanan === 'Selesai') {
+            totalGMV += (o.total_tagihan || 0);
+            totalCommission += (o.total_belanja ? o.total_belanja * 0.05 : 0);
+          }
+        });
+
+        document.getElementById('admin-kpi-users').textContent = users.length;
+        document.getElementById('admin-kpi-stores').textContent = stores.length;
+        document.getElementById('admin-kpi-orders').textContent = orders.length;
+        document.getElementById('admin-kpi-gmv').textContent = SigarumUtils.formatRupiah(totalGMV);
+        document.getElementById('admin-kpi-commission').textContent = SigarumUtils.formatRupiah(Math.round(totalCommission));
+
+        renderAdminPayments(orders);
+        renderAdminStores(stores);
+      } catch (err) {
+        console.warn('Admin load error:', err);
+      }
+    }
+
+    function renderAdminPayments(orders) {
+      const tbody = document.getElementById('admin-payments-tbody');
+      if (orders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400">Belum ada transaksi pembayaran.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = orders.map(o => {
+        const isNeedVerify = o.status_pembayaran === 'Menunggu_Verifikasi';
+        const isPaid = o.status_pembayaran === 'Dibayar';
+        let badge = 'bg-amber-100 text-amber-800';
+        if (isPaid) badge = 'bg-emerald-100 text-emerald-800';
+        else if (isNeedVerify) badge = 'bg-sky-100 text-sky-800';
+
+        return `
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="py-3 px-4 font-bold text-slate-900">
+              ${o.nomor_order}
+              <span class="block text-[11px] text-slate-500 font-normal">${o.nama_pembeli || 'Pelanggan'} (${o.email_pembeli || '-'})</span>
+            </td>
+            <td class="py-3 px-4 font-extrabold text-slate-900">${SigarumUtils.formatRupiah(o.total_tagihan)}</td>
+            <td class="py-3 px-4 text-slate-600 font-semibold">${o.metode_pembayaran}</td>
+            <td class="py-3 px-4">
+              <button type="button" onclick="previewReceiptModal(${o.id_order})" class="text-ocean-600 hover:underline font-bold text-[11px] flex items-center gap-1">
+                <span>Lihat Bukti Bayar</span>
+              </button>
+            </td>
+            <td class="py-3 px-4 text-center">
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${badge}">
+                ${o.status_pembayaran}
+              </span>
+            </td>
+            <td class="py-3 px-4 text-right space-x-1.5">
+              ${!isPaid ? `
+                <button type="button" onclick="handleVerifyPaymentAction(${o.id_order}, 'setujui')" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[11px] font-bold">
+                  Setujui Pembayaran ✓
+                </button>
+              ` : `
+                <span class="text-emerald-600 font-bold text-[11px]">Terverifikasi ✓</span>
+              `}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function handleVerifyPaymentAction(orderId, action) {
+      if (!confirm(`Konfirmasi verifikasi pembayaran pesanan ini? Status pesanan akan otomatis diteruskan ke Penjual.`)) return;
+
+      try {
+        // Fetch payment id
+        const payRes = await SigarumApi.getPayment(orderId);
+        const paymentId = (payRes.data && payRes.data.payment) ? payRes.data.payment.id_payment : orderId;
+
+        const res = await SigarumApi.verifyPayment(paymentId, action, 'Diverifikasi langsung oleh Administrator.');
+        if (res.success) {
+          SigarumUtils.showToast('Pembayaran berhasil diverifikasi! Pesanan diteruskan ke Mitra Penjual.', 'success');
+          loadAdminDashboardData();
+        }
+      } catch (err) {
+        SigarumUtils.showToast(err.message, 'error');
+      }
+    }
+
+    async function previewReceiptModal(orderId) {
+      try {
+        const payRes = await SigarumApi.getPayment(orderId);
+        const receiptUrl = (payRes.data && payRes.data.payment && payRes.data.payment.bukti_transfer) ? payRes.data.payment.bukti_transfer : 'https://images.unsplash.com/photo-1607344645866-009c320c5ab8?auto=format&fit=crop&w=600&q=80';
+        document.getElementById('modal-receipt-img').src = receiptUrl;
+        document.getElementById('modal-preview-receipt').classList.remove('hidden');
+      } catch {
+        alert('Tidak dapat memuat bukti transfer.');
+      }
+    }
+    function closeReceiptModal() {
+      document.getElementById('modal-preview-receipt').classList.add('hidden');
+    }
+
+    function renderAdminStores(stores) {
+      const tbody = document.getElementById('admin-stores-tbody');
+      tbody.innerHTML = stores.slice(0, 8).map(s => `
+        <tr class="hover:bg-slate-50 transition-colors">
+          <td class="py-3 px-4 font-bold text-slate-800">
+            ${s.nama_umkm}
+            <span class="block text-[11px] text-slate-400 font-normal">Pemilik: ${s.pemilik}</span>
+          </td>
+          <td class="py-3 px-4">
+            <span class="font-semibold text-slate-700">${s.kategori}</span>
+            <span class="block text-[10px] text-slate-400">Kec. ${s.kecamatan}</span>
+          </td>
+          <td class="py-3 px-4 text-slate-600 font-mono text-[11px]">${s.kontak}</td>
+          <td class="py-3 px-4 text-center">
+            ${SigarumUtils.getStatusBadge(s.status)}
+          </td>
+          <td class="py-3 px-4 text-right">
+            <button type="button" onclick="toggleStoreStatus(${s.id_umkm}, '${s.status}')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold ${s.status === 'Aktif' ? 'bg-rose-50 text-rose-700 hover:bg-rose-100' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'} transition-colors">
+              ${s.status === 'Aktif' ? 'Tangguhkan' : 'Aktifkan'}
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function toggleStoreStatus(id, currentStatus) {
+      const nextStatus = currentStatus === 'Aktif' ? 'Nonaktif' : 'Aktif';
+      const reason = prompt(`Masukkan alasan ${nextStatus === 'Nonaktif' ? 'penangguhan' : 'pengaktifan'} toko ini:`);
+      if (reason === null) return;
+
+      try {
+        const store = SigarumStore.getUMKMById(id);
+        if (store) {
+          store.status = nextStatus;
+          await SigarumApi.saveUMKM(store);
+          SigarumUtils.showToast(`Status toko berhasil diubah menjadi ${nextStatus}.`, 'success');
+          loadAdminDashboardData();
+        }
+      } catch (err) {
+        SigarumUtils.showToast(err.message, 'error');
+      }
+    }
+
+    async function loadAuditLogs() {
+      const tbody = document.getElementById('admin-audit-tbody');
+      try {
+        const res = await SigarumApi.getAuditLogs(15);
+        const logs = (res && res.data) || [];
+        if (logs.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-slate-400">Belum ada riwayat audit log tercatat.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = logs.map(l => `
+          <tr class="hover:bg-slate-50 text-[11px]">
+            <td class="py-2.5 px-4 font-mono text-slate-400">${l.created_at || 'Baru saja'}</td>
+            <td class="py-2.5 px-4 font-bold text-slate-800">${l.nama_user || 'Sistem'}</td>
+            <td class="py-2.5 px-4 font-semibold text-ocean-700">${l.aksi}</td>
+            <td class="py-2.5 px-4 text-slate-600">${l.keterangan || '-'}</td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-slate-400">Audit log aktif.</td></tr>`;
+      }
+    }
+
+    function handleLogout() {
+      SigarumStore.logout();
+      SigarumUtils.showToast("Berhasil logout dari sistem", "info");
+      setTimeout(() => {
+        window.location.href = '../login.html';
+      }, 500);
+    }
+  </script>
+  <script src="../assets/js/liquid-background.js"></script>
+</body>
+</html>

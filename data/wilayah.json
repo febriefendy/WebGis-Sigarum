@@ -1,0 +1,74 @@
+[
+  {
+    "id_wilayah": 1,
+    "nama_wilayah": "Pademawu",
+    "kecamatan": "Pademawu",
+    "kabupaten": "Pamekasan",
+    "provinsi": "Jawa Timur",
+    "tipe_pesisir": "Pantai Selatan & Sentra Garam Rakyat",
+    "deskripsi": "Kecamatan penghasil garam terbesar di Pamekasan dengan sentra tambak di Desa Bunder, Majungan, dan Dasok, serta sentra olahan hasil laut.",
+    "center": [-7.2185, 113.5420],
+    "zoom": 13,
+    "potensi_utama": "Garam Krosok, Garam Beryodium, Kerupuk Terung, Ikan Kering"
+  },
+  {
+    "id_wilayah": 2,
+    "nama_wilayah": "Tlanakan",
+    "kecamatan": "Tlanakan",
+    "kabupaten": "Pamekasan",
+    "provinsi": "Jawa Timur",
+    "tipe_pesisir": "Pantai Selatan & Pelabuhan Perikanan",
+    "deskripsi": "Kawasan pelabuhan perikanan utama (Branta Pesisir & Kramat) dengan aktivitas lelang ikan segar, pembuatan terasi rebon asli, dan petis khas Madura.",
+    "center": [-7.2120, 113.4680],
+    "zoom": 13,
+    "potensi_utama": "Terasi Rebon, Petis Ikan Cakalang, Teri Nasi, Ikan Asap"
+  },
+  {
+    "id_wilayah": 3,
+    "nama_wilayah": "Galis",
+    "kecamatan": "Galis",
+    "kabupaten": "Pamekasan",
+    "provinsi": "Jawa Timur",
+    "tipe_pesisir": "Pesisir Selatan & Tambak Garam Tradisional",
+    "deskripsi": "Pusat tambak garam kristal alami di bagian timur laut selatan Madura dengan kualitas kristal garam putih bersih dan olahan ikan asin.",
+    "center": [-7.2010, 113.5780],
+    "zoom": 13,
+    "potensi_utama": "Garam Halus, Garam Kristal Super, Garam Industri, Ikan Asin"
+  },
+  {
+    "id_wilayah": 4,
+    "nama_wilayah": "Larangan",
+    "kecamatan": "Larangan",
+    "kabupaten": "Pamekasan",
+    "provinsi": "Jawa Timur",
+    "tipe_pesisir": "Pesisir Timur & Pengeringan Ikan",
+    "deskripsi": "Wilayah pesisir timur yang terkenal dengan Pantai Talang Siring, pengolahan ikan asin cucut, dan tangkapan udang tambak.",
+    "center": [-7.1550, 113.5850],
+    "zoom": 13,
+    "potensi_utama": "Ikan Asin, Hasil Olahan Udang, Garam Tambak Semi-Modern"
+  },
+  {
+    "id_wilayah": 5,
+    "nama_wilayah": "Pasean",
+    "kecamatan": "Pasean",
+    "kabupaten": "Pamekasan",
+    "provinsi": "Jawa Timur",
+    "tipe_pesisir": "Pantai Utara (Laut Jawa)",
+    "deskripsi": "Sentra perikanan tangkap laut utara Pamekasan dengan hasil tangkapan laut berlimpah seperti tongkol, tenggiri, dan cumi-cumi serta aneka abon laut.",
+    "center": [-6.8870, 113.5480],
+    "zoom": 13,
+    "potensi_utama": "Abon Ikan Tongkol, Cumi Kering Asin, Ikan Teri Belah, Kerupuk Ikan"
+  },
+  {
+    "id_wilayah": 6,
+    "nama_wilayah": "Batumarmar",
+    "kecamatan": "Batumarmar",
+    "kabupaten": "Pamekasan",
+    "provinsi": "Jawa Timur",
+    "tipe_pesisir": "Pantai Utara Pamekasan",
+    "deskripsi": "Kawasan pesisir utara berkarang dengan UMKM olahan kerupuk ikan payus, ikan kering layang, dan budidaya rumput laut.",
+    "center": [-6.8980, 113.4820],
+    "zoom": 13,
+    "potensi_utama": "Kerupuk Udang Pesisir, Ikan Asin Layang, Olahan Rumput Laut"
+  }
+]

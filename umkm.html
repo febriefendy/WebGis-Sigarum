@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Direktori Data UMKM - SIGARUM WebGIS</title>
+  <!-- Tailwind CSS CDN -->
+  <script>
+    (function(){
+      const origWarn = console.warn;
+      console.warn = function(...args) {
+        if (args[0] && typeof args[0] === 'string' && args[0].indexOf('cdn.tailwindcss.com') !== -1) return;
+        origWarn.apply(console, args);
+      };
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ocean: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e' },
+            navy: { 900: '#0f172a', 950: '#020617' },
+            salt: { 500: '#f59e0b', 600: '#d97706', 700: '#b45309' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-black text-slate-100 flex flex-col min-h-screen has-liquid-bg">
+  <!-- Fixed Full-Page Liquid Blue Glass Canvas -->
+  <canvas id="liquid-canvas" class="liquid-canvas-fixed"></canvas>
+
+  <!-- Demo Notice Banner -->
+  <div class="demo-banner bg-slate-950/60 backdrop-blur-md border-b border-white/5">
+    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase">
+      Data Demo / Prototype
+    </span>
+    <span class="text-slate-300">SIGARUM WebGIS • Data Direktori UMKM Kabupaten Pamekasan</span>
+  </div>
+
+  <!-- Navbar -->
+  <header class="sticky top-0 z-50 glass-nav border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center gap-3">
+          <img src="assets/images/logo.svg" alt="SIGARUM Logo" class="w-10 h-10 rounded-xl drop-shadow-md">
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-extrabold text-xl tracking-tight text-slate-900">SIGA<span class="text-ocean-600">RUM</span></span>
+              <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-ocean-100 text-ocean-800 uppercase">WebGIS</span>
+            </div>
+            <p class="text-[11px] text-slate-500 leading-none">Olahan Laut & Garam Pamekasan</p>
+          </div>
+        </a>
+
+        <!-- Desktop Menu -->
+        <nav class="hidden md:flex items-center gap-1 lg:gap-2">
+          <a href="index.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Beranda</a>
+          <a href="peta.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Peta UMKM</a>
+          <a href="umkm.html" class="px-3 py-2 rounded-lg text-sm font-semibold text-ocean-700 bg-ocean-50">Data UMKM</a>
+          <a href="produk.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Produk</a>
+          <a href="statistik.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Statistik</a>
+          <a href="tentang.html" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-ocean-600 hover:bg-slate-100">Tentang</a>
+        </nav>
+
+        <div id="nav-auth-slot">
+          <a href="login.html" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 shadow-sm transition-all border border-slate-700/50">
+            <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+            <span>Masuk / Login</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Header -->
+  <div class="bg-white border-b border-slate-200 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Direktori Data UMKM</h1>
+          <p class="text-sm text-slate-600 mt-1">Daftar lengkap UMKM olahan hasil laut dan sentra garam di Kabupaten Pamekasan.</p>
+        </div>
+        <a href="peta.html" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm text-white bg-ocean-600 hover:bg-ocean-700 shadow-sm transition-all">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+          Lihat di Peta WebGIS
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Section -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
+    
+    <!-- Filter and Search Toolbar -->
+    <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm mb-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 items-center">
+        
+        <!-- Search Box -->
+        <div class="lg:col-span-5 relative">
+          <input type="text" id="search-input" placeholder="Cari nama UMKM, produk, atau pemilik..." class="w-full text-xs sm:text-sm pl-9 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-ocean-500">
+          <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        </div>
+
+        <!-- Filter Kecamatan -->
+        <div class="lg:col-span-3">
+          <select id="kecamatan-select" class="w-full text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-ocean-500 bg-white">
+            <option value="Semua">Semua Kecamatan</option>
+            <option value="Pademawu">Pademawu</option>
+            <option value="Tlanakan">Tlanakan</option>
+            <option value="Galis">Galis</option>
+            <option value="Larangan">Larangan</option>
+            <option value="Pasean">Pasean</option>
+            <option value="Batumarmar">Batumarmar</option>
+          </select>
+        </div>
+
+        <!-- Filter Kategori -->
+        <div class="lg:col-span-2">
+          <select id="kategori-select" class="w-full text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-ocean-500 bg-white">
+            <option value="Semua">Semua Kategori</option>
+            <option value="Olahan Laut">Olahan Laut</option>
+            <option value="Garam">Garam</option>
+          </select>
+        </div>
+
+        <!-- Reset Button -->
+        <div class="lg:col-span-2 flex justify-end">
+          <button onclick="resetFilters()" class="w-full sm:w-auto px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs sm:text-sm rounded-xl transition-colors">
+            Reset Filter
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Data Table Container -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-50/80 border-b border-slate-200 text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">
+              <th class="py-4 px-4 text-center w-12">No</th>
+              <th class="py-4 px-4">Nama UMKM & Pemilik</th>
+              <th class="py-4 px-4">Kategori</th>
+              <th class="py-4 px-4">Wilayah & Alamat</th>
+              <th class="py-4 px-4">Produk Utama</th>
+              <th class="py-4 px-4 text-center">Status</th>
+              <th class="py-4 px-4 text-right">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="umkm-table-body" class="divide-y divide-slate-100 text-xs sm:text-sm">
+            <!-- Rendered by JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div id="table-empty-state" class="hidden py-16 text-center">
+        <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </div>
+        <h4 class="font-bold text-slate-800 text-base">Tidak Ada Data UMKM</h4>
+        <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+          Belum terdapat data UMKM yang sesuai dengan pencarian atau filter Anda.
+        </p>
+        <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-ocean-50 text-ocean-700 hover:bg-ocean-100 rounded-lg text-xs font-bold transition-colors">
+          Reset Filter
+        </button>
+      </div>
+
+      <!-- Pagination & Status bar -->
+      <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 font-medium">
+        <div id="table-count-info">
+          Menampilkan 1-10 dari 16 UMKM
+        </div>
+        <div class="flex items-center gap-1" id="pagination-controls">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-auto bg-slate-900 text-slate-400 text-sm border-t border-slate-800 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs">
+      <div>&copy; 2026 SIGARUM WebGIS • Data Demo Simulasi Pamekasan</div>
+      <div class="mt-2 sm:mt-0 flex gap-4">
+        <a href="peta.html" class="hover:text-white">Peta Interaktif</a>
+        <a href="produk.html" class="hover:text-white">Produk</a>
+        <a href="login.html" class="hover:text-white">Portal Masuk</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="assets/js/app.js"></script>
+  <script>
+    let currentPage = 1;
+    const perPage = 8;
+    let filteredList = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadTableData();
+
+      document.getElementById('search-input').addEventListener('input', () => {
+        currentPage = 1;
+        loadTableData();
+      });
+      document.getElementById('kecamatan-select').addEventListener('change', () => {
+        currentPage = 1;
+        loadTableData();
+      });
+      document.getElementById('kategori-select').addEventListener('change', () => {
+        currentPage = 1;
+        loadTableData();
+      });
+    });
+
+    function loadTableData() {
+      const q = document.getElementById('search-input').value;
+      const kec = document.getElementById('kecamatan-select').value;
+      const kat = document.getElementById('kategori-select').value;
+
+      filteredList = SigarumStore.getUMKM({
+        keyword: q,
+        kecamatan: kec,
+        kategori: kat
+      });
+
+      renderTable();
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('umkm-table-body');
+      const emptyState = document.getElementById('table-empty-state');
+      const countInfo = document.getElementById('table-count-info');
+      const pagination = document.getElementById('pagination-controls');
+
+      if (filteredList.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        countInfo.textContent = 'Menampilkan 0 data';
+        pagination.innerHTML = '';
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+
+      // Pagination slice
+      const totalPages = Math.ceil(filteredList.length / perPage);
+      if (currentPage > totalPages) currentPage = totalPages;
+      const start = (currentPage - 1) * perPage;
+      const end = start + perPage;
+      const pageItems = filteredList.slice(start, end);
+
+      countInfo.textContent = `Menampilkan ${start + 1}-${Math.min(end, filteredList.length)} dari ${filteredList.length} UMKM`;
+
+      tbody.innerHTML = pageItems.map((item, idx) => `
+        <tr class="hover:bg-slate-50 transition-colors">
+          <td class="py-3.5 px-4 text-center font-mono text-slate-400 font-semibold">
+            ${start + idx + 1}
+          </td>
+          <td class="py-3.5 px-4">
+            <div class="flex items-center gap-3">
+              <img src="${item.foto}" alt="" class="w-10 h-10 rounded-lg object-cover bg-slate-100 border border-slate-200 shrink-0">
+              <div>
+                <a href="detail-umkm.html?id=${item.id_umkm}" class="font-bold text-slate-900 hover:text-ocean-600 transition-colors block leading-tight">
+                  ${item.nama_umkm}
+                </a>
+                <span class="text-[11px] text-slate-500 font-medium">Pemilik: ${item.pemilik}</span>
+              </div>
+            </div>
+          </td>
+          <td class="py-3.5 px-4 whitespace-nowrap">
+            ${SigarumUtils.getCategoryBadge(item.kategori)}
+          </td>
+          <td class="py-3.5 px-4">
+            <div class="font-semibold text-slate-800">Kec. ${item.kecamatan}</div>
+            <div class="text-[11px] text-slate-500 truncate max-w-xs">${item.desa}, ${item.alamat}</div>
+          </td>
+          <td class="py-3.5 px-4">
+            <div class="text-xs text-slate-700 max-w-xs font-medium">
+              ${(item.produk_unggulan || []).join(', ') || '-'}
+            </div>
+          </td>
+          <td class="py-3.5 px-4 text-center whitespace-nowrap">
+            ${SigarumUtils.getStatusBadge(item.status)}
+          </td>
+          <td class="py-3.5 px-4 text-right whitespace-nowrap">
+            <div class="flex items-center justify-end gap-1.5">
+              <a href="detail-umkm.html?id=${item.id_umkm}" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors">
+                Detail
+              </a>
+              <a href="peta.html?id=${item.id_umkm}" class="px-2.5 py-1.5 rounded-lg bg-ocean-50 hover:bg-ocean-100 text-ocean-700 text-xs font-bold transition-colors">
+                Peta
+              </a>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      // Build Pagination
+      let pagHtml = '';
+      for (let i = 1; i <= totalPages; i++) {
+        pagHtml += `
+          <button onclick="goToPage(${i})" class="px-3 py-1.5 rounded-lg text-xs font-bold ${i === currentPage ? 'bg-ocean-600 text-white' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'}">
+            ${i}
+          </button>
+        `;
+      }
+      pagination.innerHTML = pagHtml;
+    }
+
+    function goToPage(page) {
+      currentPage = page;
+      renderTable();
+    }
+
+    function resetFilters() {
+      document.getElementById('search-input').value = '';
+      document.getElementById('kecamatan-select').value = 'Semua';
+      document.getElementById('kategori-select').value = 'Semua';
+      currentPage = 1;
+      loadTableData();
+      SigarumUtils.showToast("Filter direktori di-reset", "info");
+    }
+  </script>
+  <script src="assets/js/liquid-background.js"></script>
+</body>
+</html>
