@@ -61,17 +61,15 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
         <!-- Logo -->
-        <a href="index.html" class="flex items-center gap-3 group">
+        <a href="index.html" class="header-brand-container group">
           <img src="assets/images/logo.svg" alt="SIGARUM Logo"
-            class="w-10 h-10 rounded-xl group-hover:scale-105 transition-transform drop-shadow-md">
-          <div>
+            class="header-brand-logo group-hover:scale-105 transition-transform drop-shadow-md">
+          <div class="min-w-0">
             <div class="flex items-center gap-1.5">
-              <span class="font-extrabold text-xl tracking-tight text-white">SIGA<span
-                  class="text-sky-400">RUM</span></span>
-              <span
-                class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-500/30 uppercase tracking-wider">WebGIS</span>
+              <span class="header-brand-title text-white">SIGA<span class="text-sky-400">RUM</span></span>
+              <span class="header-brand-badge text-[10px] font-bold px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-500/30 uppercase tracking-wider shrink-0">WebGIS</span>
             </div>
-            <p class="text-[11px] text-slate-400 leading-none">Olahan Laut & Garam Pamekasan</p>
+            <p class="header-brand-sub leading-none truncate">Olahan Laut & Garam Pamekasan</p>
           </div>
         </a>
 
@@ -93,23 +91,29 @@
             class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 transition-colors">Tentang</a>
         </nav>
 
-        <!-- Right Action: Cart & Multi-Role Auth Slot -->
-        <div class="flex items-center gap-3">
-          <a href="keranjang.html" class="relative p-2 text-slate-300 hover:text-white rounded-xl hover:bg-white/10 transition-colors" title="Lihat Keranjang">
+        <!-- Right Action: Cart, Multi-Role Auth Slot, & Mobile Hamburger -->
+        <div class="header-right-actions flex items-center gap-1.5 sm:gap-3 shrink-0">
+          <a href="keranjang.html" class="relative p-2 text-slate-300 hover:text-white rounded-xl hover:bg-white/10 transition-colors shrink-0" title="Lihat Keranjang">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-            <span id="nav-cart-badge" class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-sky-600 text-white text-[9px] font-black flex items-center justify-center">0</span>
+            <span id="nav-cart-badge" class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-sky-600 text-white text-[9px] font-black flex items-center justify-center nav-cart-badge">0</span>
           </a>
 
           <div id="nav-auth-slot">
             <a href="login.html"
-              class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-slate-900/90 hover:bg-slate-800 shadow-sm transition-all hover:shadow-md border border-white/10">
-              <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              class="btn-auth-compact inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold text-white bg-slate-900/90 hover:bg-slate-800 shadow-sm transition-all hover:shadow-md border border-white/10 shrink-0 whitespace-nowrap">
+              <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-sky-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
               </svg>
-              <span>Masuk / Akun</span>
+              <span class="hidden sm:inline">Masuk / Login</span>
+              <span class="sm:hidden text-xs">Masuk</span>
             </a>
           </div>
+
+          <!-- Mobile Hamburger Toggle -->
+          <button id="btn-mobile-nav-toggle" type="button" aria-label="Buka Menu Navigasi" class="md:hidden p-2 rounded-xl text-slate-200 bg-white/10 hover:bg-white/15 border border-white/10 transition-all flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+          </button>
         </div>
       </div>
     </div>
@@ -121,23 +125,23 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 
         <!-- Left Hero Content -->
-        <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
-          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight hero-title-main">
+        <div class="lg:col-span-7 space-y-5 sm:space-y-6 text-center lg:text-left">
+          <h1 class="hero-title-main font-extrabold tracking-tight">
             <span class="hero-title-prefix">Pemetaan UMKM</span> <br class="hidden sm:inline">
             <span class="hero-title-gradient">
               Olahan Laut & Garam
             </span>
           </h1>
 
-          <p class="text-lg text-slate-300 max-w-2xl leading-relaxed mx-auto lg:mx-0">
+          <p class="hero-desc-main text-slate-300 max-w-2xl leading-relaxed mx-auto lg:mx-0">
             Temukan lokasi, produk unggulan, dan potensi ekonomi UMKM olahan hasil laut serta sentra garam rakyat
             Kabupaten Pamekasan dalam satu platform terintegrasi yang akurat, aman, dan mudah diakses.
           </p>
 
-          <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3 sm:gap-4 pt-2">
             <a href="peta.html"
               onclick="SigarumUI.smoothNavigate('peta.html', event, this)"
-              class="liquid-btn-primary card-lift glass-card-hover inline-flex items-center gap-2.5 px-6 py-3.5 rounded-2xl font-bold transition-all shadow-lg text-sm sm:text-base">
+              class="liquid-btn-primary card-lift glass-card-hover inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl font-bold transition-all shadow-lg text-sm sm:text-base w-full sm:w-auto">
               <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7">
@@ -148,7 +152,7 @@
 
             <a href="produk.html"
               onclick="SigarumUI.smoothNavigate('produk.html', event, this)"
-              class="liquid-btn-secondary card-lift glass-card-hover inline-flex items-center gap-2.5 px-6 py-3.5 rounded-2xl font-bold transition-all shadow-lg text-sm sm:text-base group">
+              class="liquid-btn-secondary card-lift glass-card-hover inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl font-bold transition-all shadow-lg text-sm sm:text-base group w-full sm:w-auto">
               <svg class="w-5 h-5 text-sky-400 group-hover:text-cyan-300 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
@@ -158,22 +162,22 @@
           </div>
 
           <!-- Mini Feature Tags -->
-          <div class="pt-4 flex items-center justify-center lg:justify-start gap-6 text-xs text-slate-300 font-medium">
-            <span class="flex items-center gap-1.5">
-              <svg class="w-4 h-4 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+          <div class="pt-3 sm:pt-4 flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-6 text-xs text-slate-300 font-medium">
+            <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/60 border border-white/5">
+              <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd"
                   d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                   clip-rule="evenodd"></path>
               </svg>
-              PostGIS Spatial Point & Polygon
+              <span>PostGIS Spatial Point & Polygon</span>
             </span>
-            <span class="flex items-center gap-1.5">
-              <svg class="w-4 h-4 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+            <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/60 border border-white/5">
+              <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd"
                   d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                   clip-rule="evenodd"></path>
               </svg>
-              Filter Wilayah & Kategori Real-Time
+              <span>Filter Wilayah & Kategori Real-Time</span>
             </span>
           </div>
         </div>
@@ -323,96 +327,92 @@
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
 
         <!-- Card 1: Pemetaan Lokasi -->
-        <div onclick="SigarumUI.smoothNavigate('peta.html', event, this)" role="button" tabindex="0" class="liquid-glass rounded-3xl p-6 sm:p-7 card-lift glass-card-hover border border-white/10 reveal-on-scroll delay-100 flex flex-col justify-between group">
+        <div onclick="SigarumUI.smoothNavigate('peta.html', event, this)" role="button" tabindex="0" class="liquid-glass rounded-2xl sm:rounded-3xl p-3.5 sm:p-7 card-lift glass-card-hover border border-white/10 reveal-on-scroll delay-100 flex flex-col justify-between group">
           <div>
-            <div class="w-14 h-14 rounded-2xl bg-sky-500/15 border border-sky-400/30 text-sky-400 flex items-center justify-center mb-5 shadow-lg shadow-sky-500/15 group-hover:scale-105 group-hover:border-sky-400/60 group-hover:shadow-sky-500/30 transition-all duration-300">
-              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-sky-500/15 border border-sky-400/30 text-sky-400 flex items-center justify-center mb-3 sm:mb-5 shadow-md sm:shadow-lg shadow-sky-500/15 group-hover:scale-105 group-hover:border-sky-400/60 group-hover:shadow-sky-500/30 transition-all duration-300">
+              <svg class="w-5 h-5 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
               </svg>
             </div>
-            <span class="inline-block text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full bg-sky-500/10 text-sky-300 border border-sky-400/20 mb-3 w-max">WebGIS Presisi</span>
-            <h4 class="text-lg font-bold text-white group-hover:text-sky-300 transition-colors">Pemetaan Lokasi</h4>
-            <p class="text-sm text-slate-300 mt-2 leading-relaxed">
-              Visualisasi titik koordinat presisi UMKM di pesisir Pamekasan menggunakan peta interaktif Leaflet dan
-              OpenStreetMap.
+            <span class="inline-block text-[9px] sm:text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-sky-500/10 text-sky-300 border border-sky-400/20 mb-2 sm:mb-3 w-max">WebGIS Presisi</span>
+            <h4 class="text-sm sm:text-lg font-bold text-white group-hover:text-sky-300 transition-colors line-clamp-1 sm:line-clamp-none">Pemetaan Lokasi</h4>
+            <p class="text-[11px] sm:text-sm text-slate-300 mt-1 sm:mt-2 leading-relaxed line-clamp-2 sm:line-clamp-none">
+              Visualisasi titik koordinat presisi UMKM di pesisir Pamekasan menggunakan Leaflet WebGIS.
             </p>
           </div>
-          <div class="mt-6 pt-3.5 border-t border-white/10 flex items-center justify-between text-xs font-semibold text-sky-400 group-hover:text-sky-300">
-            <span>Buka Peta Interaktif</span>
+          <div class="mt-3 sm:mt-6 pt-2.5 sm:pt-3.5 border-t border-white/10 flex items-center justify-between text-[11px] sm:text-xs font-semibold text-sky-400 group-hover:text-sky-300">
+            <span class="truncate">Buka Peta</span>
             <span class="group-hover:translate-x-1.5 transition-transform duration-300">&rarr;</span>
           </div>
         </div>
 
         <!-- Card 2: Informasi UMKM -->
-        <div onclick="SigarumUI.smoothNavigate('umkm.html', event, this)" role="button" tabindex="0" class="liquid-glass rounded-3xl p-6 sm:p-7 card-lift glass-card-hover border border-white/10 reveal-on-scroll delay-200 flex flex-col justify-between group">
+        <div onclick="SigarumUI.smoothNavigate('umkm.html', event, this)" role="button" tabindex="0" class="liquid-glass rounded-2xl sm:rounded-3xl p-3.5 sm:p-7 card-lift glass-card-hover border border-white/10 reveal-on-scroll delay-200 flex flex-col justify-between group">
           <div>
-            <div class="w-14 h-14 rounded-2xl bg-sky-500/15 border border-sky-400/30 text-sky-400 flex items-center justify-center mb-5 shadow-lg shadow-sky-500/15 group-hover:scale-105 group-hover:border-sky-400/60 group-hover:shadow-sky-500/30 transition-all duration-300">
-              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-sky-500/15 border border-sky-400/30 text-sky-400 flex items-center justify-center mb-3 sm:mb-5 shadow-md sm:shadow-lg shadow-sky-500/15 group-hover:scale-105 group-hover:border-sky-400/60 group-hover:shadow-sky-500/30 transition-all duration-300">
+              <svg class="w-5 h-5 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
                 </path>
               </svg>
             </div>
-            <span class="inline-block text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full bg-sky-500/10 text-sky-300 border border-sky-400/20 mb-3 w-max">Legalitas & Profil</span>
-            <h4 class="text-lg font-bold text-white group-hover:text-sky-300 transition-colors">Informasi UMKM</h4>
-            <p class="text-sm text-slate-300 mt-2 leading-relaxed">
-              Profil lengkap pelaku usaha mencakup legalitas izin (NIB/P-IRT), kontak WhatsApp langsung, dan profil
-              pemilik usaha.
+            <span class="inline-block text-[9px] sm:text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-sky-500/10 text-sky-300 border border-sky-400/20 mb-2 sm:mb-3 w-max">Legalitas & Profil</span>
+            <h4 class="text-sm sm:text-lg font-bold text-white group-hover:text-sky-300 transition-colors line-clamp-1 sm:line-clamp-none">Informasi UMKM</h4>
+            <p class="text-[11px] sm:text-sm text-slate-300 mt-1 sm:mt-2 leading-relaxed line-clamp-2 sm:line-clamp-none">
+              Profil lengkap pelaku usaha, legalitas NIB/P-IRT, kontak WhatsApp, dan legalitas izin.
             </p>
           </div>
-          <div class="mt-6 pt-3.5 border-t border-white/10 flex items-center justify-between text-xs font-semibold text-sky-400 group-hover:text-sky-300">
-            <span>Jelajahi Data UMKM</span>
+          <div class="mt-3 sm:mt-6 pt-2.5 sm:pt-3.5 border-t border-white/10 flex items-center justify-between text-[11px] sm:text-xs font-semibold text-sky-400 group-hover:text-sky-300">
+            <span class="truncate">Jelajahi UMKM</span>
             <span class="group-hover:translate-x-1.5 transition-transform duration-300">&rarr;</span>
           </div>
         </div>
 
         <!-- Card 3: Katalog Produk -->
-        <div onclick="SigarumUI.smoothNavigate('produk.html', event, this)" role="button" tabindex="0" class="liquid-glass rounded-3xl p-6 sm:p-7 card-lift glass-card-hover border border-white/10 reveal-on-scroll delay-300 flex flex-col justify-between group">
+        <div onclick="SigarumUI.smoothNavigate('produk.html', event, this)" role="button" tabindex="0" class="liquid-glass rounded-2xl sm:rounded-3xl p-3.5 sm:p-7 card-lift glass-card-hover border border-white/10 reveal-on-scroll delay-300 flex flex-col justify-between group">
           <div>
-            <div class="w-14 h-14 rounded-2xl bg-sky-500/15 border border-sky-400/30 text-sky-400 flex items-center justify-center mb-5 shadow-lg shadow-sky-500/15 group-hover:scale-105 group-hover:border-sky-400/60 group-hover:shadow-sky-500/30 transition-all duration-300">
-              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-sky-500/15 border border-sky-400/30 text-sky-400 flex items-center justify-center mb-3 sm:mb-5 shadow-md sm:shadow-lg shadow-sky-500/15 group-hover:scale-105 group-hover:border-sky-400/60 group-hover:shadow-sky-500/30 transition-all duration-300">
+              <svg class="w-5 h-5 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
               </svg>
             </div>
-            <span class="inline-block text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full bg-sky-500/10 text-sky-300 border border-sky-400/20 mb-3 w-max">E-Commerce Terintegrasi</span>
-            <h4 class="text-lg font-bold text-white group-hover:text-sky-300 transition-colors">Katalog Produk</h4>
-            <p class="text-sm text-slate-300 mt-2 leading-relaxed">
-              Daftar aneka komoditas olahan laut dan garam lengkap dengan harga transparan, berat kemasan, dan foto produk
-              asli.
+            <span class="inline-block text-[9px] sm:text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-sky-500/10 text-sky-300 border border-sky-400/20 mb-2 sm:mb-3 w-max">E-Commerce</span>
+            <h4 class="text-sm sm:text-lg font-bold text-white group-hover:text-sky-300 transition-colors line-clamp-1 sm:line-clamp-none">Katalog Produk</h4>
+            <p class="text-[11px] sm:text-sm text-slate-300 mt-1 sm:mt-2 leading-relaxed line-clamp-2 sm:line-clamp-none">
+              Daftar komoditas olahan laut dan garam dengan harga transparan, berat, dan foto asli.
             </p>
           </div>
-          <div class="mt-6 pt-3.5 border-t border-white/10 flex items-center justify-between text-xs font-semibold text-sky-400 group-hover:text-sky-300">
-            <span>Lihat Katalog Produk</span>
+          <div class="mt-3 sm:mt-6 pt-2.5 sm:pt-3.5 border-t border-white/10 flex items-center justify-between text-[11px] sm:text-xs font-semibold text-sky-400 group-hover:text-sky-300">
+            <span class="truncate">Lihat Produk</span>
             <span class="group-hover:translate-x-1.5 transition-transform duration-300">&rarr;</span>
           </div>
         </div>
 
         <!-- Card 4: Data Spasial Wilayah -->
-        <div onclick="SigarumUI.smoothNavigate('statistik.html', event, this)" role="button" tabindex="0" class="liquid-glass rounded-3xl p-6 sm:p-7 card-lift glass-card-hover border border-white/10 reveal-on-scroll delay-400 flex flex-col justify-between group">
+        <div onclick="SigarumUI.smoothNavigate('statistik.html', event, this)" role="button" tabindex="0" class="liquid-glass rounded-2xl sm:rounded-3xl p-3.5 sm:p-7 card-lift glass-card-hover border border-white/10 reveal-on-scroll delay-400 flex flex-col justify-between group">
           <div>
-            <div class="w-14 h-14 rounded-2xl bg-sky-500/15 border border-sky-400/30 text-sky-400 flex items-center justify-center mb-5 shadow-lg shadow-sky-500/15 group-hover:scale-105 group-hover:border-sky-400/60 group-hover:shadow-sky-500/30 transition-all duration-300">
-              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-sky-500/15 border border-sky-400/30 text-sky-400 flex items-center justify-center mb-3 sm:mb-5 shadow-md sm:shadow-lg shadow-sky-500/15 group-hover:scale-105 group-hover:border-sky-400/60 group-hover:shadow-sky-500/30 transition-all duration-300">
+              <svg class="w-5 h-5 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
                 </path>
               </svg>
             </div>
-            <span class="inline-block text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full bg-sky-500/10 text-sky-300 border border-sky-400/20 mb-3 w-max">Analisis Spasial</span>
-            <h4 class="text-lg font-bold text-white group-hover:text-sky-300 transition-colors">Data Spasial Wilayah</h4>
-            <p class="text-sm text-slate-300 mt-2 leading-relaxed">
-              Dukungan analisis batas poligon kecamatan GeoJSON dan statistik sebaran untuk acuan perumusan kebijakan
-              dinas terkait.
+            <span class="inline-block text-[9px] sm:text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-sky-500/10 text-sky-300 border border-sky-400/20 mb-2 sm:mb-3 w-max">Analisis Spasial</span>
+            <h4 class="text-sm sm:text-lg font-bold text-white group-hover:text-sky-300 transition-colors line-clamp-1 sm:line-clamp-none">Data Spasial</h4>
+            <p class="text-[11px] sm:text-sm text-slate-300 mt-1 sm:mt-2 leading-relaxed line-clamp-2 sm:line-clamp-none">
+              Analisis batas poligon GeoJSON kecamatan dan statistik sebaran untuk perumusan kebijakan.
             </p>
           </div>
-          <div class="mt-6 pt-3.5 border-t border-white/10 flex items-center justify-between text-xs font-semibold text-sky-400 group-hover:text-sky-300">
-            <span>Akses Data Spasial</span>
+          <div class="mt-3 sm:mt-6 pt-2.5 sm:pt-3.5 border-t border-white/10 flex items-center justify-between text-[11px] sm:text-xs font-semibold text-sky-400 group-hover:text-sky-300">
+            <span class="truncate">Akses Data</span>
             <span class="group-hover:translate-x-1.5 transition-transform duration-300">&rarr;</span>
           </div>
         </div>
@@ -422,15 +422,15 @@
   </section>
 
   <!-- Section: Sebaran UMKM Unggulan -->
-  <section class="py-16 bg-white border-t border-slate-200">
+  <section class="py-12 sm:py-16 bg-slate-900/50 border-t border-white/10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex flex-col md:flex-row md:items-end justify-between mb-10">
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-10">
         <div>
-          <span class="text-xs font-bold text-ocean-600 uppercase tracking-widest">Rekomendasi Unggulan</span>
-          <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">UMKM Pesisir Pilihan</h3>
+          <span class="text-xs font-bold text-sky-400 uppercase tracking-widest">Rekomendasi Unggulan</span>
+          <h3 class="text-xl sm:text-3xl font-extrabold text-white mt-1">UMKM Pesisir Pilihan</h3>
         </div>
         <a href="umkm.html"
-          class="mt-4 md:mt-0 inline-flex items-center gap-1.5 text-sm font-bold text-ocean-600 hover:text-ocean-700">
+          class="mt-3 md:mt-0 inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-sky-400 hover:text-sky-300">
           Lihat Semua UMKM (16)
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
@@ -438,8 +438,8 @@
         </a>
       </div>
 
-      <!-- Grid Cards -->
-      <div id="home-umkm-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Grid Cards: 2-kolom rapi di smartphone, 4-kolom di desktop -->
+      <div id="home-umkm-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
         <!-- Rendered by JS -->
       </div>
     </div>
@@ -447,10 +447,11 @@
 
   <!-- Footer -->
   <footer class="mt-auto bg-slate-900 text-slate-400 text-sm border-t border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <!-- 2-kolom di smartphone, 4-kolom di layar besar -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
 
-        <div class="md:col-span-2 space-y-3">
+        <div class="col-span-2 space-y-3">
           <div class="flex items-center gap-3">
             <img src="assets/images/logo.svg" alt="SIGARUM Logo" class="w-8 h-8 rounded-lg drop-shadow">
             <span class="font-bold text-white text-lg">SIGA<span class="text-sky-400">RUM</span></span>
@@ -467,35 +468,34 @@
           </div>
         </div>
 
-        <div>
-          <h5 class="text-white font-bold text-xs uppercase tracking-wider mb-3">Tautan Cepat</h5>
-          <ul class="space-y-2 text-xs">
-            <li><a href="peta.html" class="hover:text-white transition-colors">Peta Interaktif WebGIS</a></li>
+        <div class="col-span-1">
+          <h5 class="text-white font-bold text-xs uppercase tracking-wider mb-2.5 sm:mb-3">Tautan Cepat</h5>
+          <ul class="space-y-1.5 sm:space-y-2 text-xs">
+            <li><a href="peta.html" class="hover:text-white transition-colors">Peta WebGIS</a></li>
             <li><a href="umkm.html" class="hover:text-white transition-colors">Direktori UMKM</a></li>
-            <li><a href="produk.html" class="hover:text-white transition-colors">Katalog Produk Olahan</a></li>
-            <li><a href="statistik.html" class="hover:text-white transition-colors">Statistik & Analisis Spasial</a>
-            </li>
-            <li><a href="tentang.html" class="hover:text-white transition-colors">Dokumentasi & Arsitektur</a></li>
+            <li><a href="produk.html" class="hover:text-white transition-colors">Katalog Produk</a></li>
+            <li><a href="statistik.html" class="hover:text-white transition-colors">Statistik Spasial</a></li>
+            <li><a href="tentang.html" class="hover:text-white transition-colors">Dokumentasi</a></li>
           </ul>
         </div>
 
-        <div>
-          <h5 class="text-white font-bold text-xs uppercase tracking-wider mb-3">Teknologi GIS</h5>
-          <ul class="space-y-1.5 text-xs text-slate-400">
-            <li>• Leaflet.js 1.9.4 & OpenStreetMap</li>
-            <li>• PostgreSQL 14 + PostGIS 3.0</li>
-            <li>• QGIS 3.28 Desktop Processing</li>
-            <li>• GeoJSON WGS84 (SRID 4326)</li>
-            <li>• Tailwind CSS & Chart.js</li>
+        <div class="col-span-1">
+          <h5 class="text-white font-bold text-xs uppercase tracking-wider mb-2.5 sm:mb-3">Teknologi GIS</h5>
+          <ul class="space-y-1 sm:space-y-1.5 text-xs text-slate-400">
+            <li>• Leaflet & OSM</li>
+            <li>• PostGIS 3.0</li>
+            <li>• QGIS 3.28</li>
+            <li>• GeoJSON WGS84</li>
+            <li>• Tailwind & Chart.js</li>
           </ul>
         </div>
 
       </div>
 
       <div
-        class="pt-8 mt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500">
+        class="pt-6 sm:pt-8 mt-6 sm:mt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-3 sm:gap-0">
         <div>&copy; 2026 SIGARUM WebGIS. Tugas Perancangan Sistem Informasi Geografis.</div>
-        <div class="mt-2 sm:mt-0 flex gap-4">
+        <div class="flex gap-4">
           <a href="login.html" class="hover:text-slate-300">Portal Admin</a>
           <button onclick="SigarumStore.resetToDefault()" class="hover:text-slate-300">Reset Data Demo</button>
         </div>
@@ -540,40 +540,41 @@
         SigarumAnimations.animateCounter(elAktif, true);
       }, 100);
 
-      // 2. Render 4 Featured UMKM Cards
+      // 2. Render 4 Featured UMKM Cards with 2-column mobile layout
       const umkmList = SigarumStore.getUMKM({ onlyActive: true }).slice(0, 4);
       const grid = document.getElementById('home-umkm-grid');
       grid.innerHTML = umkmList.map((item, idx) => `
-        <div class="bg-white rounded-2xl border border-slate-200/90 overflow-hidden card-lift glass-card-hover shadow-sm hover:shadow-xl flex flex-col group transition-all">
-          <div class="relative h-44 w-full bg-slate-100 overflow-hidden">
+        <div class="liquid-glass-subtle rounded-xl sm:rounded-2xl border border-white/10 overflow-hidden card-lift glass-card-hover shadow-sm hover:shadow-xl flex flex-col group transition-all">
+          <div class="relative w-full aspect-[16/11] bg-slate-900 overflow-hidden">
             <img src="${item.foto}" alt="${item.nama_umkm}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80'">
-            <div class="absolute top-3 left-3">
+            <div class="absolute top-2 left-2 sm:top-3 sm:left-3 scale-90 sm:scale-100 origin-top-left">
               ${SigarumUtils.getCategoryBadge(item.kategori)}
             </div>
-            <div class="absolute top-3 right-3">
+            <div class="absolute top-2 right-2 sm:top-3 sm:right-3 scale-90 sm:scale-100 origin-top-right">
               ${SigarumUtils.getStatusBadge(item.status)}
             </div>
           </div>
-          <div class="p-5 flex-1 flex flex-col justify-between">
+          <div class="p-2.5 sm:p-5 flex-1 flex flex-col justify-between">
             <div>
-              <h4 class="font-bold text-slate-900 group-hover:text-ocean-600 transition-colors line-clamp-1">
+              <h4 class="font-bold text-white group-hover:text-sky-400 transition-colors line-clamp-1 text-xs sm:text-base">
                 ${item.nama_umkm}
               </h4>
-              <p class="text-xs text-slate-500 mt-1 flex items-center gap-1">
-                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
-                Kec. ${item.kecamatan}, Desa ${item.desa}
+              <p class="text-[10px] sm:text-xs text-slate-400 mt-0.5 sm:mt-1 flex items-center gap-1">
+                <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                <span class="truncate">Kec. ${item.kecamatan}, Desa ${item.desa}</span>
               </p>
-              <p class="text-xs text-slate-600 mt-2.5 line-clamp-2">
+              <p class="text-[11px] sm:text-xs text-slate-300 mt-1.5 sm:mt-2.5 line-clamp-2 leading-relaxed">
                 ${item.deskripsi}
               </p>
             </div>
-            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-              <span class="text-[11px] font-semibold text-slate-500">
-                Pemilik: <span class="text-slate-800">${item.pemilik.split(' ')[0]}</span>
+            <div class="mt-2.5 sm:mt-4 pt-2 sm:pt-3 border-t border-white/10 flex items-center justify-between gap-1">
+              <span class="text-[10px] sm:text-[11px] font-medium text-slate-400 flex items-center gap-0.5 min-w-0">
+                <span class="hidden sm:inline">Pemilik:</span>
+                <span class="text-slate-200 font-semibold truncate max-w-[65px] sm:max-w-[140px]" title="${item.pemilik}">${item.pemilik}</span>
               </span>
-              <a href="detail-umkm.html?id=${item.id_umkm}" class="text-xs font-bold text-ocean-600 hover:text-ocean-700 flex items-center gap-1">
+              <a href="detail-umkm.html?id=${item.id_umkm}" class="text-[11px] sm:text-xs font-bold text-sky-400 hover:text-sky-300 flex items-center gap-0.5 shrink-0 py-0.5 px-1.5 sm:py-1 sm:px-2 rounded-lg hover:bg-sky-500/10 transition-colors">
                 Detail
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
               </a>
             </div>
           </div>

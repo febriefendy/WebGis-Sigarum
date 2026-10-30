@@ -1,0 +1,916 @@
+/* ==========================================================================
+   SIGARUM - RESPONSIVE & ADAPTIVE MULTI-DEVICE STYLESHEET
+   Supports: Android, iPhone (all generations), iPad Mini/Air/Pro, Tablets,
+             Laptops, Desktops, & Ultrawide Displays
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. CSS Variables & Design Tokens (Consistent with SIGARUM Dark Futuristic)
+   -------------------------------------------------------------------------- */
+:root {
+  /* Brand Color Palette */
+  --sigarum-bg-primary: #020611;
+  --sigarum-bg-secondary: #071225;
+  --sigarum-bg-card: #071329;
+  --sigarum-blue-primary: #00AFFF;
+  --sigarum-cyan-accent: #22D3EE;
+  --sigarum-blue-light: #60A5FA;
+  --sigarum-text-primary: #F8FAFC;
+  --sigarum-text-secondary: #CBD5E1;
+  --sigarum-text-muted: #94A3B8;
+  --sigarum-success: #10B981;
+
+  /* Safe Area Inset Variables for iPhone & Modern Android */
+  --sat: env(safe-area-inset-top, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+
+  /* Dynamic Viewport Unit with Fallback */
+  --vh: 1vh;
+  --app-height: 100dvh;
+
+  /* Header & Bottom Nav Dimensions */
+  --header-height: 64px;
+  --bottom-nav-height: 62px;
+}
+
+/* --------------------------------------------------------------------------
+   2. Global Reset & Mobile Usability Baselines
+   -------------------------------------------------------------------------- */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+body {
+  overflow-x: hidden;
+  width: 100%;
+  min-height: 100vh;
+  min-height: var(--app-height);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: rgba(0, 175, 255, 0.15);
+}
+
+/* Touch Targets: Ensure min 44x44px target on interactive elements */
+button, 
+a, 
+input, 
+select, 
+textarea,
+[role="button"] {
+  touch-action: manipulation;
+}
+
+/* Prevent iOS Safari auto-zoom on input focus by setting 16px base font on mobile */
+@media (max-width: 767px) {
+  input[type="text"],
+  input[type="number"],
+  input[type="password"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="search"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   3. Safe Area Padding Utilities
+   -------------------------------------------------------------------------- */
+.safe-pt {
+  padding-top: max(1rem, var(--sat));
+}
+
+.safe-pb {
+  padding-bottom: max(1rem, var(--sab));
+}
+
+.safe-pl {
+  padding-left: max(1rem, var(--sal));
+}
+
+.safe-pr {
+  padding-right: max(1rem, var(--sar));
+}
+
+/* Navbar Safe Area */
+.glass-nav {
+  padding-top: var(--sat);
+}
+
+/* Content & Footer spacing when bottom navigation dock is present on mobile */
+@media (max-width: 767px) {
+  /* 1. Footers across all pages must have safe clearance above the fixed mobile bottom dock */
+  footer,
+  body:has(#mobile-bottom-nav) footer,
+  body.has-bottom-nav footer {
+    padding-bottom: calc(var(--bottom-nav-height) + var(--sab) + 2rem) !important;
+  }
+
+  /* 2. For pages without a footer, ensure main has safe clearance */
+  body:has(#mobile-bottom-nav):not(:has(footer)) main,
+  body.has-bottom-nav:not(:has(footer)) main,
+  .page-with-bottom-nav {
+    padding-bottom: calc(var(--bottom-nav-height) + var(--sab) + 1.75rem) !important;
+  }
+
+  /* 3. When footer is present, main doesn't need redundant huge padding */
+  body:has(#mobile-bottom-nav):has(footer) main,
+  body.has-bottom-nav:has(footer) main {
+    padding-bottom: 1.5rem !important;
+  }
+
+  /* 4. WebGIS Map Container specific adjustment when bottom dock is present */
+  body.has-bottom-nav #map-page-container {
+    padding-bottom: calc(var(--bottom-nav-height) + var(--sab)) !important;
+  }
+
+  body.has-bottom-nav #map-page-container main {
+    padding-bottom: 0 !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   4. Header & Responsive Brand Styles
+   -------------------------------------------------------------------------- */
+.header-brand-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+.header-brand-logo {
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  border-radius: 0.625rem;
+  transition: transform 0.2s ease;
+}
+
+@media (min-width: 640px) {
+  .header-brand-container {
+    gap: 0.75rem;
+  }
+  .header-brand-logo {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}
+
+.header-brand-title {
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  font-size: 1rem;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+@media (min-width: 640px) {
+  .header-brand-title {
+    font-size: 1.125rem;
+  }
+}
+
+.header-brand-sub {
+  font-size: 0.6875rem;
+  color: var(--sigarum-text-muted);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Slogan disembunyikan pada mobile (< 640px) agar ruang header lega dan tidak tabrakan */
+@media (max-width: 639px) {
+  .header-brand-sub {
+    display: none !important;
+  }
+}
+
+/* Header Brand Badge (WEBGIS / E-COMMERCE) */
+.header-brand-badge {
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  padding: 1px 4px !important;
+  border-radius: 4px !important;
+  letter-spacing: 0.04em !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
+}
+
+/* Pada layar sangat sempit (< 420px), sembunyikan badge brand agar logo + nama SIGARUM tetap pas */
+@media (max-width: 419px) {
+  .header-brand-badge,
+  .badge-webgis,
+  .header-brand-container .uppercase {
+    display: none !important;
+  }
+}
+
+/* Header Right Actions Container */
+.header-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex-shrink: 0;
+}
+
+@media (min-width: 640px) {
+  .header-right-actions {
+    gap: 0.75rem;
+  }
+}
+
+/* Compact Mobile Auth Button */
+.btn-auth-compact,
+#nav-login-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.375rem !important;
+  padding: 0.375rem 0.625rem !important;
+  border-radius: 0.75rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  line-height: 1 !important;
+}
+
+@media (min-width: 640px) {
+  .btn-auth-compact,
+  #nav-login-btn {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.875rem !important;
+    gap: 0.5rem !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   5. Mobile Navigation Slide-Out Drawer & Overlay
+   -------------------------------------------------------------------------- */
+.mobile-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 3, 10, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 90;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mobile-drawer-overlay.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.mobile-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(340px, 86vw);
+  height: 100%;
+  height: 100dvh;
+  background: rgba(7, 18, 37, 0.96);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: -10px 0 35px rgba(0, 0, 0, 0.65);
+  z-index: 100;
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-col: column;
+  padding-top: var(--sat);
+  padding-bottom: var(--sab);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-drawer.is-active {
+  transform: translateX(0);
+}
+
+.mobile-drawer-link {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.875rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--sigarum-text-secondary);
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.mobile-drawer-link:hover,
+.mobile-drawer-link:active {
+  background: rgba(0, 175, 255, 0.12);
+  color: #ffffff;
+  border-color: rgba(34, 211, 238, 0.3);
+}
+
+.mobile-drawer-link.is-active {
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.4) 0%, rgba(3, 105, 161, 0.6) 100%);
+  color: #ffffff;
+  border-color: rgba(56, 189, 248, 0.45);
+  box-shadow: 0 4px 16px rgba(2, 132, 199, 0.3);
+}
+
+/* --------------------------------------------------------------------------
+   6. Mobile Bottom Navigation Bar (App-Like Thumb Dock)
+   -------------------------------------------------------------------------- */
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: rgba(6, 14, 32, 0.92);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.5);
+  padding-bottom: var(--sab);
+  height: calc(var(--bottom-nav-height) + var(--sab));
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .mobile-bottom-nav {
+    display: none !important;
+  }
+}
+
+.mobile-bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: 0.375rem 0.25rem;
+  color: var(--sigarum-text-muted);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  position: relative;
+  text-decoration: none;
+  border-radius: 0.5rem;
+}
+
+.mobile-bottom-nav-item:hover,
+.mobile-bottom-nav-item:active {
+  color: var(--sigarum-blue-light);
+}
+
+.mobile-bottom-nav-item.is-active {
+  color: var(--sigarum-cyan-accent);
+}
+
+.mobile-bottom-nav-item.is-active::after {
+  content: '';
+  position: absolute;
+  top: 0.125rem;
+  width: 1.25rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--sigarum-cyan-accent);
+  box-shadow: 0 0 8px var(--sigarum-cyan-accent);
+}
+
+.mobile-bottom-nav-item svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  transition: transform 0.2s ease;
+}
+
+.mobile-bottom-nav-item.is-active svg {
+  transform: translateY(-1px);
+}
+
+/* --------------------------------------------------------------------------
+   7. Fluid Responsive Typography
+   -------------------------------------------------------------------------- */
+.hero-title-main {
+  font-size: clamp(1.875rem, 5.5vw, 3.75rem);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+}
+
+.section-title-main {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.hero-desc-main {
+  font-size: clamp(0.9375rem, 2.2vw, 1.125rem);
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   8. Catalog Cards & Images Responsive Constraints
+   -------------------------------------------------------------------------- */
+.umkm-card-image-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #020611;
+}
+
+.umkm-card-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.umkm-card-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.umkm-card-footer {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   9. WebGIS Map Page Responsive Architecture (peta.html)
+   -------------------------------------------------------------------------- */
+.webgis-page-root {
+  height: 100vh;
+  height: var(--app-height);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.webgis-main-container {
+  flex: 1;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+}
+
+/* Mobile Sidebar Drawer for Filters */
+@media (max-width: 767px) {
+  #map-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(340px, 88vw);
+    height: 100%;
+    height: 100dvh;
+    z-index: 70;
+    border-radius: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 10px 0 35px rgba(0, 0, 0, 0.7);
+    padding-top: var(--sat);
+    padding-bottom: var(--sab);
+  }
+
+  .map-sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 3, 12, 0.65);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 65;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .map-sidebar-overlay.is-active {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+/* Tablet Adaptive Map Sidebar (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  #map-sidebar {
+    width: 290px !important;
+    flex-shrink: 0;
+    transition: transform 0.3s ease, width 0.3s ease;
+  }
+  
+  #map-sidebar.tablet-collapsed {
+    transform: translateX(-100%);
+    position: absolute;
+    z-index: 40;
+  }
+}
+
+/* Desktop Map Sidebar (>= 1024px) */
+@media (min-width: 1024px) {
+  #map-sidebar {
+    width: 360px !important;
+    flex-shrink: 0;
+  }
+}
+
+/* Leaflet Map Touch Optimization */
+.leaflet-touch .leaflet-control-zoom a {
+  width: 38px !important;
+  height: 38px !important;
+  line-height: 38px !important;
+  font-size: 18px !important;
+  border-radius: 10px !important;
+  background: rgba(7, 18, 37, 0.88) !important;
+  color: #f8fafc !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+.leaflet-touch .leaflet-control-zoom a:hover {
+  background: rgba(8, 125, 222, 0.5) !important;
+  color: #ffffff !important;
+  border-color: rgba(87, 185, 255, 0.5) !important;
+}
+
+/* Responsive Popup on Mobile */
+.custom-map-popup .leaflet-popup-content-wrapper {
+  max-width: min(320px, 86vw) !important;
+}
+
+@media (max-width: 480px) {
+  .custom-map-popup .leaflet-popup-content {
+    min-width: 220px !important;
+    max-width: 270px !important;
+  }
+}
+
+/* Floating Action Controls on Map */
+.map-floating-controls {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+@media (max-width: 639px) {
+  .map-floating-controls {
+    top: 0.625rem;
+    right: 0.625rem;
+    max-width: calc(100vw - 1.25rem);
+  }
+}
+
+/* Map Toggle Button Pill */
+.map-toggle-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: rgba(5, 12, 28, 0.85);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  padding: 3px;
+}
+
+.map-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.625rem;
+  border-radius: 10px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  user-select: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.map-toggle-btn.is-active {
+  background: linear-gradient(135deg, rgba(8, 125, 222, 0.85) 0%, rgba(2, 132, 199, 0.95) 100%);
+  color: #ffffff;
+  border-color: rgba(184, 229, 255, 0.45);
+  box-shadow: 0 2px 10px rgba(8, 125, 222, 0.4);
+}
+
+.map-toggle-btn.is-inactive {
+  background: transparent;
+  color: #94a3b8;
+}
+
+.map-toggle-btn.is-inactive:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f1f5f9;
+}
+
+/* --------------------------------------------------------------------------
+   10. Responsive Tables & Data Layout
+   -------------------------------------------------------------------------- */
+.sigarum-table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 1rem;
+  position: relative;
+}
+
+.sigarum-table-responsive::-webkit-scrollbar {
+  height: 6px;
+}
+
+.sigarum-table-responsive::-webkit-scrollbar-track {
+  background: rgba(2, 6, 16, 0.3);
+}
+
+.sigarum-table-responsive::-webkit-scrollbar-thumb {
+  background: rgba(87, 185, 255, 0.3);
+  border-radius: 3px;
+}
+
+/* Table Horizontal Scroll Hint on Mobile */
+@media (max-width: 767px) {
+  .sigarum-table-responsive {
+    box-shadow: inset -10px 0 10px -10px rgba(0, 175, 255, 0.25);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   11. Modal Dialogs Responsive Optimization
+   -------------------------------------------------------------------------- */
+.sigarum-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 3, 10, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.sigarum-modal-dialog {
+  width: 100%;
+  max-width: min(540px, 92vw);
+  max-height: 88vh;
+  max-height: 88dvh;
+  overflow-y: auto;
+  background: rgba(7, 18, 37, 0.95);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1.5rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+  padding: 1.5rem;
+}
+
+@media (max-width: 480px) {
+  .sigarum-modal-dialog {
+    padding: 1.125rem;
+    border-radius: 1.25rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   12. Accessibility & Prefers-Reduced-Motion
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .liquid-canvas-fixed {
+    display: none !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   13. Admin & Pelanggan Portal Responsive Architecture
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  aside.w-64,
+  aside#admin-sidebar,
+  .admin-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: min(280px, 80vw) !important;
+    height: 100% !important;
+    height: 100dvh !important;
+    z-index: 95 !important;
+    transform: translateX(-100%);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    box-shadow: 10px 0 35px rgba(0, 0, 0, 0.75) !important;
+  }
+
+  aside.w-64.is-open,
+  aside#admin-sidebar.is-open,
+  .admin-sidebar.is-open {
+    transform: translateX(0) !important;
+  }
+
+  .admin-sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 3, 12, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 90;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .admin-sidebar-overlay.is-active {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+/* Tablet Adaptive Admin Layout (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  aside.w-64,
+  aside#admin-sidebar {
+    width: 220px !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   14. Systematic Multi-Device Breakpoint Rules
+   -------------------------------------------------------------------------- */
+
+/* Breakpoint 1: Small Mobile (320px – 374px) e.g., iPhone SE (1st/2nd gen), small Android */
+@media (max-width: 374px) {
+  .hero-title-main {
+    font-size: 1.75rem !important;
+  }
+  .header-brand-title {
+    font-size: 0.95rem !important;
+  }
+  .header-brand-sub {
+    display: none !important;
+  }
+  .liquid-btn-primary,
+  .liquid-btn-secondary {
+    padding: 0.625rem 1rem !important;
+    font-size: 0.8125rem !important;
+  }
+  .grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Breakpoint 2: Standard Mobile (375px – 430px) e.g., iPhone 13/14/15/16, Galaxy S-series */
+@media (min-width: 375px) and (max-width: 430px) {
+  .hero-title-main {
+    font-size: 2.125rem !important;
+  }
+}
+
+/* Breakpoint 3: Large Mobile (431px – 599px) e.g., iPhone Pro Max, Galaxy Ultra */
+@media (min-width: 431px) and (max-width: 599px) {
+  .hero-title-main {
+    font-size: 2.375rem !important;
+  }
+}
+
+/* Breakpoint 4: Small Tablet & Phablet (600px – 767px) e.g., Galaxy Fold unfolded */
+@media (min-width: 600px) and (max-width: 767px) {
+  .hero-title-main {
+    font-size: 2.625rem !important;
+  }
+}
+
+/* Breakpoint 5: Tablet Adaptive (768px – 1023px) e.g., iPad Mini, iPad Air, Android Tablets */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .tablet-grid-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  
+  .tablet-gap-4 {
+    gap: 1rem !important;
+  }
+}
+
+/* Breakpoint 6: Small Laptop (1024px – 1279px) e.g., iPad Pro 11"/12.9", MacBook Air 11" */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .hero-title-main {
+    font-size: 3.25rem !important;
+  }
+}
+
+/* Breakpoint 7: Desktop Standard (1280px – 1535px) e.g., FHD 1080p Laptops & Monitors */
+@media (min-width: 1280px) and (max-width: 1535px) {
+  .hero-title-main {
+    font-size: 3.75rem !important;
+  }
+}
+
+/* Breakpoint 8: Large & Ultrawide Display (>= 1536px, QHD, 4K, 21:9 Ultrawide) */
+@media (min-width: 1536px) {
+  .max-w-7xl {
+    max-width: 88rem !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   14. Admin Panel Responsive & Mobile Drawer Adaptations
+   -------------------------------------------------------------------------- */
+@media (max-width: 1023px) {
+  body.has-liquid-bg aside.w-64,
+  aside.w-64 {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    height: 100% !important;
+    height: 100dvh !important;
+    z-index: 60 !important;
+    transform: translateX(-100%);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    box-shadow: 12px 0 35px rgba(0, 0, 0, 0.7) !important;
+  }
+
+  aside.w-64.is-open {
+    transform: translateX(0) !important;
+  }
+}
+
+.admin-sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 5, 15, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 55;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.admin-sidebar-overlay.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* --------------------------------------------------------------------------
+   15. Mobile Card Grid & Compact Card Styling (< 640px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 639px) {
+  #home-umkm-grid .liquid-glass-subtle,
+  #product-grid > div {
+    border-radius: 0.875rem !important;
+  }
+
+  /* Ensure category badges on mobile cards stay compact */
+  #home-umkm-grid .scale-90,
+  #product-grid .scale-90 {
+    transform: scale(0.85) !important;
+  }
+
+  /* On extra-small screens, ensure product title has clean line height */
+  #product-grid h4 {
+    font-size: 0.75rem !important;
+    line-height: 1.15rem !important;
+  }
+}

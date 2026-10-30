@@ -3,6 +3,8 @@
    Aesthetics: Deep Pitch Black, Liquid Electric Blue Waves, Specular Highlights
    ========================================================================== */
 
+@import url('responsive.css');
+
 :root {
   --color-black: #000000;
   --color-dark-navy: #020817;

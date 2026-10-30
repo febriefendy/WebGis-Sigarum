@@ -5,6 +5,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 @import url('liquid-glass.css');
+@import url('responsive.css');
 
 :root {
   --primary-ocean: #0284c7;

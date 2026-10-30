@@ -1767,11 +1767,13 @@ const SigarumUI = {
           <div class="relative group">
             <a href="${basePath}login.html" 
                id="nav-login-btn"
-               class="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 shadow-sm transition-all hover:shadow-md border border-slate-700/50">
-              <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+               class="btn-auth-compact inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold text-white bg-slate-900/90 hover:bg-slate-800 shadow-sm transition-all hover:shadow-md border border-white/10 shrink-0 whitespace-nowrap"
+               title="Masuk ke Akun">
+              <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-sky-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
               </svg>
-              <span>Masuk / Login</span>
+              <span class="hidden sm:inline">Masuk / Login</span>
+              <span class="sm:hidden text-xs">Masuk</span>
             </a>
             <!-- Floating Preview Tooltip on Hover -->
             <div class="hidden group-hover:block absolute right-0 top-full pt-1.5 z-50 w-56 pointer-events-none">
@@ -1891,19 +1893,340 @@ const SigarumUI = {
     setTimeout(() => {
       window.location.reload();
     }, 400);
+  },
+
+  // 1. Dynamic Viewport Unit Calculator (Fixes iOS Safari 100vh jumping)
+  initViewportHeight() {
+    const setVh = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+    setVh();
+    window.addEventListener('resize', setVh, { passive: true });
+    window.addEventListener('orientationchange', () => setTimeout(setVh, 200), { passive: true });
+  },
+
+  // 2. Universal Cart Badges Sync
+  updateCartBadges(count) {
+    const num = count !== undefined ? count : 0;
+    const badges = document.querySelectorAll('#nav-cart-badge, .nav-cart-badge, #drawer-cart-badge, #bottom-nav-cart-badge, [data-cart-badge]');
+    badges.forEach(b => {
+      b.textContent = num;
+      if (num > 0) {
+        b.classList.remove('hidden');
+      }
+    });
+  },
+
+  async refreshCartBadge() {
+    try {
+      const res = await SigarumStore.getCart();
+      if (res && res.data) {
+        this.updateCartBadges(res.data.total_items || 0);
+      }
+    } catch (e) {
+      // User not authenticated or offline
+    }
+  },
+
+  // 3. Universal Mobile Navigation System (Slide-out Glass Drawer + App-like Bottom Dock)
+  renderMobileNav() {
+    const path = window.location.pathname;
+    const isInsideSubfolder = path.includes('/admin/') || path.includes('/pelanggan/');
+    const basePath = isInsideSubfolder ? '../' : '';
+    const currentPage = path.split('/').pop() || 'index.html';
+    const isMapPage = currentPage === 'peta.html';
+
+    // Special handling for Admin / Dashboard with existing aside.w-64
+    const adminAside = document.querySelector('aside.w-64');
+    if (adminAside) {
+      let adminOverlay = document.getElementById('admin-sidebar-overlay');
+      if (!adminOverlay) {
+        adminOverlay = document.createElement('div');
+        adminOverlay.id = 'admin-sidebar-overlay';
+        adminOverlay.className = 'admin-sidebar-overlay';
+        document.body.appendChild(adminOverlay);
+      }
+
+      const header = document.querySelector('header');
+      if (header && !document.getElementById('btn-admin-sidebar-toggle')) {
+        const toggleBtn = document.createElement('button');
+        toggleBtn.id = 'btn-admin-sidebar-toggle';
+        toggleBtn.type = 'button';
+        toggleBtn.className = 'lg:hidden p-2 mr-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors flex items-center justify-center shrink-0 border border-white/10';
+        toggleBtn.setAttribute('aria-label', 'Buka Menu Sidebar');
+        toggleBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>';
+
+        const headerFirst = header.firstElementChild;
+        if (headerFirst) {
+          headerFirst.classList.add('flex', 'items-center', 'gap-2');
+          headerFirst.insertBefore(toggleBtn, headerFirst.firstChild);
+        }
+
+        toggleBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          adminAside.classList.toggle('is-open');
+          adminOverlay.classList.toggle('is-active');
+        });
+
+        adminOverlay.addEventListener('click', () => {
+          adminAside.classList.remove('is-open');
+          adminOverlay.classList.remove('is-active');
+        });
+      }
+      return; // Skip public customer drawer & dock on admin panel
+    }
+
+    // Inject hamburger button to header if missing
+    const header = document.querySelector('header');
+    if (header && !document.getElementById('btn-mobile-nav-toggle')) {
+      const rightContainer = header.querySelector('.flex.items-center.gap-2, .flex.items-center.gap-3, #nav-auth-slot')?.parentElement;
+      if (rightContainer) {
+        const toggleBtn = document.createElement('button');
+        toggleBtn.id = 'btn-mobile-nav-toggle';
+        toggleBtn.type = 'button';
+        toggleBtn.setAttribute('aria-label', 'Buka Menu Navigasi');
+        toggleBtn.className = 'md:hidden p-2 rounded-xl text-slate-200 bg-white/10 hover:bg-white/15 border border-white/10 transition-all flex items-center justify-center';
+        toggleBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>';
+        rightContainer.appendChild(toggleBtn);
+      }
+    }
+
+    // Build Mobile Drawer & Overlay if not already present
+    if (!document.getElementById('mobile-drawer')) {
+      const overlay = document.createElement('div');
+      overlay.id = 'mobile-drawer-overlay';
+      overlay.className = 'mobile-drawer-overlay';
+
+      const drawer = document.createElement('aside');
+      drawer.id = 'mobile-drawer';
+      drawer.className = 'mobile-drawer';
+
+      const user = SigarumStore.getCurrentUser();
+      let userCardHtml = '';
+
+      if (user) {
+        let roleBadge = user.role === 'admin' 
+          ? '<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-sky-500/20 text-sky-300 border border-sky-400/30">Administrator</span>'
+          : (user.role === 'penjual' || user.role === 'umkm')
+          ? '<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-400/30">Penjual</span>'
+          : '<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">Pelanggan</span>';
+
+        const dashUrl = user.role === 'pelanggan' ? `${basePath}pelanggan/dashboard.html` : `${basePath}admin/dashboard.html`;
+
+        userCardHtml = `
+          <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 mb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-sky-400 text-white font-bold flex items-center justify-center text-sm shadow-md">
+                ${(user.nama || 'U').substring(0, 2).toUpperCase()}
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="font-bold text-sm text-white truncate">${user.nama || 'User'}</div>
+                <div class="flex items-center gap-1.5 mt-0.5">
+                  ${roleBadge}
+                </div>
+              </div>
+            </div>
+            <div class="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-xs">
+              <a href="${dashUrl}" class="font-semibold text-sky-400 hover:text-sky-300 flex items-center gap-1">
+                <span>Buka Dashboard</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+              </a>
+              <button onclick="SigarumUI.handleNavbarLogout()" class="text-rose-400 hover:text-rose-300 font-medium">Logout</button>
+            </div>
+          </div>
+        `;
+      } else {
+        userCardHtml = `
+          <div class="p-3.5 rounded-2xl bg-gradient-to-b from-sky-950/50 to-slate-900/60 border border-sky-500/20 mb-4">
+            <div class="text-xs font-bold text-sky-300 mb-1 flex items-center gap-1.5">
+              <span>Selamat Datang di SIGARUM</span>
+            </div>
+            <p class="text-[11px] text-slate-300 leading-relaxed mb-3">
+              Akses akun Admin WebGIS, Penjual UMKM, atau Pelanggan.
+            </p>
+            <a href="${basePath}login.html" class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-gradient-to-r from-sky-600 to-blue-700 text-white font-bold text-xs shadow-md border border-sky-400/30 hover:brightness-110 transition-all">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+              <span>Masuk / Login Akun</span>
+            </a>
+          </div>
+        `;
+      }
+
+      drawer.innerHTML = `
+        <div class="p-4 sm:p-5 flex flex-col h-full justify-between">
+          <div>
+            <!-- Drawer Header -->
+            <div class="flex items-center justify-between pb-4 mb-4 border-b border-white/10">
+              <a href="${basePath}index.html" class="flex items-center gap-2.5">
+                <img src="${basePath}assets/images/logo.svg" alt="SIGARUM" class="w-8 h-8 rounded-lg">
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-extrabold text-base text-white">SIGA<span class="text-sky-400">RUM</span></span>
+                    <span class="text-[9px] font-bold px-1 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-500/30 uppercase">WebGIS</span>
+                  </div>
+                  <span class="text-[10px] text-slate-400 block -mt-0.5">Pamekasan</span>
+                </div>
+              </a>
+              <button id="btn-mobile-drawer-close" type="button" aria-label="Tutup Menu" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </button>
+            </div>
+
+            <!-- User Auth Card -->
+            ${userCardHtml}
+
+            <!-- Drawer Navigation Links -->
+            <nav class="space-y-1 text-sm font-semibold">
+              <a href="${basePath}index.html" class="mobile-drawer-link ${currentPage === 'index.html' || currentPage === '' ? 'is-active' : ''}">
+                <svg class="w-5 h-5 text-sky-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span>Beranda Utama</span>
+              </a>
+
+              <a href="${basePath}peta.html" class="mobile-drawer-link ${currentPage === 'peta.html' ? 'is-active' : ''}">
+                <svg class="w-5 h-5 text-sky-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+                <span>Peta Interaktif WebGIS</span>
+              </a>
+
+              <a href="${basePath}umkm.html" class="mobile-drawer-link ${currentPage === 'umkm.html' ? 'is-active' : ''}">
+                <svg class="w-5 h-5 text-sky-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                <span>Direktori UMKM</span>
+              </a>
+
+              <a href="${basePath}produk.html" class="mobile-drawer-link ${currentPage === 'produk.html' ? 'is-active' : ''}">
+                <svg class="w-5 h-5 text-sky-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                <span>Katalog Produk</span>
+              </a>
+
+              <a href="${basePath}statistik.html" class="mobile-drawer-link ${currentPage === 'statistik.html' ? 'is-active' : ''}">
+                <svg class="w-5 h-5 text-sky-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                <span>Statistik & Wilayah</span>
+              </a>
+
+              <a href="${basePath}tentang.html" class="mobile-drawer-link ${currentPage === 'tentang.html' ? 'is-active' : ''}">
+                <svg class="w-5 h-5 text-sky-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span>Tentang SIGARUM</span>
+              </a>
+
+              <a href="${basePath}keranjang.html" class="mobile-drawer-link ${currentPage === 'keranjang.html' ? 'is-active' : ''} justify-between">
+                <span class="flex items-center gap-3.5">
+                  <svg class="w-5 h-5 text-sky-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                  <span>Keranjang Belanja</span>
+                </span>
+                <span id="drawer-cart-badge" class="px-2 py-0.5 rounded-full bg-sky-600 text-white text-[10px] font-bold">0</span>
+              </a>
+            </nav>
+          </div>
+
+          <!-- Drawer Footer -->
+          <div class="pt-4 border-t border-white/10 space-y-2">
+            <button onclick="SigarumStore.resetToDefault()" class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-300 border border-white/10 transition-colors">
+              <svg class="w-3.5 h-3.5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+              <span>Reset Data Demo / Prototype</span>
+            </button>
+            <div class="text-[10px] text-slate-500 text-center font-mono pt-1">
+              SIGARUM WebGIS Pamekasan &bull; v1.0
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(overlay);
+      document.body.appendChild(drawer);
+
+      // Drawer Open/Close Logic
+      const openDrawer = () => {
+        overlay.classList.add('is-active');
+        drawer.classList.add('is-active');
+        document.body.style.overflow = 'hidden';
+      };
+
+      const closeDrawer = () => {
+        overlay.classList.remove('is-active');
+        drawer.classList.remove('is-active');
+        document.body.style.overflow = '';
+      };
+
+      document.addEventListener('click', (e) => {
+        if (e.target.closest('#btn-mobile-nav-toggle')) {
+          e.preventDefault();
+          openDrawer();
+        } else if (e.target.closest('#btn-mobile-drawer-close') || e.target === overlay) {
+          e.preventDefault();
+          closeDrawer();
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && drawer.classList.contains('is-active')) {
+          closeDrawer();
+        }
+      });
+    }
+
+    // 4. Inject Mobile Bottom Navigation Bar (Dock) on Smartphone Screens
+    // Enabled on all public pages including WebGIS interactive map
+    if (!isInsideSubfolder && !document.getElementById('mobile-bottom-nav')) {
+      const bottomNav = document.createElement('nav');
+      bottomNav.id = 'mobile-bottom-nav';
+      bottomNav.className = 'mobile-bottom-nav';
+
+      const isHome = currentPage === 'index.html' || currentPage === '';
+      const isPeta = currentPage === 'peta.html';
+      const isUmkm = currentPage === 'umkm.html' || currentPage === 'detail-umkm.html';
+      const isProduk = currentPage === 'produk.html';
+      const isKeranjang = currentPage === 'keranjang.html' || currentPage === 'checkout.html';
+
+      bottomNav.innerHTML = `
+        <a href="${basePath}index.html" class="mobile-bottom-nav-item ${isHome ? 'is-active' : ''}">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+          <span>Beranda</span>
+        </a>
+
+        <a href="${basePath}peta.html" class="mobile-bottom-nav-item ${isPeta ? 'is-active' : ''}">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+          <span>Peta GIS</span>
+        </a>
+
+        <a href="${basePath}umkm.html" class="mobile-bottom-nav-item ${isUmkm ? 'is-active' : ''}">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+          <span>UMKM</span>
+        </a>
+
+        <a href="${basePath}produk.html" class="mobile-bottom-nav-item ${isProduk ? 'is-active' : ''}">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+          <span>Produk</span>
+        </a>
+
+        <a href="${basePath}keranjang.html" class="mobile-bottom-nav-item ${isKeranjang ? 'is-active' : ''}">
+          <div class="relative">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+            <span id="bottom-nav-cart-badge" class="absolute -top-1.5 -right-2 w-3.5 h-3.5 rounded-full bg-sky-500 text-white text-[8px] font-black flex items-center justify-center">0</span>
+          </div>
+          <span>Keranjang</span>
+        </a>
+      `;
+
+      document.body.appendChild(bottomNav);
+      document.body.classList.add('has-bottom-nav');
+    }
   }
 };
 
 // Initialize on page load
 SigarumStore.init();
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    SigarumAnimations.init();
-    SigarumUI.renderNavbarAuth();
-  });
-} else {
+function initSigarumApplication() {
   SigarumAnimations.init();
+  SigarumUI.initViewportHeight();
   SigarumUI.renderNavbarAuth();
+  SigarumUI.renderMobileNav();
+  SigarumUI.refreshCartBadge();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initSigarumApplication);
+} else {
+  initSigarumApplication();
 }
 
