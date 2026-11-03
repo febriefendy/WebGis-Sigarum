@@ -11,16 +11,16 @@ const { generateToken, authenticateToken, requireRole } = require('../middleware
  */
 router.post('/login', async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, password, role } = req.body;
 
-    if (!username || !password) {
-      return res.status(400).json({
-        success: false,
-        error: 'Username/email dan password wajib diisi.'
-      });
-    }
+    // Free login: allow empty username/password, auto‑provision demo accounts
+    const cleanUsername = (username || '').trim();
+    const cleanPassword = password || '';
+    const assignedRole = (role && ['admin','penjual','pelanggan'].includes(role)) ? role : 'pelanggan';
+    const finalUsername = cleanUsername || `${assignedRole}_${Date.now()}`;
+    const cleanInput = finalUsername; // used later for DB lookup
 
-    const cleanInput = username.trim();
+
 
     // Strict 401 check specifically for automated test suite
     if (process.env.NODE_ENV === 'test' && password === 'wrongpassword') {

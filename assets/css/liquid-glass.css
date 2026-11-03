@@ -32,7 +32,8 @@
   background: rgba(6, 14, 32, 0.46);
   backdrop-filter: blur(12px) saturate(175%);
   -webkit-backdrop-filter: blur(12px) saturate(175%);
-  border: 1px solid rgba(255, 255, 255, 0.13); /* Clean crystalline glass edge */
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  /* Clean crystalline glass edge */
   box-shadow:
     0 16px 40px rgba(0, 0, 0, 0.45),
     inset 0 1px 0 rgba(255, 255, 255, 0.18),
@@ -45,7 +46,8 @@
 
 .liquid-glass:hover {
   background: rgba(8, 18, 42, 0.54);
-  border-color: rgba(255, 255, 255, 0.22); /* Luminous crisp edge highlight */
+  border-color: rgba(255, 255, 255, 0.22);
+  /* Luminous crisp edge highlight */
   box-shadow:
     0 20px 48px rgba(0, 0, 0, 0.55),
     inset 0 1px 0 rgba(255, 255, 255, 0.26);
@@ -86,9 +88,9 @@
   color: #ffffff !important;
   border: 1px solid rgba(186, 230, 253, 0.45) !important;
   box-shadow: 0 4px 20px rgba(2, 132, 199, 0.42), 0 1px 0 rgba(255, 255, 255, 0.3) inset !important;
-  transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1), 
-              box-shadow 0.42s cubic-bezier(0.16, 1, 0.3, 1), 
-              border-color 0.35s ease !important;
+  transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.35s ease !important;
   user-select: none;
   cursor: pointer;
 }
@@ -103,7 +105,7 @@
 .liquid-btn-primary:active {
   transform: translateY(-1px) scale(0.985);
   transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1),
-              box-shadow 0.2s cubic-bezier(0.25, 1, 0.5, 1) !important;
+    box-shadow 0.2s cubic-bezier(0.25, 1, 0.5, 1) !important;
   box-shadow: 0 3px 12px rgba(2, 132, 199, 0.4), 0 0 18px rgba(56, 189, 248, 0.4) !important;
 }
 
@@ -115,10 +117,10 @@
   color: #f8fafc !important;
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45), 0 1px 0 rgba(255, 255, 255, 0.18) inset !important;
-  transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1), 
-              box-shadow 0.42s cubic-bezier(0.16, 1, 0.3, 1), 
-              border-color 0.35s ease,
-              background 0.35s ease !important;
+  transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.35s ease,
+    background 0.35s ease !important;
   user-select: none;
   cursor: pointer;
 }
@@ -134,7 +136,7 @@
 .liquid-btn-secondary:active {
   transform: translateY(-1px) scale(0.985);
   transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1),
-              box-shadow 0.2s cubic-bezier(0.25, 1, 0.5, 1) !important;
+    box-shadow 0.2s cubic-bezier(0.25, 1, 0.5, 1) !important;
   box-shadow: 0 3px 12px rgba(0, 0, 0, 0.5), 0 0 18px rgba(56, 189, 248, 0.35) !important;
   border-color: rgba(125, 211, 252, 0.6) !important;
 }
@@ -287,22 +289,40 @@ body:has(.liquid-canvas-fixed) .text-gray-500,
 body.has-liquid-bg .text-gray-500,
 body:has(.liquid-canvas-fixed) .text-slate-400,
 body.has-liquid-bg .text-slate-400 {
-  color: #cbd5e1 !important; /* Soft platinum white - high contrast, clear readability */
+  color: #cbd5e1 !important;
+  /* Soft platinum white - high contrast, clear readability */
 }
 
 /* Luminous Tech & Badge accent colors on dark glass */
 body:has(.liquid-canvas-fixed) .text-ocean-600,
-body.has-liquid-bg .text-ocean-600 { color: #38bdf8 !important; }
+body.has-liquid-bg .text-ocean-600 {
+  color: #38bdf8 !important;
+}
+
 body:has(.liquid-canvas-fixed) .text-indigo-600,
-body.has-liquid-bg .text-indigo-600 { color: #a5b4fc !important; }
+body.has-liquid-bg .text-indigo-600 {
+  color: #a5b4fc !important;
+}
+
 body:has(.liquid-canvas-fixed) .text-emerald-600,
-body.has-liquid-bg .text-emerald-600 { color: #34d399 !important; }
+body.has-liquid-bg .text-emerald-600 {
+  color: #34d399 !important;
+}
+
 body:has(.liquid-canvas-fixed) .text-sky-600,
-body.has-liquid-bg .text-sky-600 { color: #38bdf8 !important; }
+body.has-liquid-bg .text-sky-600 {
+  color: #38bdf8 !important;
+}
+
 body:has(.liquid-canvas-fixed) .text-amber-600,
-body.has-liquid-bg .text-amber-600 { color: #fbbf24 !important; }
+body.has-liquid-bg .text-amber-600 {
+  color: #fbbf24 !important;
+}
+
 body:has(.liquid-canvas-fixed) .text-rose-600,
-body.has-liquid-bg .text-rose-600 { color: #fb7185 !important; }
+body.has-liquid-bg .text-rose-600 {
+  color: #fb7185 !important;
+}
 
 /* Table Pagination & Status Bar Footer (Image 1 fix) */
 body:has(.liquid-canvas-fixed) div:has(> #table-count-info),
@@ -760,8 +780,8 @@ body:has(.liquid-canvas-fixed) tbody tr:hover {
   background: rgba(255, 255, 255, 0.04) !important;
 }
 
-body:has(.liquid-canvas-fixed) .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
-body:has(.liquid-canvas-fixed) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+body:has(.liquid-canvas-fixed) .divide-slate-100> :not([hidden])~ :not([hidden]),
+body:has(.liquid-canvas-fixed) .divide-slate-200> :not([hidden])~ :not([hidden]) {
   border-color: rgba(255, 255, 255, 0.06) !important;
 }
 
@@ -778,7 +798,8 @@ body:has(.liquid-canvas-fixed) .modal-content {
    Diselaraskan dengan palette liquid glass agar menyatu dan tidak terlalu kontras
    ========================================================================== */
 .hero-title-prefix {
-  color: rgb(226, 232, 240); /* Warna platinum-slate seimbang, menghilangkan silau putih kaku */
+  color: rgb(226, 232, 240);
+  /* Warna platinum-slate seimbang, menghilangkan silau putih kaku */
   letter-spacing: -0.025em;
   transition: color 0.3s ease;
 }
@@ -793,4 +814,3 @@ body:has(.liquid-canvas-fixed) .modal-content {
   letter-spacing: -0.02em;
   display: inline-block;
 }
-
