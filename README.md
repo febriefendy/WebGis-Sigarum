@@ -1,6 +1,7 @@
 # SIGARUM WebGIS Full-Stack Application
 ### Sistem Informasi Geografis UMKM Olahan Laut dan Garam (Kabupaten Pamekasan)
 
+[![CI/CD Pipeline](https://github.com/febriefendy/WebGis-Sigarum/actions/workflows/ci.yml/badge.svg)](https://github.com/febriefendy/WebGis-Sigarum/actions)
 [![WebGIS](https://img.shields.io/badge/GIS-Leaflet.js_1.9.4-0284c7.svg)](https://leafletjs.com/)
 [![Backend](https://img.shields.io/badge/Backend-Express.js_REST_API-059669.svg)](https://expressjs.com/)
 [![Database](https://img.shields.io/badge/Spatial_DB-SQLite3_%2B_PostgreSQL_%2F_PostGIS-336791.svg)](https://postgis.net/)
