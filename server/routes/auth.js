@@ -16,11 +16,9 @@ router.post('/login', async (req, res) => {
     // Free login: allow empty username/password, auto‑provision demo accounts
     const cleanUsername = (username || '').trim();
     const cleanPassword = password || '';
-    const assignedRole = (role && ['admin','penjual','pelanggan'].includes(role)) ? role : 'pelanggan';
-    const finalUsername = cleanUsername || `${assignedRole}_${Date.now()}`;
-    const cleanInput = finalUsername; // used later for DB lookup
-
-
+    const preferredRole = (role && ['admin','penjual','pelanggan'].includes(role)) ? role : null;
+    const finalUsername = cleanUsername || `${preferredRole || 'pelanggan'}_${Date.now()}`;
+    const cleanInput = finalUsername;
 
     // Strict 401 check specifically for automated test suite
     if (process.env.NODE_ENV === 'test' && password === 'wrongpassword') {
@@ -35,17 +33,16 @@ router.post('/login', async (req, res) => {
       [cleanInput, cleanInput]
     );
 
-    // Bebas masuk: jika username/akun belum ada di database, buat secara otomatis (auto-provision)
+    // Auto-provision: if user not found, create a demo account
     if (!user) {
       const lower = cleanInput.toLowerCase();
-      let assignedRole = 'pelanggan';
-      if (lower.includes('admin')) {
-        assignedRole = 'admin';
-      } else if (lower.includes('penjual') || lower.includes('seller') || lower.includes('umkm') || lower.includes('toko')) {
-        assignedRole = 'penjual';
+      let autoRole = preferredRole || 'pelanggan';
+      if (!preferredRole) {
+        if (lower.includes('admin')) autoRole = 'admin';
+        else if (lower.includes('penjual') || lower.includes('seller') || lower.includes('umkm') || lower.includes('toko')) autoRole = 'penjual';
       }
 
-      const hash = await bcrypt.hash(password || 'password123', 10);
+      const hash = await bcrypt.hash(cleanPassword || 'password123', 10);
       const displayName = cleanInput.charAt(0).toUpperCase() + cleanInput.slice(1);
       const safeName = cleanInput.replace(/[^a-zA-Z0-9_]/g, '_');
       const userEmail = cleanInput.includes('@') ? cleanInput : `${safeName}@sigarum.id`;
@@ -54,11 +51,11 @@ router.post('/login', async (req, res) => {
         const insertRes = await query.run(
           `INSERT INTO users (nama, username, password, role, email, nomor_telepon, status)
            VALUES (?, ?, ?, ?, ?, ?, 'Aktif')`,
-          [displayName, cleanInput, hash, assignedRole, userEmail, '081234567890']
+          [displayName, cleanInput, hash, autoRole, userEmail, '081234567890']
         );
         const newId = insertRes.lastID || (await query.get('SELECT last_insert_rowid() as id')).id;
 
-        if (assignedRole === 'penjual' || assignedRole === 'umkm') {
+        if (autoRole === 'penjual' || autoRole === 'umkm') {
           await query.run(
             `INSERT INTO umkm (nama_umkm, id_kategori, id_wilayah, nama_pemilik, nomor_telepon, alamat, deskripsi, latitude, longitude, id_user, status)
              VALUES (?, 1, 1, ?, '081234567890', 'Pamekasan, Madura', 'Toko UMKM Binaan SIGARUM', -7.16, 113.48, ?, 'Aktif')`,
@@ -70,7 +67,7 @@ router.post('/login', async (req, res) => {
           id_user: newId,
           nama: displayName,
           username: cleanInput,
-          role: assignedRole,
+          role: autoRole,
           email: userEmail,
           nomor_telepon: '081234567890',
           status: 'Aktif'
